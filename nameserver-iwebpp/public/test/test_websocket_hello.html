@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<!--
+-->
+<head>
+  <title>Basic websocket test</title>
+</head>
+
+<body onload="testWebSocket()">
+
+<script class="testbody" type="text/javascript">
+
+var ws, t;
+
+function testWebSocket () {
+  ws = new WebSocket("ws://localhost:51680/");
+  ///ws = new WebSocket("ws://192.168.1.109:51680/");
+  
+  ws.onopen = function(e) {
+    console.log("opened");
+    ws.send('something from client');
+
+    for (var i = 0; i < 3; i ++) {
+        ws.send(JSON.stringify('Ping Hello word @ '+i));    
+    }
+
+    t = setInterval(function(){
+        ws.send(JSON.stringify('Ping Hello word @ '+Date.now()));    
+        ///ws.send('something from client');
+    }, 2000);
+  }
+  
+  ws.onclose = function(e) {
+    clearInterval(t);
+    console.log("connection closed");
+  }
+  
+  ws.onerror = function(e) {
+    console.log("onerror called!");
+    //ws.close();
+  }
+
+  ws.onmessage = function(e) {
+    console.log('received: ' + e.data);
+    ///ws.send('ping back from client: '+e.data);
+  }
+}
+
+</script>
+
+</body>
+</html>

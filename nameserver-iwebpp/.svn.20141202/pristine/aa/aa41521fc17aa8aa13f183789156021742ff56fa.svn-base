@@ -1,0 +1,115 @@
+#!/usr/bin/env node
+
+
+//
+// Please install node-httpp binary in your system exec dir, like /usr/bin/ or /usr/local/bin/
+//
+
+var util = require('util'),
+    argv = require('optimist').argv,
+    auth = require('./auth'),
+    genk = require('./usrkey');
+
+var help = [
+    "usage: taobao [options] ",
+    "",
+    "Setup Taobao accounting list using the specified command-line options",
+    "",
+    "options:",
+    "  -o, --operation  add,remove,update,check/output add/remove/update/check/output usrkey entry",
+    "  -k, --key        User key                       Key for the registered user on ivncbox.com",
+    "  -f  --from       Date in ms                     Begin date in ms",
+    "  -t  --to         Date in ms                     End date in ms",
+    "  -d  --days       How long in days               Duration in days",
+    "  -p  --prefix     Prefix of user key             Prefix for user",
+    "  -h, --help                                      You're staring at it"
+].join('\n');
+
+if (argv.h || argv.help || Object.keys(argv).length === 2) {
+  return util.puts(help);
+}
+
+var operation = argv.o || argv.operation,
+       usrkey = argv.k || argv.key,
+         from = argv.f || argv.from,
+           to = argv.t || argv.to,
+         days = argv.d || argv.days,
+         pref = argv.p || argv.prefix;
+
+// add usrkey entry
+if (operation === 'add') {
+	var account = {};
+	
+	if (from) {
+		account.from = parseInt(from, 10);
+	} else {
+		account.from = Date.now();
+	}
+	if (to) {
+		account.to =  parseInt(to, 10);
+	} else if (days) {
+		account.days = parseInt(days, 10);
+	}
+	
+	// if no usrkey input, then create one
+	if (!usrkey) {
+		usrkey = genk.genUsrkey(pref ? pref : 'tbx');
+		console.log('created user key:'+usrkey);
+	}
+	auth.add(usrkey, account, function(err, entry){
+		if (err) {
+			console.log('add usrkey entry failed '+err);
+		} else {
+			console.log('add usrkey entry success '+JSON.stringify(entry));
+		}
+	});
+} else if (operation === 'remove' || operation === 'delete') {
+	auth.remove(usrkey, function(err, entry) {
+		if (err) {
+			console.log('remove usrkey entry failed '+err);
+		} else {
+			console.log('remove usrkey entry success '+JSON.stringify(entry));
+		}
+	});
+} else if (operation === 'update') {
+	var account = {};
+	
+	if (to) {
+		account.to =  parseInt(to, 10);
+	} else if (days) {
+		account.days = parseInt(days, 10);
+	}
+	
+	auth.update(usrkey, account, function(err, entry){
+		if (err) {
+			console.log('update usrkey entry failed '+err);
+		} else {
+			console.log('update usrkey entry success '+JSON.stringify(entry));
+		}
+	});
+} else if (operation === 'check') {
+	// check if valid user key firstly
+	if (genk.verUsrkey(usrkey)) {
+		// check if user key expired
+		auth.check(usrkey, function(err, entry) {
+			if (err) {
+				console.log('check usrkey entry failed '+err);
+			} else {
+				console.log('check usrkey entry success '+JSON.stringify(entry));
+			}
+		});
+	} else {
+		console.log('invalid user key '+usrkey);
+	}
+} else if (operation === 'output') {
+	auth.output(function(err, ostr){
+		if (err) {
+			console.log('output usrkey entry failed '+err);
+		} else {
+			console.log('output usrkey entry success\n'+ostr);
+		}
+	});
+} else {
+	util.puts(help);
+}
+
