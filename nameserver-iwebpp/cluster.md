@@ -17,8 +17,8 @@ iwebpp.io-nameserver cluster - a cluster of machine node run nameserver services
 * every node can run alonely, or join a cluster 
 * any node can be plain node, or Seed node
 * when node join cluster, need describe one or more Seed nodes to connect
-* Seed node used to plain node retrieve cluster state info when bootup
-* every node exchange cluster state info automatically, including cluster toponology and vURL information
+* Seed node used for plain node retrieve cluster state info when bootup
+* every node exchange cluster state info automatically, including cluster toponology and vURL/peerService information
 
 
 ## Architecture
@@ -38,7 +38,7 @@ iwebpp.io-nameserver cluster - a cluster of machine node run nameserver services
 * exchange cluster state information
 
   A report it's cluster toponology info to all peers, B so on,
-  A report it's vURL info to B, B report it's vURL info to A, etc
+  A report it's vURL/peerService info to B, B report it's vURL/peerService info to A, etc
 
 * forward SEP message to correct node
 
@@ -62,7 +62,7 @@ iwebpp.io-nameserver cluster - a cluster of machine node run nameserver services
   then B setup connecton to other peers, and get cluster state info again;
   
   After A,B,C bootup well and exchange cluster state info done, then they enter
-  normal cluster state, that exchanges vURL info in real time.
+  normal cluster state, that exchanges vURL/peerService info in real time.
   
   If some node leave cluser or dead, Node will exhange cluster state info again until
   maintain a consistent cluster toponology.
