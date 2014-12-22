@@ -124,7 +124,10 @@ peerService.prototype.put = function(entry, fn){
     });
     
     if (fn) fn(null, (self.db[indx])[entry.vurl]);
-    if (Debug) console.log('add peer service:'+JSON.stringify(entry));
+    if (Debug) console.log('add peer service:' + JSON.stringify(entry));
+
+    // emit add for cluster
+    self.emit('add', entry);
 }
 
 peerService.prototype.del = function(entry, fn){
@@ -145,7 +148,10 @@ peerService.prototype.del = function(entry, fn){
             self.db[indx] = null;
         }
         if (fn) fn(null);
-        if (Debug) console.log('delete peer service:'+entry);
+        if (Debug) console.log('delete peer service:' + entry);
+
+        // emit delete for cluster
+        self.emit('delete', entry);
     } else {
         if (fn) fn(null);
     }
@@ -165,4 +171,7 @@ peerService.prototype.clrByvURL = function(vurl, fn){
     });
     
     if (fn) fn(null);
+
+    // emit clear for cluster
+    self.emit('clear', vurl);
 };

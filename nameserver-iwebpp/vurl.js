@@ -64,6 +64,9 @@ vURL.prototype.put = function(entry, fn){
 	    
         if (fn) fn(null, self.db[entry.vurl]);
         ///console.log('add vURL:'+JSON.stringify(entry));
+
+        // emit add for cluster
+        self.emit('add', entry);
     }
 }
 
@@ -86,6 +89,9 @@ vURL.prototype.del = function(vurl, fn){
         self.db[vurl].live = false;
         if (fn) fn(null);
         ///console.log('delete vURL:'+vurl);
+
+        // emit delete for cluster
+        self.emit('delete', vurl);
     } else {
         if (fn) fn(null);
     }
