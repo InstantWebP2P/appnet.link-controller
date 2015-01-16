@@ -1189,11 +1189,15 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     // record service info
                     // notes: bridge to another service manager by now
                     // TBD... record it in geo-graph database
-                    
+
                     // 2.1
                     // set live flag true
                     data.offer.srv.live = true;
-                    
+
+                    // 2.2
+                    // set geoIP info
+                    data.offer.srv.geoip = client.clntinfo.clntgeoip;
+
                     peerService.put(data.offer.srv, function(err, srv){                        
                         // 3.
                         // send back answer
@@ -1285,6 +1289,11 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     // update service info
                     // notes: bridge to another service manager by now
                     // TBD... update it in geo-graph database
+
+                    // 2.1
+                    // keep geoIP info
+                    data.offer.srv.geoip = client.clntinfo.clntgeoip;
+
                     peerService.put(data.offer.srv, function(err, srv){                        
                         // 3.
                         // send back answer

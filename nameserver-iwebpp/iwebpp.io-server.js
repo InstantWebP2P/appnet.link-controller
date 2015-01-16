@@ -417,34 +417,33 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                     });
                     break;
 
-
-                    case SEP.SEP_OPC_HEART_BEAT_OFFER:
-                        // 1.
-                        // check if user was allowed to query it
-                        // TBD...
-                    
-                        // 2.
-                        // heart-beat check response
-                
-                        // 2.1
-                        // fill answer opc
-			data.opc = SEP.SEP_OPC_HEART_BEAT_ANSWER;
-			data.answer = {};
-			data.answer.state = SEP.SEP_OPC_STATE_READY;
-			
-			data.answer.ready = true;
-				
-			// fill server timestamp
-			data.answer.timeAt = Date.now();
-				
-			// 3.
-			// send message back
-			sendOpcMsg(client, data);
-				
-			// 3.1
-			// emit event
-		        self.emit('NS.SEP.SEP_OPC_HEART_BEAT_OFFER', {client: client, data: data});
-                    break;
+                case SEP.SEP_OPC_HEART_BEAT_OFFER:
+					// 1.
+					// check if user was allowed to query it
+					// TBD...
+	
+					// 2.
+					// heart-beat check response
+	
+					// 2.1
+					// fill answer opc
+					data.opc = SEP.SEP_OPC_HEART_BEAT_ANSWER;
+					data.answer = {};
+					data.answer.state = SEP.SEP_OPC_STATE_READY;
+	
+					data.answer.ready = true;
+	
+					// fill server timestamp
+					data.answer.timeAt = Date.now();
+	
+					// 3.
+					// send message back
+					sendOpcMsg(client, data);
+	
+					// 3.1
+					// emit event
+					self.emit('NS.SEP.SEP_OPC_HEART_BEAT_OFFER', {client: client, data: data});
+					break;
 
                 case SEP.SEP_OPC_STUN_OFFER:
                     if (Debug) console.log('stun.offer:'+JSON.stringify(data));
@@ -1132,6 +1131,10 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                     // set live flag true
                     data.offer.srv.live = true;
                     
+                    // 2.2
+                    // set geoIP info
+                    data.offer.srv.geoip = client.clntinfo.clntgeoip;
+                    
                     peerService.put(data.offer.srv, function(err, srv){                        
                         // 3.
                         // send back answer
@@ -1223,6 +1226,11 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                     // update service info
                     // notes: bridge to another service manager by now
                     // TBD... update it in geo-graph database
+
+                    // 2.1
+                    // keep geoIP info
+                    data.offer.srv.geoip = client.clntinfo.clntgeoip;
+
                     peerService.put(data.offer.srv, function(err, srv){                        
                         // 3.
                         // send back answer
