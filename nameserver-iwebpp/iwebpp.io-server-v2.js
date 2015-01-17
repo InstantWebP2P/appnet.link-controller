@@ -1368,9 +1368,16 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                             data.answer.srv   = data.offer.srv;
                             data.answer.state = SEP.SEP_OPC_STATE_FAIL;
                         } else {
-                            // send back service info as answer
-                            data.answer.srv   = srv;
-                            data.answer.state = SEP.SEP_OPC_STATE_READY;
+                        	// send back service info as answer
+                        	data.answer.srv   = srv;
+                        	data.answer.state = SEP.SEP_OPC_STATE_READY;
+
+                        	// !!! for security, only return country/city of GeoIP to client
+                        	var geoip_     = {};
+                        	geoip_.country = srv.geoip.country;
+                        	geoip_.city    = srv.geoip.city;
+
+                        	data.answer.srv.geoip = geoip_;
                         }
                         sendOpcMsg(client, data);
                         
