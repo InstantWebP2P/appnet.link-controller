@@ -1130,13 +1130,16 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                     // 2.1
                     // set live flag true
                     data.offer.srv.live = true;
-                    
+
                     // 2.2
                     // set geoIP info
-                    data.offer.srv.geoip = client.clntinfo.clntgeoip;
-                    
+                    // !!! for security, only return country/city of GeoIP to client
+                    data.offer.srv.geoip         = {};
+                    data.offer.srv.geoip.country = client.clntinfo.clntgeoip.country;
+                    data.offer.srv.geoip.city    = client.clntinfo.clntgeoip.city;
+
                     peerService.put(data.offer.srv, function(err, srv){                        
-                        // 3.
+                    	// 3.
                         // send back answer
                         data.opc    = SEP.SEP_OPC_SRV_REPORT_ANSWER;
                         data.answer = {};
@@ -1229,7 +1232,10 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
 
                     // 2.1
                     // keep geoIP info
-                    data.offer.srv.geoip = client.clntinfo.clntgeoip;
+                	// !!! for security, only return country/city of GeoIP to client
+                    data.offer.srv.geoip         = {};
+                    data.offer.srv.geoip.country = client.clntinfo.clntgeoip.country;
+                    data.offer.srv.geoip.city    = client.clntinfo.clntgeoip.city;
 
                     peerService.put(data.offer.srv, function(err, srv){                        
                         // 3.
@@ -1308,13 +1314,6 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                         	// send back service info as answer
                         	data.answer.srv   = srv;
                         	data.answer.state = SEP.SEP_OPC_STATE_READY;
-
-                        	// !!! for security, only return country/city of GeoIP to client
-                        	var geoip_     = {};
-                        	geoip_.country = srv.geoip.country;
-                        	geoip_.city    = srv.geoip.city;
-
-                        	data.answer.srv.geoip = geoip_;
                         }
                         sendOpcMsg(client, data);
                         
