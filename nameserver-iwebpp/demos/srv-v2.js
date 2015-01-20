@@ -10,7 +10,7 @@ var nmsrvs = new nmSrv(
             dn: 'iwebpp.com',                     // name server domain name, change to yours
         ipaddr: '0.0.0.0', ports: [52686, 52868], // name server
           turn: [52688, 52866],                   // relay server
-        option: {mbw: 32000}                      // user-specific feature, mbw: maxim bandwidth 32KB/s in default
+	    option: {mbw: 256000}                     // user-specific feature, mbw: maxim bandwidth 256KB/s in default
     },
     
     // SSL/NACL certs
