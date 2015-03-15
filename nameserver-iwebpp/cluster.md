@@ -14,7 +14,7 @@ iwebpp.io-nameserver cluster - a cluster of machine node run nameserver services
 
 ## Design
 
-* every node can run alonely, or join a cluster 
+* every node can run alonely, or join a cluster as constant hash ring
 * any node can be plain node, or Seed node
 * when node join cluster, need describe one or more Seed nodes to connect
 * Seed node used for plain node retrieve cluster state info when bootup
