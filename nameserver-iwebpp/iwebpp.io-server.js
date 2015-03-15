@@ -82,7 +82,7 @@ var Debug = 0;
 //                         ps: {key: xxx, cert: yyy, subdn:{'subdomain': {key:x, cert: x}}}} https/httpps SSL certs
 //           }
 var nmSrv = exports = module.exports = function(endpoints, sslcerts){
-    if (!(this instanceof nmSrv)) return new nmSrv(endpoints);
+    if (!(this instanceof nmSrv)) return new nmSrv(endpoints, sslcerts);
 
     var self = this;
        

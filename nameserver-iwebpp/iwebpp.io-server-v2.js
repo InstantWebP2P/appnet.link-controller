@@ -96,7 +96,7 @@ var Debug = 0;
 //                         }
 //           }
 var nmSrv = exports = module.exports = function(endpoints, seccerts){
-    if (!(this instanceof nmSrv)) return new nmSrv(endpoints);
+    if (!(this instanceof nmSrv)) return new nmSrv(endpoints, seccerts);
 
     var self = this;
        
