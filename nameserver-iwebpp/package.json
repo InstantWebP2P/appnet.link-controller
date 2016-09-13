@@ -12,22 +12,20 @@
   },
   "main": "./iwebpp.io-server",
   "dependencies": {
-    "wspp": "latest",
-    "msgpack-js": "0.1.x",
-    "node-uuid": "1.4.x",
-    "httpp-proxy": "latest",
-    "iwebpp.io": "latest",
-    "neo4j": "0.2.x",
-    "siphash": "latest",
+    "axon": "0.6.x",
     "connect": "2.7.x",
     "connect-httpp": "latest",
-    "raw-socket": "latest",
-    "net-ping": "latest",
-    "axon": "0.6.x",
     "ddp": "0.3.x",
-    "geoip-lite": "1.1.x"
+    "geoip-lite": "1.1.x",
+    "httpp-proxy": "latest",
+    "iwebpp.io": "latest",
+    "msgpack-js": "0.1.x",
+    "neo4j": "0.2.x",
+    "net-ping": "^1.2.0",
+    "node-uuid": "1.4.x",
+    "raw-socket": "latest",
+    "siphash": "latest",
+    "wspp": "latest"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }
-
