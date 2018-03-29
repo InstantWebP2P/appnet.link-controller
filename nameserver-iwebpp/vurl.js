@@ -1,5 +1,5 @@
 // iWebPP vURL pure JS implementation
-// Copyright (c) 2012-2013 Tom Zhou<zs68j2ee@gmail.com>
+// Copyright (c) 2012-2013 Tom Zhou<iwebpp@gmail.com>
 // Notes: 
 // - vURL has two mode: vHost-based and vPath-based
 // - vURL key always is lower case
