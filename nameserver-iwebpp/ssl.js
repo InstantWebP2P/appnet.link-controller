@@ -1,5 +1,5 @@
 // SSL binary wrapper in pure JS
-// Copyright (c) 2012-2013 Tom Zhou<zs68j2ee@gmail.com>
+// Copyright (c) 2012-2013 Tom Zhou<iwebpp@gmail.com>
 //
 
 var fs = require('fs');
@@ -183,7 +183,7 @@ var genSslCert = exports.genSslCert = function(filename, info, fn){
 // --- openssl genrsa -out ia.key 2048
 // --- openssl req -new -key ia.key -subj '/C=CN/ST=SH/L=SH/CN=xxx.com' -out ia.csr
 // --- openssl x509 -req -days 730 -in ia.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out ia.crt
-// --- To use this subordinate CA key for Authenticode signatures with Microsoft¡¯s signtool, you¡¯ll have to package the keys and certs in a PKCS12 file:
+// --- To use this subordinate CA key for Authenticode signatures with MicrosoftÂ¡Â¯s signtool, youÂ¡Â¯ll have to package the keys and certs in a PKCS12 file:
 // ---- openssl pkcs12 -export -out ia.p12 -inkey ia.key -in ia.crt -chain -CAfile ca.crt
 // --
 // --- V3 extension
