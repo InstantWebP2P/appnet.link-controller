@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2013 Tom Zhou<zs68j2ee@gmail.com>
+// Copyright (c) 2012-2013 Tom Zhou<iwebpp@gmail.com>
 //
 // TURN establish the session between two clients by relay server
 // 0. relay server consists of three services: proxy server, agent server(used to punch hole) and agent client, that binds on same ip and different port
