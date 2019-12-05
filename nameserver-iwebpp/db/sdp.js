@@ -9,7 +9,7 @@
 // 5. client-node was identified by it's local IP&Port&devkey;
 // 5.1 device-node was identified by it's devkey;
 // 6. user-node was identified by User's domain+usrkey;
-// 7. multiple sessions can exist between nameserver and User entity;
+// 7. multiple sessions can co-exist between nameserver and User entity;
 // 8. session consists of (nameserver ip&port)+(Users's domain+usrkey)+(nameclient local ip&port)+(devkey),
 //    that means one user can login to nameserver from different devices;
 // 9. router-node was identified by it's public IP&Port;
@@ -18,7 +18,7 @@
 // ...
 
 var neo4j = require('neo4j');
-var db = new neo4j.GraphDatabase(process.env.NEO4J_URL || 'http://localhost:7474');
+var db    = new neo4j.GraphDatabase(process.env.NEO4J_URL || 'http://localhost:7474');
 
 
 // node types:
@@ -35,16 +35,16 @@ exports.NODE_RELAYSRV = 3;
 exports.NODE_USER     = 4;
 exports.NODE_DEVICE   = 5;
 
-// session types:
-// 0: sdp(client<-->nmsrv),
-// 1: stun(client<-->client),
-// 2: turn(client<->relaysrv<->client),
-// 3: nexthop(nmsrv<.-.>router<.-.>client),
-// 4: login(user<->client),
-// 5: turn proxy(initiator client<->relay proxy server),
-// 6: turn agent(relay agent client<->responder client),
-// 7: turn punch(responder client<->relay agent server)
-// 8: runon(client<->device)
+// Session Types:
+// 0: SDP        (client<-->nmsrv),
+// 1: STUN       (client<-->client),
+// 2: TURN       (client<->relaysrv<->client),
+// 3: NextHop    (nmsrv<.-.>router<.-.>client),
+// 4: Login      (user<->client),
+// 5: TURN Proxy (initiator client<->relay proxy server),
+// 6: TURN Agent (relay agent client<->responder client),
+// 7: TURN Punch (responder client<->relay agent server)
+// 8: RunOn      (client<->device)
 exports.SESSION_SDP        = 'SESSION_SDP';
 exports.SESSION_STUN       = 'SESSION_STUN';
 exports.SESSION_TURN       = 'SESSION_TURN';
@@ -56,8 +56,8 @@ exports.SESSION_TURN_PUNCH = 'SESSION_TURN_PUNCH';
 exports.SESSION_RUNON      = 'SESSION_RUNON';
 
 // NAT/FW types:
-// 0: asymmetric NAT/FW
-// 1: symmetric NAT/FW
+// 0: Asymmetric NAT/FW
+// 1:  Symmetric NAT/FW
 exports.NAT_ASYM = 0;
 exports.NAT_SYMM = 1;
 
