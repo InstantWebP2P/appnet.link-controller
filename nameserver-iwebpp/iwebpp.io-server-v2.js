@@ -1,5 +1,5 @@
 // iWebPP.IO name-server V2 implementation, that works with iwebpp.io name-client.
-// Copyright (c) 2014 Tom Zhou<iwebpp@gmail.com>
+// Copyright (c) 2014-present Tom Zhou<iwebpp@gmail.com>
 //
 // iWebPP.io module
 var iWebPP = require('iwebpp.io').V2;

@@ -1,5 +1,5 @@
 // SSL binary wrapper in pure JS
-// Copyright (c) 2012-2013 Tom Zhou<iwebpp@gmail.com>
+// Copyright (c) 2012-present Tom Zhou<iwebpp@gmail.com>
 //
 
 var fs = require('fs');

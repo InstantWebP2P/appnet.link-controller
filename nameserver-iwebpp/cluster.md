@@ -9,7 +9,7 @@ iwebpp.io-nameserver cluster - a cluster of machine node run nameserver services
 * node can join or leave dynamically
 * auto load balancing
 * secure connection between nodes
-* dead node auto repair
+* dead node auto repair,removed,refresh
 
 
 ## Design

@@ -1,5 +1,5 @@
 // iWebPP Peer-Service store pure JS implementation
-// Copyright (c) 2012-2013 Tom Zhou<iwebpp@gmail.com>
+// Copyright (c) 2012-present Tom Zhou<iwebpp@gmail.com>
 // Notes: a peer-service MUST be described by domain, usrkey and cate, and identified by vURL.
 
 var eventEmitter = require('events').EventEmitter,
