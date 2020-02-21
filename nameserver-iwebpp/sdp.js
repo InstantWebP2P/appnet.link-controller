@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2013 Tom Zhou<iwebpp@gmail.com>
+// Copyright (c) 2012-present Tom Zhou<iwebpp@gmail.com>
 //
 // session description protocol model:
 // 1. when user login to nameserver, nameserver record user's connection info, session 
