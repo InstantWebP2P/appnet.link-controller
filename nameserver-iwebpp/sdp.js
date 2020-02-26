@@ -1,6 +1,6 @@
 // Copyright (c) 2012-present Tom Zhou<iwebpp@gmail.com>
 //
-// session description protocol model:
+// Session Description protocol model:
 // 1. when user login to nameserver, nameserver record user's connection info, session 
 //    id and user identify, etc;
 // 2. when user want to connect to peer, nameserver decide how to punch hole and setup
