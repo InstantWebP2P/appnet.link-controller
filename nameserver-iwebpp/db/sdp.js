@@ -1,6 +1,6 @@
 // Copyright (c) 2012-present Tom Zhou<iwebpp@gmail.com>
 //
-// graphDB used to record SDP, establish peer connection topology
+// graphDB used to record SDP, establish peer connection's topology
 // notes: 
 // 1. SDP record will be mapped to client-node, server-node and their relationship;
 // 2. client-node represents User entity, server-node is nameserver entity;
