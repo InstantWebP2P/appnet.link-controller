@@ -1,21 +1,21 @@
 // Copyright (c) 2012-present Tom Zhou<iwebpp@gmail.com>
 //
 // TURN establish the session between two clients by relay server
-// 0. relay server consists of three services: proxy server, agent server(used to punch hole) and agent client, that binds on same ip and different port
-// - 0.1 proxy server accept connect from initiator client, then proxy request/response to responder client for agent client
-// - 0.2 agent server accept connect from responder client, which used to punch hole from responder client to agent client
-// - 0.3 proxy server binds on proxy port, while agent server/client binds on agent port
+// 0. Relay server consists of three services: proxy server, agent server(used to punch hole) and agent client, that binds on same ip and different port
+// - 0.a Proxy server accept connect from initiator client, then proxy request/response to responder client for agent client
+// - 0.b Agent server accept connect from responder client, which used to punch hole from responder client to agent client
+// - 0.c Aroxy server binds on proxy port, while both agent server and agent client binds on same ip, but another same agent port
 // 
-// 1. one client acts as initiator, another client acts as responder and relay server as meddle server
-// 2. TURN has two mode: TURN_CS, TURN_PP, that matched to STUN_CS, STUN_PP
+// 1. One client acts as initiator, another client acts as responder and relay server as middle server
+// 2. TURN has two mode: TURN_CS, TURN_PP, that's related to STUN_CS, STUN_PP
 // 3. TURN_CS means the connection setup in client to server mode
 // 4. TURN_PP means the connection setup in rendezvous mode 
 // 5. TURN does need relay-server
 // 
 // 6. TURN has three logical connections:
-// - 6.1 responder client connect to relay-server's agent server, which used to punch hole to responder client for agent client
-// - 6.2 initiator client connect to relay-server proxy server
-// - 6.3 relay-server agent client connect to responder client
+// - 6.a Responder client connect to relay-server's agent server, which used to punch hole to responder client for agent client
+// - 6.b Initiator client connect to relay-server proxy server
+// - 6.c Relay-server agent client connect to responder client
 
 var eventEmitter = require('events').EventEmitter,
     util = require('util');
