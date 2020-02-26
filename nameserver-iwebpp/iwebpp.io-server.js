@@ -8,29 +8,29 @@ var iWebPP = require('iwebpp.io');
 var SEP = iWebPP.SEP;
 
 // eventEmitter
-var eventEmitter = require('events').EventEmitter,
-    util = require('util'),
-    url = require('url'),
-    http = require('http'),
-    https = require('https');
-    httpp = require('httpp'),
-    httpps = require('httpps'),
-    crypto = require('crypto'),
-    Connect = require('connect'),
+var eventEmitter  = require('events').EventEmitter,
+    util          = require('util'),
+    url           = require('url'),
+    http          = require('http'),
+    https         = require('https');
+    httpp         = require('httpp'),
+    httpps        = require('httpps'),
+    crypto        = require('crypto'),
+    Connect       = require('connect'),
     connect_httpp = require('connect-httpp'),
-    UDT = require('udt');
+    UDT           = require('udt');
 
 // security hash
 // SIPKEY can be any user defined 4 integers
 var SIPHASH = require('siphash'),
-    SIPKEY = [0x33336666, 0x33338888, 0x88889999, 0x11116666]; // magic key
+    SIPKEY  = [0x33336666, 0x33338888, 0x88889999, 0x11116666]; // magic key
 
 // MSGPACK library
 // prefer JSON format instead of msgpack
-var MSGPACK = require('msgpack-js');
+var MSGPACK         = require('msgpack-js');
 
 // p2p stream websocket library
-var WebSocket = require('wspp');
+var WebSocket       = require('wspp');
 var WebSocketServer = WebSocket.Server;
 
 // httpp-proxy library
@@ -94,20 +94,20 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
     self.dn     = endpoints.dn      || 'iwebpp.com';
     self.ipaddr = endpoints.ipaddr  || '0.0.0.0';
     self.ports  = endpoints.ports   || [51686, 51868];
-    	
-	// SSL certs
-	self.sslcerts    = sslcerts || {};
-	self.sslcerts.ns = self.sslcerts.ns || false;
-	self.sslcerts.as = self.sslcerts.as || false;
-	self.sslcerts.ps = self.sslcerts.ps || false;
 	
-	// ssl CA cert/key
-	self.sslcerts.ca = self.sslcerts.ca || false;
+    // SSL certs
+    self.sslcerts    = sslcerts || {};
+    self.sslcerts.ns = self.sslcerts.ns || false;
+    self.sslcerts.as = self.sslcerts.as || false;
+    self.sslcerts.ps = self.sslcerts.ps || false;
 	
-	// default user-specific features
-	self.option = endpoints.option || {};
+    // ssl CA cert/key
+    self.sslcerts.ca = self.sslcerts.ca || false;
 	
-	// server obj cache
+    // default user-specific features
+    self.option = endpoints.option || {};
+	
+    // server obj cache
     self.srvs = {};
     
     // clients connection cache
