@@ -1,4 +1,4 @@
-### Nameserver consists of STUN, TURN, SDP and SEP services
+### Nameserver consists of SDP, STUN, TURN and vURL services
 
 * sdp.js                 - Session Desription implementation
 * stun.js                - STUN protcol implementation
