@@ -1,11 +1,11 @@
 // Copyright (c) 2012-present Tom Zhou<iwebpp@gmail.com>
 //
 // STUN establish the session between two clients by UDP hole punch
-// 1. one client acts as initiator, another client acts as responder
+// 1. One client acts as Initiator, another client acts as Responder
 // 2. STUN has two mode: STUN_CS, STUN_PP
 // 3. STUN_CS means the connection setup in client to server mode
 // 4. STUN_PP means the connection setup in rendezvous mode 
-// 5. STUN don't need relay-server
+// 5. STUN don't need relay-server. right now, Neither clients can behind Symmetric NAT/Firewall
 
 var eventEmitter = require('events').EventEmitter,
     util = require('util');
