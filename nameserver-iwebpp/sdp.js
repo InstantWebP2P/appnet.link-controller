@@ -5,11 +5,11 @@
 //    id and user identify, etc;
 // 2. when user want to connect to peer, nameserver decide how to punch hole and setup
 //    p2p connection;
-// 3. when user logout, nameserver update user's session to offline, and notificate peers;
+// 3. when user logout, nameserver update user's session to offline, and notify peers;
 // 4. when user relogin, nameserver update user's session with new connection info and
-//    notificate peers;
-// 5. nameserver basically maintain a live connection state-machine and co-operate with peers;
-// 6. to punch hole easily, the client as user always binds one ip/port in the device
+//    notify peers;
+// 5. nameserver basically maintain a live connection state-machine and cooperate with peers;
+// 6. to punch hole easily, the client as user always binds one same ip/port on the device
 // 7. for details, please refer to iWebPP_SW_Func_Spec.doc and Roadisys_Virtual_URL_SW_Func_Spec.doc
 // ...
 
