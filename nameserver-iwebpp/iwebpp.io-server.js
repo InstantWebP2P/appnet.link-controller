@@ -68,8 +68,8 @@ var geoIP = require('geoip-lite');
 var Debug = 0;
 
 
-// name-server pair: primary/alternate listen on UDP port 51686/51868 in default
-// turn-server pair: proxy/agent server
+// name-server pair  - primary/alternate listen on UDP port 51686/51868 in default
+// turn-server pair  - proxy/agent server
 // - endpoints       : {dn: domain name, ipaddr: name-server hostname or IP, ports: [primary,alternative], turn: [proxy,agent], option: {mbw:xxx, ...}}
 // - endpoints.dn    : server's domain name, it's needed for TURN session
 // - endpoints.turn  : turn proxy/agent ports
