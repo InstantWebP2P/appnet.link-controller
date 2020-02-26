@@ -1,4 +1,4 @@
-// iWebPP.IO name-server V2 implementation, that works with iwebpp.io name-client.
+// iWebPP.IO name-server V2 implementation based SecureWebsocket and NaclCert, that works with iwebpp.io name-client
 // Copyright (c) 2014-present Tom Zhou<iwebpp@gmail.com>
 //
 // iWebPP.io module
