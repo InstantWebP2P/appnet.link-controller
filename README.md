@@ -1,14 +1,24 @@
 # iwebpp.io-controller
 iWebPP.IO controller serivices to support [iwebpp.io protocol](https://github.com/InstantWebP2P/iwebpp.io)
 
+
 ### [Discussion group](https://groups.google.com/d/forum/iwebpp)
+
 
 ### Install/Usage
 
 * iwebpp.io-controller depends on node-httpp, please build it from repo [node-httpp](https://github.com/InstantWebP2P/node-httpp.git)
 * clone this repo and npm install in root directory
-* start Neo4j service
+* install Neo4j graphDB, then start Neo4j service. refer to [Running Neo4j](https://github.com/neo4j/neo4j)
+
+` bin/neo4j start `
+
 * start controller services
+
+` ~/node-httpp/node ./bin/srv.js `
+
+* now ready to serve [iwebpp.io client](https://github.com/InstantWebP2P/iwebpp.io)
+
 
 ### Code structure
 
@@ -32,15 +42,18 @@ iWebPP.IO controller serivices to support [iwebpp.io protocol](https://github.co
 
     Look on demos/
 
+
 ### TODO:
 
 * User authentication
 * Domain authorization
 * Improve documents, Protocol Spec, RFC draft
 
+
 ### Support us
 
 * Welcome contributing on document, codes, tests and issues
+
 
 ### License
 
