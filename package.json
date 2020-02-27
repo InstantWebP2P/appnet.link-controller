@@ -1,21 +1,19 @@
 {
-  "author": "Tom Zhou <iwebpp@gmail.com> (http://iwebpp.com)",
-  "name": "iwebpp.io-server",
-  "description": "iWebPP name-server library for node.js",
+  "author": "Tom Zhou <iwebpp@gmail.com>",
+  "name": "iwebpp.io-controller",
+  "description": "iWebPP.io protocol controller service for node.js",
   "version": "2.0.1",
   "repository": {
     "type": "git",
-    "url": "git://github.com/InstantWebP2P/iwebpp.io-server.git"
+    "url": "git://github.com/InstantWebP2P/iwebpp.io-controller.git"
   },
   "engines": {
     "node": ">=0.8.0"
   },
-  "main": "./iwebpp.io-server",
+  "main": "./iwebpp.io-controller",
   "dependencies": {
-    "axon": "0.6.x",
     "connect": "2.7.x",
     "connect-httpp": "latest",
-    "ddp": "0.3.x",
     "geoip-lite": "1.1.x",
     "httpp-proxy": "latest",
     "iwebpp.io": "latest",
