@@ -1,3 +1,4 @@
+// Copyright (c) 2012-present Tom Zhou<iwebpp@gmail.com>
 
 var nmSrv = require('../iwebpp.io-server');
 var WEBPP = nmSrv.Client;
