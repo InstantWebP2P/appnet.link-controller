@@ -1,4 +1,4 @@
-// iWebPP.IO name-server example
+// iWebPP.IO name-server V2 example
 // Copyright (c) 2012-present Tom Zhou<iwebpp@gmail.com>
 //
 var fs = require('fs');
