@@ -1,5 +1,5 @@
 // iWebPP.IO name-server example
-// Copyright (c) 2012 Tom Zhou<zs68j2ee@gmail.com>
+// Copyright (c) 2012-present Tom Zhou<iwebpp@gmail.com>
 //
 var fs = require('fs');
 var nmSrv = require('../iwebpp.io-server-v2');
