@@ -1,13 +1,13 @@
 // SSL binary wrapper in pure JS
-// Copyright (c) 2012 Tom Zhou<zs68j2ee@gmail.com>
+// Copyright (c) 2012-present Tom Zhou<iwebpp@gmail.com>
 //
 
 var fs = require('fs');
 var spawn = require('child_process').spawn;
 
 
-// generate ssl certs
-// self-signed certs like below:
+// Generate ssl certs
+// Self-signed certs like below:
 // - openssl genrsa -out server-key.pem 1024
 // - openssl req -new -key server-key.pem -out server-csr.pem
 // - openssl x509 -req -in server-csr.pem -signkey server-key.pem -out server-cert.pem
