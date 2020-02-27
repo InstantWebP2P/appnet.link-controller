@@ -1,2 +1,0 @@
-Service control binary util
-===========================
