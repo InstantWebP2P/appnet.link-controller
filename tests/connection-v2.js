@@ -10,27 +10,27 @@ process.on('uncaughtException', function (err) {
 var WebSocket = require('wspp');
 
 // connecting to primary name-server
-var con = new WebSocket('wss://localhost:51686'+SEP.SEP_CTRLPATH_NS, {httpp: true});
+var con = new WebSocket('ws://localhost:52686'+SEP.SEP_CTRLPATH_NS, {httpp: true});
 
 var t = setTimeout(function(){
-    console.log('connecting to primary name-server timeout');
+    console.log('v2 connecting to primary name-server timeout');
 }, 2000); // 2s in default
 
 con.on('open', function(){
     clearTimeout(t);
-    console.log('connecting to primary name-server successfully');
+    console.log('v2 connecting to primary name-server successfully');
     con.close();
 });
 
 // connecting to alternative name-server
-var con1 = new WebSocket('wss://localhost:51868'+SEP.SEP_CTRLPATH_NS, {httpp: true});
+var con1 = new WebSocket('ws://localhost:52868'+SEP.SEP_CTRLPATH_NS, {httpp: true});
 
 var t1 = setTimeout(function(){
-    console.log('connecting to alternative name-server timeout');
+    console.log('v2 connecting to alternative name-server timeout');
 }, 2000); // 2s in default
 
 con1.on('open', function(){
     clearTimeout(t1);
-    console.log('connecting to alternative name-server successfully');
+    console.log('v2 connecting to alternative name-server successfully');
     con1.close();
 });

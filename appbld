@@ -9,8 +9,8 @@ fi
 # execute commands 
 if [ $# -ne 0 ]; then
   echo "$@ ..."
-  docker run -v `pwd`:`pwd` -w `pwd` -i -t iwebpp-bld:16.04 $@
+  docker run -v `pwd`:`pwd` -w `pwd` -i -t --rm --network host iwebpp-bld:16.04 $@
 else
   echo "Enter shell ..."
-  docker run -v `pwd`:`pwd` -w `pwd` -i -t iwebpp-bld:16.04
+  docker run -v `pwd`:`pwd` -w `pwd` -i -t --rm --network host iwebpp-bld:16.04
 fi
