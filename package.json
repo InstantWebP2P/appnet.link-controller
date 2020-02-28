@@ -12,7 +12,7 @@
   },
   "main": "./iwebpp.io-controller",
   "dependencies": {
-    "connect": "2.7.x",
+    "connect": "2.30.2",
     "connect-httpp": "latest",
     "geoip-lite": "1.1.x",
     "httpp-proxy": "latest",
@@ -20,7 +20,7 @@
     "msgpack-js": "0.1.x",
     "neo4j": "0.2.x",
     "node-uuid": "1.4.x",
-    "siphash": "latest",
+    "siphash": "1.1.0",
     "wspp": "latest"
   },
   "devDependencies": {}

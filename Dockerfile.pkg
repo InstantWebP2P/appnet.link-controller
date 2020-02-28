@@ -1,5 +1,5 @@
 #
-# iWebPP.io building Dockerfile
+# iWebPP.io packaging Dockerfile
 #
 # https://github.com/InstantWebP2P/iwebpp.io-controller
 #
@@ -10,15 +10,23 @@ FROM httpp:16.04
 # Install.
 RUN \
  apt-get -y update && \
- apt-get install -y python g++ make openssl
+ apt-get install -y openssl
 
 # Add files.
+COPY . /appins/
 
 # Set environment variables.
 ENV HOME /root
 
 # Define working directory.
-WORKDIR /data
+WORKDIR /appins
+
+# Expose ports
+EXPOSE 51686/udp
+EXPOSE 51868/udp
+EXPOSE 51866/udp
+EXPOSE 51688/udp
+EXPOSE 51688/tcp
 
 # Define default command.
-CMD ["bash"]
+CMD ["node", "./bin/srv.js"]
