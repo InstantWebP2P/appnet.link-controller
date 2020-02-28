@@ -19,9 +19,7 @@
     "iwebpp.io": "latest",
     "msgpack-js": "0.1.x",
     "neo4j": "0.2.x",
-    "net-ping": "^1.2.0",
     "node-uuid": "1.4.x",
-    "raw-socket": "latest",
     "siphash": "latest",
     "wspp": "latest"
   },

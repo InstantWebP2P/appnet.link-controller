@@ -1,0 +1,24 @@
+#
+# iWebPP.io building Dockerfile
+#
+# https://github.com/InstantWebP2P/iwebpp.io-controller
+#
+
+# Pull base image.
+FROM httpp:16.04
+
+# Install.
+RUN \
+ apt-get -y update && \
+ apt-get install -y python g++ make
+
+# Add files.
+
+# Set environment variables.
+ENV HOME /root
+
+# Define working directory.
+WORKDIR /data
+
+# Define default command.
+CMD ["sh"]
