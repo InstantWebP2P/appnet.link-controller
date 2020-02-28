@@ -1,12 +1,12 @@
 # CA cert Self-Signed
 ## Need only generate once for one Domain Name
-if [ $2 ]
+if [ $2 eq "genca" ]
 then
     openssl req -x509 -nodes -days 3680 -subj '/C=CN/ST=SH/L=SH/CN=$1' -newkey rsa:4096 -keyout ./ca-certs/ca-key.pem -out ./ca-certs/ca-cert.pem
     echo "### Generate CA cert done"
 fi
 
-## Usage: ./genSrvKey.bash domainName [1: reGen CA cert]
+## Usage: ./genSrvKey.bash domainName [genca: Gen CA cert]
  
 ### default key/cert
 openssl genrsa -out ./certs/$1-key.pem 2048
