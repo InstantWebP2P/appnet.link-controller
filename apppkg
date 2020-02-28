@@ -12,5 +12,5 @@ if [ $# -ne 0 ]; then
   docker run -v `pwd`:`pwd` -w `pwd` -i -t --rm --network host iwebpp-srv:16.04 $@
 else
   echo "Start services ..."
-  docker run -v `pwd`:`pwd` -w `pwd` -i -t --rm --network host iwebpp-srv:16.04
+  docker run                         -i -t --rm --network host iwebpp-srv:16.04
 fi
