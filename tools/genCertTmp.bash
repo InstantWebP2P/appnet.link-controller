@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Generate&Store Certs in memory instead of disk
 # TBD...
 
