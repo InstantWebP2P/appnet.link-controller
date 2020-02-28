@@ -17,7 +17,7 @@ iWebPP.IO controller serivices to support [iwebpp.io protocol](https://github.co
 
     ` bin/neo4j start `
 
-* generate SSL certs once with your own Domain Name
+* generate SSL certs once for your own Domain Name
 
     ` ./tools/genSrvKey.bash xxx.com `
 
