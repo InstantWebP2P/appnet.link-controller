@@ -38,15 +38,15 @@ iWebPP.IO controller serivices to support [iwebpp.io protocol](https://github.co
 
 * Clone this repo
 
-* Building with docker
+* Install dependency modules
 
-      ./appbld
+      ./appbld npm i
       
 * Generate SSL certs
 
       ./appbld ./tools/genSrvKey.bash aiworkspace.com
       
-* Packaging with docker
+* Packaging and start services
 
       ./apppkg
 
