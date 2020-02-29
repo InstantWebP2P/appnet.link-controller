@@ -47,8 +47,23 @@ iWebPP.IO controller serivices to support [iwebpp.io protocol](https://github.co
       ./appbld ./tools/genSrvKey.bash aiworkspace.com
       
 * Packaging and start services
+      
+      ./apppkg 
 
-      ./apppkg
+      Start services ...
+      name-server-0 listen on udp port 51686
+      name-server-1 listen on udp port 51868
+      agent-server listen on udp port 51866
+      httpp proxy-server listen on udp port 51688
+      http proxy-server listen on tcp port 51688
+
+* Testing service if start successfully
+
+      ./apppkg node tests/connection.js 
+  
+      node tests/connection.js ...
+      connecting to alternative name-server successfully
+      connecting to primary name-server successfully
 
 
 ### Code structure
