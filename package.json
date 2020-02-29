@@ -10,7 +10,7 @@
   "engines": {
     "node": ">=0.8.0"
   },
-  "main": "./iwebpp.io-controller",
+  "main": "index.js",
   "dependencies": {
     "connect": "2.30.2",
     "connect-httpp": "latest",
