@@ -7,7 +7,7 @@ iWebPP.IO controller serivices to support [iwebpp.io protocol](https://github.co
 
 ### Prerequest
 
-* install Neo4j graphDB, then start Neo4j service. refer to [Running Neo4j](https://github.com/neo4j/neo4j)
+* install graphDB [Neo4j v1.9.9](https://github.com/neo4j/neo4j/releases/tag/1.9.9), then start Neo4j service. refer to [Running Neo4j](https://github.com/neo4j/neo4j)
 
     ` bin/neo4j start `
  
