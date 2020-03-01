@@ -19,7 +19,7 @@
     "iwebpp.io": "latest",
     "msgpack-js": "0.1.x",
     "neo4j": "0.2.x",
-    "node-uuid": "1.4.x",
+    "uuid": "3.0.0",
     "siphash": "1.1.0",
     "wspp": "latest"
   },
