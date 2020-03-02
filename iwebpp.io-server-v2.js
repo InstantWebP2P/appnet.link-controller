@@ -13,9 +13,9 @@ var eventEmitter = require('events').EventEmitter,
     url = require('url'),
     http = require('http'),
     https = require('https');
-    httpp = require('httpp'),
-    httpps = require('httpps'),
-    crypto = require('crypto'),
+    httpp   = require('httpp'),
+    httpps  = require('httpps'),
+    crypto  = require('crypto'),
     Connect = require('connect'),
     connect_httpp = require('connect-httpp'),
     UDT = require('udt');
@@ -41,7 +41,7 @@ var Naclcert = SecureWebSocket.Naclcert;
 var httppProxy = require('httpp-proxy');
 
 // UUID generator
-var UUID = require('node-uuid');
+var UUID = require('uuid');
 
 // SDP model
 var Sdp = require('./sdp');
