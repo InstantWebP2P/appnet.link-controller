@@ -37,7 +37,7 @@ var WebSocketServer = WebSocket.Server;
 var httppProxy = require('httpp-proxy');
 
 // UUID generator
-var UUID = require('node-uuid');
+var UUID = require('uuid');
 
 // SDP model
 var Sdp = require('./sdp');
