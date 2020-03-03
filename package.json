@@ -18,7 +18,7 @@
     "httpp-proxy": "latest",
     "iwebpp.io": "latest",
     "msgpack-js": "0.1.x",
-    "neo4j": "1.1.1",
+    "neo4j": "1.1.0",
     "uuid": "3.0.0",
     "siphash": "1.1.0",
     "wspp": "latest"
