@@ -7,11 +7,16 @@ iWebPP.IO controller serivices to support [iwebpp.io protocol](https://github.co
 
 ### Prerequest
 
-* install graphDB [Neo4j v1.9.9](https://github.com/neo4j/neo4j/releases/tag/1.9.9), then start Neo4j service. refer to [Running Neo4j](https://github.com/neo4j/neo4j)
+* Build Neo4j 2.1.8 on Linux with Docker, then start Neo4j services
 
-    ` bin/neo4j start `
+      ./neo4jpkg
+
+* Copy Neo4j package out of Docker image to local
+
+      ./neo4jpkg cp -rf /tmp/*.tar* .
+
  
-### Install/Usage
+### Install
 
 * iwebpp.io-controller depends on node-httpp, please build it from repo [node-httpp](https://github.com/InstantWebP2P/node-httpp.git)
 
@@ -34,7 +39,7 @@ iWebPP.IO controller serivices to support [iwebpp.io protocol](https://github.co
 
 #### Install on Linux with Docker
 
-* Build node-httpp docker images firstly. Refer to [node-httpp](https://github.com/InstantWebP2P/node-httpp)
+* Build node-httpp docker images, refer to [node-httpp](https://github.com/InstantWebP2P/node-httpp)
 
 * Clone this repo
 
