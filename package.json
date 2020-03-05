@@ -12,7 +12,7 @@
   },
   "main": "index.js",
   "dependencies": {
-    "debug": "2.2.0",
+    "debug": "4.1.1",
     "connect": "2.30.2",
     "connect-httpp": "latest",
     "geoip-lite": "1.1.x",
