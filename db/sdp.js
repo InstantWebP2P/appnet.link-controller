@@ -118,7 +118,7 @@ var editNode = function(gid, data, fn){
     // 1.
     // query
     db.getIndexedNode('SdpGids', 'gid', gid, function(err, node){
-        if (err) return fn(err+',unknown node gid@'+gid);
+        if (err) return fn(err+', edit indexed node failed gid@'+gid);
         
         // 2.
         // update property
@@ -129,7 +129,7 @@ var editNode = function(gid, data, fn){
         // 3.
         // persist again
         node.save(function(err){
-            if (err) return fn(err+',update node failed');
+            if (err) return fn(err+', edit node failed');
             fn(null, node);
         });
     });
@@ -142,7 +142,7 @@ var delNode = function(gid, fn, force){
     // query node
     db.getIndexedNode('SdpGids', 'gid', gid, function(err, node){
         if (err || !node) {
-            console.log(err+',unknown node gid@'+gid);
+            console.log(err+', delete indexed node failed gid@'+gid);
             fn(null);
         } else {
             // 2.
@@ -163,7 +163,7 @@ var updateNode = function(gid, data, fn){
         debug('updateNode@:'+gid+':'+JSON.stringify(node));
         
         if (err || !node) {
-            console.log(err+',unknown node gid@'+gid);
+            console.log(err+', update indexed node failed gid@'+gid);
             // 2.
             // create new node
             addNode(data, fn);
@@ -180,7 +180,7 @@ var updateNode = function(gid, data, fn){
             // 2.2
             // persist again
             node.save(function(err){
-                if (err) return fn(err+',update node failed');
+                if (err) return fn(err+', update node failed');
                 fn(null, node);
             });
         }
