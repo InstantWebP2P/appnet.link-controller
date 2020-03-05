@@ -606,7 +606,7 @@ var getSessionByFromTo = exports.getSessionByFromTo = function(clnt, srv, fn){
 
     debug(qs);
     db.query(qs, null, function(err, rslts){
-        if (err || !rslts || (rslts.length === 0)) return fn(err+'query relationship failed @\n'+qs);
+        if (err || !rslts || (rslts.length === 0)) return fn(err+', getSessionByFromTo query relationship failed @\n'+qs);
 
         debug('session: from@'+clnt.gid+' to@'+srv.gid+':'+JSON.stringify(rslts));
         fn(null, {from: rslts[0].from._data.data, to: rslts[0].to._data.data, rel: rslts[0].rel._data.data});
@@ -626,7 +626,7 @@ var getSessionsByFromType = exports.getSessionByFromType = function(clnt, sessio
     
     debug(qs);
     db.query(qs, null, function(err, rslts){
-        if (err || !rslts || (rslts.length === 0)) return fn(err+',query relationship failed @\n'+qs);
+        if (err || !rslts || (rslts.length === 0)) return fn(err+', getSessionsByFromType query relationship failed @\n'+qs);
 
         debug('session@'+session.type+' from@'+clnt.gid+' :'+JSON.stringify(rslts));
         
@@ -651,7 +651,7 @@ var getSessionsByToType = exports.getSessionByToType = function(clnt, session, f
     
     debug(qs);
     db.query(qs, null, function(err, rslts){
-        if (err || !rslts || (rslts.length === 0)) return fn(err+',query relationship failed @\n'+qs);
+        if (err || !rslts || (rslts.length === 0)) return fn(err+', getSessionsByToType query relationship failed @\n'+qs);
 
         debug('session@'+session.type+' to@'+clnt.gid+' :'+JSON.stringify(rslts));
         
@@ -675,7 +675,7 @@ var getSessionsByType = exports.getSessionsByType = function(session, fn){
     
     debug(qs);
     db.query(qs, null, function(err, rslts){
-        if (err || !rslts || (rslts.length === 0)) return fn(err+',query relationship failed @\n'+qs);
+        if (err || !rslts || (rslts.length === 0)) return fn(err+', getSessionsByType query relationship failed @\n'+qs);
 
         debug('session@'+session.type+' :'+JSON.stringify(rslts));
         
@@ -701,7 +701,7 @@ var updateSessionsByFromType = exports.updateSessionsByFromType = function(clnt,
     
     debug(qs);
     db.query(qs, null, function(err, rslts){
-        if (err || !rslts || (rslts.length === 0)) return fn(err+',query relationship failed @\n'+qs);
+        if (err || !rslts || (rslts.length === 0)) return fn(err+', updateSessionsByFromType query relationship failed @\n'+qs);
 
         debug('session@'+session.type+' from@'+clnt.gid+' :'+JSON.stringify(rslts));
         
