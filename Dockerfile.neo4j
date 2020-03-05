@@ -1,0 +1,38 @@
+#
+# Neo4j building Dockerfile
+#
+# https://github.com/InstantWebP2P/iwebpp.io-controller
+#
+
+# Pull base image.
+FROM httpp:16.04
+
+# Install.
+RUN \
+ apt-get -y update && \
+ apt-get install -y git tar openjdk-8-jdk maven
+
+# Building
+RUN \
+  cd /tmp && \
+  git clone -b 2.1.8 --depth 1 https://github.com/neo4j/neo4j && \
+  \
+  cd  neo4j/packaging/standalone && \
+  mvn clean package && \
+  \
+  rm -rf /appins/* && \
+  tar -xvzf target/neo4j-community-2.1.8-unix.tar.gz -C /appins/ && \
+  cp -rf target/* /tmp/ && \
+  rm -rf /tmp/neo4j
+
+# Add files.
+#COPY .   /appins/
+
+# Set environment variables.
+ENV HOME /root
+
+# Define working directory.
+WORKDIR /appins
+
+# Define default command.
+CMD ["./bin/neo4j", "console"]

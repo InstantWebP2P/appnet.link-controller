@@ -2,7 +2,7 @@
   "author": "Tom Zhou <iwebpp@gmail.com>",
   "name": "iwebpp.io-controller",
   "description": "iWebPP.io protocol controller service for node.js",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/InstantWebP2P/iwebpp.io-controller.git"
@@ -12,13 +12,14 @@
   },
   "main": "index.js",
   "dependencies": {
+    "debug": "2.2.0",
     "connect": "2.30.2",
     "connect-httpp": "latest",
     "geoip-lite": "1.1.x",
     "httpp-proxy": "latest",
     "iwebpp.io": "latest",
     "msgpack-js": "0.1.x",
-    "neo4j": "1.1.0",
+    "neo4jv1": "1.1.6",
     "uuid": "3.0.0",
     "siphash": "1.1.0",
     "wspp": "latest"

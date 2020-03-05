@@ -10,7 +10,7 @@ FROM httpp:16.04
 # Install.
 RUN \
  apt-get -y update && \
- apt-get install -y python g++ make openssl
+ apt-get install -y python g++ make openssl vim
 
 # Add files.
 

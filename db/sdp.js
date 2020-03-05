@@ -17,7 +17,8 @@
 // 11. user can login to multiple clients, while a client means a device with local proto/ip/port;
 // ...
 
-var neo4j = require('neo4j');
+var debug = require('debug')('db.sdp');
+var neo4j = require('neo4jv1');
 var db    = new neo4j.GraphDatabase(process.env.NEO4J_URL || 'http://localhost:7474');
 
 
@@ -79,7 +80,7 @@ var addNode = function(data, fn){
             // indexing type
             node.index('SdpGtypes', 'gtype', data.type, function(err) {
                 if (err) return fn(err+',created type index failed type@'+data.type);
-                ///console.log('added node:'+JSON.stringify(node));
+                debug('added node:'+JSON.stringify(node));
                 
                 // 4.
                 // index devkey,natype in client node
@@ -159,7 +160,7 @@ var updateNode = function(gid, data, fn){
     // 1.
     // query firstly
     db.getIndexedNode('SdpGids', 'gid', gid, function(err, node){
-        ///console.log('updateNode@:'+gid+':'+JSON.stringify(node));
+        debug('updateNode@:'+gid+':'+JSON.stringify(node));
         
         if (err || !node) {
             console.log(err+',unknown node gid@'+gid);
@@ -387,18 +388,18 @@ var addSession = function(clnt, srv, session, fn){
         if (err) return fn(err + ',please create client node first gid@'+clnt.gid);
         var from = node;
         
-        ///console.log('from@'+JSON.stringify(from)+' from.gid@'+clnt.gid);
+        debug('from@'+JSON.stringify(from)+' from.gid@'+clnt.gid);
         
         db.getIndexedNode('SdpGids', 'gid', srv.gid, function(err, node){
             if (err) return fn(err+',please create server node first gid@'+srv.gid);
             var to = node;
             
-            ///console.log('to@\n'+JSON.stringify(to)+' to.gid@'+srv.gid);
+            debug('to@\n'+JSON.stringify(to)+' to.gid@'+srv.gid);
             // 2.
             // create session as relationship
             from.createRelationshipTo(to, session.type, session.data, function(err, rel){
                 if (err) return fn(err+',created relationship failed rel type@'+session.type);    
-                ///console.log('added session:'+JSON.stringify(rel));
+                debug('added session:'+JSON.stringify(rel));
                 // indexing relationship type always
                 rel.index('SdpGreltype', 'greltype', session.type, function(err) {
                     if (err) return fn(err+',created reltype index failed reltype@'+session.type);
@@ -421,7 +422,7 @@ var editSession = function(clnt, srv, session, fn){
     .replace( 'TGID', srv.gid)
     .replace('RTYPE', session.type);
 
-    ///console.log(qs);
+    debug(qs);
     db.query(qs, null, function(err, rslts){
         if (err) return fn(err+',query relationship failed @\n'+qs);
 
@@ -454,7 +455,7 @@ var delSession = function(clnt, srv, session, fn){
     .replace( 'TGID', srv.gid)
     .replace('RTYPE', session.type);
 
-    ///console.log(qs);
+    debug(qs);
     db.query(qs, null, function(err, rslts){
         if (err || !rslts || (rslts.length === 0)) {
             console.log(err+',nothing to do, session not existed @\n'+qs);
@@ -484,7 +485,7 @@ var updateSession = exports.updateSession = function(clnt, srv, session, fn){
     .replace( 'TGID', srv.gid)
     .replace('RTYPE', session.type);
 
-    ///console.log(qs);
+    debug(qs);
     db.query(qs, null, function(err, rslts){
         if (err || !rslts || (rslts.length === 0)) {
             console.log(err+',query relationship failed @\n'+qs);
@@ -497,7 +498,7 @@ var updateSession = exports.updateSession = function(clnt, srv, session, fn){
         } else {
             // 2.
             // edit secondly
-            ///console.log('update session:'+JSON.stringify(rslts));
+            debug('update session:'+JSON.stringify(rslts));
             
             var rel = rslts[0] && rslts[0].rel;
             // 2.1
@@ -521,7 +522,7 @@ var updateSession = exports.updateSession = function(clnt, srv, session, fn){
 var getNodeById = exports.getNodeById = function(gid, fn){
    db.getIndexedNodes('SdpGids', 'gid', gid, function(err, nodes){
         if (err || !nodes || (nodes.length === 0)) return fn(err + ',unknown node gid@'+gid);
-        ///console.log('getNodeById@'+gid+JSON.stringify(nodes[0]));
+        debug('getNodeById@'+gid+JSON.stringify(nodes[0]));
         fn(null, nodes[0]._data.data);
     });
 };
@@ -603,11 +604,11 @@ var getSessionByFromTo = exports.getSessionByFromTo = function(clnt, srv, fn){
     .replace( 'FGID', clnt.gid)
     .replace( 'TGID', srv.gid);
 
-    ///console.log(qs);
+    debug(qs);
     db.query(qs, null, function(err, rslts){
         if (err || !rslts || (rslts.length === 0)) return fn(err+'query relationship failed @\n'+qs);
 
-        ///console.log('session: from@'+clnt.gid+' to@'+srv.gid+':'+JSON.stringify(rslts));
+        debug('session: from@'+clnt.gid+' to@'+srv.gid+':'+JSON.stringify(rslts));
         fn(null, {from: rslts[0].from._data.data, to: rslts[0].to._data.data, rel: rslts[0].rel._data.data});
     });
 };
@@ -623,11 +624,11 @@ var getSessionsByFromType = exports.getSessionByFromType = function(clnt, sessio
     .replace( 'FGID', clnt.gid)
     .replace('RTYPE', session.type);
     
-    ///console.log(qs);
+    debug(qs);
     db.query(qs, null, function(err, rslts){
         if (err || !rslts || (rslts.length === 0)) return fn(err+',query relationship failed @\n'+qs);
 
-        ///console.log('session@'+session.type+' from@'+clnt.gid+' :'+JSON.stringify(rslts));
+        debug('session@'+session.type+' from@'+clnt.gid+' :'+JSON.stringify(rslts));
         
         var rets = [];
         for (var i = 0; i < rslts.length; i ++) {
@@ -648,11 +649,11 @@ var getSessionsByToType = exports.getSessionByToType = function(clnt, session, f
     .replace( 'TGID', clnt.gid)
     .replace('RTYPE', session.type);
     
-    ///console.log(qs);
+    debug(qs);
     db.query(qs, null, function(err, rslts){
         if (err || !rslts || (rslts.length === 0)) return fn(err+',query relationship failed @\n'+qs);
 
-        ///console.log('session@'+session.type+' to@'+clnt.gid+' :'+JSON.stringify(rslts));
+        debug('session@'+session.type+' to@'+clnt.gid+' :'+JSON.stringify(rslts));
         
         var rets = [];
         for (var i = 0; i < rslts.length; i ++) {
@@ -672,11 +673,11 @@ var getSessionsByType = exports.getSessionsByType = function(session, fn){
     ].join('\n')
     .replace('RTYPE', session.type);
     
-    ///console.log(qs);
+    debug(qs);
     db.query(qs, null, function(err, rslts){
         if (err || !rslts || (rslts.length === 0)) return fn(err+',query relationship failed @\n'+qs);
 
-        ///console.log('session@'+session.type+' :'+JSON.stringify(rslts));
+        debug('session@'+session.type+' :'+JSON.stringify(rslts));
         
         var rets = [];
         for (var i = 0; i < rslts.length; i ++) {
@@ -698,11 +699,11 @@ var updateSessionsByFromType = exports.updateSessionsByFromType = function(clnt,
     .replace( 'FGID', clnt.gid)
     .replace('RTYPE', session.type);
     
-    ///console.log(qs);
+    debug(qs);
     db.query(qs, null, function(err, rslts){
         if (err || !rslts || (rslts.length === 0)) return fn(err+',query relationship failed @\n'+qs);
 
-        ///console.log('session@'+session.type+' from@'+clnt.gid+' :'+JSON.stringify(rslts));
+        debug('session@'+session.type+' from@'+clnt.gid+' :'+JSON.stringify(rslts));
         
         // 2.
         // update every sessions
@@ -762,7 +763,7 @@ exports.testSession = function(clnt, srv, session, fn){
     .replace( 'TGID', srv.gid)
     .replace('RTYPE', session.type);
     
-    ///console.log(qs);
+    debug(qs);
     db.query(qs, null, function(err, rslts){
         if (err || !rslts || (rslts.length === 0)) {
             fn(null, 0);

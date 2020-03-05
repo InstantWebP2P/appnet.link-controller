@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# check docker image for Neo4j 
+if [ "$(docker images -q v2neo4j:2.1.8 2> /dev/null)" == "" ]; then
+  echo "Build Docker image as neo4j"
+  docker image build --compress -t v2neo4j:2.1.8 -f ./Dockerfile.neo4j .
+fi
+
+# execute commands 
+if [ $# -ne 0 ]; then
+  echo "$@ ..."
+  docker run -v `pwd`:`pwd` -w `pwd` -i -t --rm --network host v2neo4j:2.1.8 $@
+else
+  echo "Start Neo4j services ..."
+  docker run                         -i -t --rm --network host v2neo4j:2.1.8
+fi
