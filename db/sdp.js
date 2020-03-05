@@ -424,7 +424,7 @@ var editSession = function(clnt, srv, session, fn){
 
     debug(qs);
     db.query(qs, null, function(err, rslts){
-        if (err) return fn(err+',query relationship failed @\n'+qs);
+        if (err) return fn(err+', editSession query relationship failed @\n'+qs);
 
         var rel = rslts[0] && rslts[0].rel;
         // 2.
@@ -488,7 +488,7 @@ var updateSession = exports.updateSession = function(clnt, srv, session, fn){
     debug(qs);
     db.query(qs, null, function(err, rslts){
         if (err || !rslts || (rslts.length === 0)) {
-            console.log(err+',query relationship failed @\n'+qs);
+            console.log(err+', updateSession query relationship failed @\n'+qs);
             // 2.
             // create new session
             addSession(clnt, srv, session, function(err, rel){
