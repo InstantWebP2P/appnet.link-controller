@@ -13,13 +13,13 @@ RUN \
  apt-get install -y openssl
 
 # Add files.
-COPY . /appins/
+COPY . /appins/httpp/
 
 # Set environment variables.
 ENV HOME /root
 
 # Define working directory.
-WORKDIR /appins
+WORKDIR /appins/httpp
 
 # Expose ports
 EXPOSE 51686/udp

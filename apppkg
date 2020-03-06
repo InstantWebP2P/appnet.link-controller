@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 
 # check docker image for packaging 
-if [ "$(docker images -q iwebpp-srv:16.04 2> /dev/null)" == "" ]; then
-  echo "Build Docker image as iwebpp-srv:16.04"
-  docker image build --rm --network host --compress -t iwebpp-srv:16.04 -f ./Dockerfile.pkg .
+if [ "$(docker images -q iwebpp-srv:3.1 2> /dev/null)" == "" ]; then
+  echo "Build Docker image as iwebpp-srv:3.1"
+  docker image build --rm --network host --compress -t iwebpp-srv:3.1 -f ./Dockerfile.pkg .
 fi
 
 # execute commands 
 if [ $# -ne 0 ]; then
   echo "$@ ..."
-  docker run -v `pwd`:`pwd` -w `pwd` -i -t --rm --network host iwebpp-srv:16.04 $@
+  docker run -v `pwd`:`pwd` -w `pwd` -i -t --rm --network host iwebpp-srv:3.1 $@
 else
   echo "Start services ..."
-  docker run                         -i -t --rm --network host iwebpp-srv:16.04
+  docker run                         -i -t --rm --network host iwebpp-srv:3.1
 fi
