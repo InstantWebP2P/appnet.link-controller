@@ -11,7 +11,7 @@ iWebPP.IO controller serivices to support [iwebpp.io protocol](https://github.co
 
       ./neo4jpkg
 
-* Copy Neo4j package out of Docker image to local
+* Copy Neo4j packages out of Docker image to local
 
       ./neo4jpkg cp -rf /tmp/*.tar* .
 
@@ -23,7 +23,7 @@ iWebPP.IO controller serivices to support [iwebpp.io protocol](https://github.co
 * clone this repo and install dependency modules
 
       npm config set strict-ssl false -g
-      npm i npm@3.10.10 -g    
+      npm i npm@2.15.9 -g    
       npm i
 
 * generate SSL certs once for your own Domain Name
