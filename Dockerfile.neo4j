@@ -5,28 +5,36 @@
 #
 
 # Pull base image.
-FROM httpp:16.04
+FROM ubuntu:16.04
 
 # Install.
 RUN \
  apt-get -y update && \
- apt-get install -y git tar openjdk-8-jdk maven
+ apt-get install -y git tar maven
 
 # Building
 RUN \
   cd /tmp && \
-  git clone -b 2.1.8 --depth 1 https://github.com/neo4j/neo4j && \
+  git clone -b unix-2.1.8 --depth 1 https://github.com/sequoiar/v2neo4j && \
   \
-  cd  neo4j/packaging/standalone && \
-  mvn clean package && \
+  cd  v2neo4j/packaging/standalone && \
+  mvn clean package -Dlicense.skip -Dlicensing.skip && \
   \
-  rm -rf /appins/* && \
-  tar -xvzf target/neo4j-community-2.1.8-unix.tar.gz -C /appins/ && \
-  cp -rf target/* /tmp/ && \
-  rm -rf /tmp/neo4j
+  mkdir -p /appins && \
+  tar xvzf target/neo4j-community-2.1.8-unix.tar.gz -C /appins/ && \
+  cp -rf target/* /tmp/
+
+
+FROM ubuntu:16.04
+
+# Install.
+RUN \
+ apt-get -y update && \
+ apt-get install -y openjdk-8-jre
 
 # Add files.
-#COPY .   /appins/
+COPY --from=0 /appins/*   /appins/
+COPY --from=0 /tmp/*tar* /tmp/
 
 # Set environment variables.
 ENV HOME /root
