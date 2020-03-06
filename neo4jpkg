@@ -3,7 +3,7 @@
 # check docker image for Neo4j 
 if [ "$(docker images -q v2neo4j:2.1.8 2> /dev/null)" == "" ]; then
   echo "Build Docker image as neo4j"
-  docker image build --compress -t v2neo4j:2.1.8 -f ./Dockerfile.neo4j .
+  docker image build --rm --network host --compress -t v2neo4j:2.1.8 -f ./Dockerfile.neo4j .
 fi
 
 # execute commands 

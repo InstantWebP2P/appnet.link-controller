@@ -63,3 +63,6 @@ nmclnsA.on('ready', function(){
     creatNmclnWss(this);
 });
 
+nmclnsA.on('error', function(err) {
+    console.log('name client error: '+ err);
+});

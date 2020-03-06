@@ -3,7 +3,7 @@
 # check docker image for building
 if [ "$(docker images -q iwebpp-bld:16.04 2> /dev/null)" == "" ]; then
   echo "Build Docker image as iwebpp-bld:16.04"
-  docker image build --compress -t iwebpp-bld:16.04 -f ./Dockerfile.bld .
+  docker image build --rm --network host --compress -t iwebpp-bld:16.04 -f ./Dockerfile.bld .
 fi
 
 # execute commands 

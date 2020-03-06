@@ -3,7 +3,7 @@
 # check docker image for packaging 
 if [ "$(docker images -q iwebpp-srv:16.04 2> /dev/null)" == "" ]; then
   echo "Build Docker image as iwebpp-srv:16.04"
-  docker image build --compress -t iwebpp-srv:16.04 -f ./Dockerfile.pkg .
+  docker image build --rm --network host --compress -t iwebpp-srv:16.04 -f ./Dockerfile.pkg .
 fi
 
 # execute commands 

@@ -235,7 +235,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                     
                     // 2.2
                     // query client's geoIP
-                    sesn.clntgeoip = JSON.stringify(geoIP.lookup(client._socket.remoteAddress));
+                    sesn.clntgeoip = JSON.stringify(geoIP.lookup(client._socket.remoteAddress) || {country: 'NA',city: 'XY'});
                     if (Debug) console.log('new name-client GeoIP:'+sesn.clntgeoip); 
                     
                     // 2.3
@@ -1232,7 +1232,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
 
                     // 2.1
                     // keep geoIP info
-                	// !!! for security, only return country/city of GeoIP to client
+               	    // !!! for security, only return country/city of GeoIP to client
                     data.offer.srv.geoip         = {};
                     data.offer.srv.geoip.country = client.clntinfo.clntgeoip.country;
                     data.offer.srv.geoip.city    = client.clntinfo.clntgeoip.city;
@@ -2490,7 +2490,10 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                                         
                                         // destination name-client info
                                         dst: {
-                                              geoip: {country: client.clntinfo.clntgeoip.country, city: client.clntinfo.clntgeoip.city},
+                                              geoip: {
+                                                     country: client.clntinfo.clntgeoip && client.clntinfo.clntgeoip.country, 
+                                                     city:    client.clntinfo.clntgeoip && client.clntinfo.clntgeoip.city
+                                             },
                                              ipaddr: client._socket.remoteAddress, 
                                                port: client._socket.remotePort,
                                           
