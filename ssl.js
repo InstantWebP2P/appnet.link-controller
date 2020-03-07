@@ -5,6 +5,7 @@
 'use strict';
 var debug = require('debug')('ssl');
 
+var    _ = require('lodash');
 
 var fs   = require('fs');
 var exec = require('child_process').exec;
@@ -20,7 +21,7 @@ var Debug = 0;
 // - openssl x509 -req -in server-csr.pem -signkey server-key.pem -out server-cert.pem
 //
 // Or prefer in single line: http://www.madboa.com/geek/openssl/#cert-self
-// openssl req  -x509 -nodes -days 365 -subj '/C=CN/ST=SH/L=SH/CN=iwebpp.com' -newkey rsa:2048 -keyout server-key.pem -out server-cert.pem
+// openssl req  -x509 -nodes -days 365 -subj '/C=CN/ST=SH/L=SH/CN=aiworkspace.com' -newkey rsa:2048 -keyout server-key.pem -out server-cert.pem
 // Or create self-signed wildcard ssl certificate
 // - http://security.stackexchange.com/questions/10538/what-certificates-are-needed-for-multi-level-subdomains
 // - 
@@ -30,14 +31,15 @@ var genSslCert = exports.genSslCert = function(filename, info, fn){
         fn = info;
         
         info = {};
-        info.cn = 'iwebpp.com';
+        info.cn = 'aiworkspace.com';
     }
     if (!info.cn) {
-        info.cn = 'iwebpp.com';    
+        info.cn = 'aiworkspace.com';    
     }
     filename += info.cn;
     filename = filename.replace('*', 'x');
-    
+	debug('genSslCert info: ' + JSON.stringify(info));
+
     // SSL CA cert generate with retry    
     function genCert(filename, info, fn) {
 	    // construct openssl CLI arguments
@@ -69,6 +71,10 @@ var genSslCert = exports.genSslCert = function(filename, info, fn){
 	    
 	    // V3 extension, subject alternate name
 	    if (info.altname && info.altname.length) {
+			// remove duplicates
+			info.altname = _.uniq(info.altname);
+			debug('client altnames: '+info.altname);
+
 	        // -extensions v3_req
 	        cliarg.push('-extensions');
 	        cliarg.push('v3_req');
@@ -77,9 +83,8 @@ var genSslCert = exports.genSslCert = function(filename, info, fn){
 	        var v3_conf  = '[req] \n';
 	            v3_conf += '    req_extensions = v3_req \n\n';
 	            v3_conf += '    [ v3_req ] \n';
-                v3_conf += '    # Extensions to add to a certificate request \n';
-                ///v3_conf += '    basicConstraints = CA:FALSE \n';
-                ///v3_conf += '    keyUsage = nonRepudiation, digitalSignature, keyEncipherment \n';
+				v3_conf += '    basicConstraints = CA:FALSE \n';
+				v3_conf += '    keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment \n';
                 v3_conf += '    subjectAltName = @alt_names \n\n';
 	        
 	        // like 
@@ -90,7 +95,7 @@ var genSslCert = exports.genSslCert = function(filename, info, fn){
             // ...
             var ips = [], dns = [];
             
-            v3_conf += '    [alt_names] \n';
+			v3_conf += '    [alt_names] \n';
 	        for (var idx = 0; idx < info.altname.length; idx ++) {
 	            var name = info.altname[idx];
 	            
@@ -99,12 +104,12 @@ var genSslCert = exports.genSslCert = function(filename, info, fn){
 	            } else {
 	                dns.push(name);
 	            }
-	        }
+			}
+			for (var idx = 0; idx < ips.length; idx++) {
+				v3_conf += '    IP.' + idx + ' = ' + ips[idx] + '\n';
+			}
 	        for (var idx = 0; idx < dns.length; idx ++) {
-	            v3_conf += '    DNS.'+idx+' = '+dns[idx]+'\n';
-	        }
-	        for (var idx = 0; idx < ips.length; idx ++) {
-	            v3_conf += '    IP.'+idx+' = '+ips[idx]+'\n';
+	            v3_conf += '    DNS.'+ idx + ' = '+dns[idx]+'\n';
 	        }
 	        v3_conf += '\n';
 	        
@@ -175,13 +180,13 @@ var genSslCert = exports.genSslCert = function(filename, info, fn){
 
 // Generate CA-signed cert
 // - openssl genrsa -out server-key.pem 2048  
-// - openssl req -new -key server-key.pem -subj '/C=CN/ST=SH/L=SH/CN=iwebpp.com' -out server-csr.pem  
+// - openssl req -new -key server-key.pem -subj '/C=CN/ST=SH/L=SH/CN=aiworkspace.com' -out server-csr.pem  
 // - openssl x509 -req -days 730 -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -in server-csr.pem -out server-cert.pem -extensions v3_req -extfile openssl.cnf  
 // -
 // - http://blog.didierstevens.com/2008/12/30/howto-make-your-own-cert-with-openssl/
 // -- CA root cert:
 // --- openssl genrsa -out ca-key.pem 4096
-// --- openssl req -new -x509 -days 1868 -subj '/C=CN/ST=SH/L=SH/CN=iwebpp.com' -key ca-key.pem -out ca-cert.pem
+// --- openssl req -new -x509 -days 1868 -subj '/C=CN/ST=SH/L=SH/CN=aiworkspace.com' -key ca-key.pem -out ca-cert.pem
 // --
 // -- server cert:
 // --- openssl genrsa -out ia.key 2048
@@ -233,13 +238,15 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
         fn = info;
         
         info = {};
-        info.cn = 'iwebpp.com';
+        info.cn = 'aiworkspace.com';
     }
     if (!info.cn) {
-        info.cn = 'iwebpp.com';    
+        info.cn = 'aiworkspace.com';    
     }
     filename += info.cn;
-    filename = filename.replace('*', 'x');
+	filename = filename.replace('*', 'x');
+	
+	debug('genSslCertCA info: '+JSON.stringify(info));
     
     // SSL CA cert generate with retry    
     function genCert(filename, info, fn) {
@@ -328,6 +335,9 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
 					    // 3.1
 					    // V3 extension, subject alternate name
 					    if (info.altname && info.altname.length) {
+							// remove duplicates
+							info.altname = _.uniq(info.altname);
+
 					        // -extensions v3_req
 					        cliarg.push('-extensions');
 					        cliarg.push('v3_req');
@@ -336,9 +346,8 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
 					        var v3_conf  = '[req] \n';
 					            v3_conf += '    req_extensions = v3_req \n\n';
 					            v3_conf += '    [ v3_req ] \n';
-			                    v3_conf += '    # Extensions to add to a certificate request \n';
-			                    ///v3_conf += '    basicConstraints = CA:FALSE \n';
-			                    ///v3_conf += '    keyUsage = nonRepudiation, digitalSignature, keyEncipherment \n';
+								v3_conf += '    basicConstraints = CA:FALSE \n';
+								v3_conf += '    keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment \n';
 			                    v3_conf += '    subjectAltName = @alt_names \n\n';
 					        
 					        // like 
@@ -358,12 +367,12 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
 					            } else {
 					                dns.push(name);
 					            }
-					        }
+							}
+							for (var idx = 0; idx < ips.length; idx++) {
+								v3_conf += '    IP.' + idx + ' = ' + ips[idx] + '\n';
+							}
 					        for (var idx = 0; idx < dns.length; idx ++) {
 					            v3_conf += '    DNS.'+idx+' = '+dns[idx]+'\n';
-					        }
-					        for (var idx = 0; idx < ips.length; idx ++) {
-					            v3_conf += '    IP.'+idx+' = '+ips[idx]+'\n';
 					        }
 					        v3_conf += '\n';
 					        
@@ -452,8 +461,8 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
                 ca_key: './ca-certs/ca-key.pem',
 
                 days: 666,
-                cn: 'iwebpp.com',
-                altname: ['vurl.iwebpp.com', '*.vurl.iwebpp.com', '127.0.0.1']
+                cn: 'aiworkspace.com',
+                altname: ['vurl.aiworkspace.com', '*.vurl.aiworkspace.com', '127.0.0.1']
     },
     function(err, certs){
         if (err)

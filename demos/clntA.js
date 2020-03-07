@@ -26,8 +26,9 @@ var creatNmclnWss = function(self) {
 	        // flags.binary will be set if a binary message is received
 	        // flags.masked will be set if the message was masked
 	        var data = (flags.binary) ? msgpack.decode(message) : JSON.parse(message);
-	        ///console.log('business message:'+JSON.stringify(data));
-	        data += 'reply';
+			console.log(JSON.stringify(data));
+			
+	        data += 'reply from A';
 	
 	        try {
 	            client.send(msgpack.encode(data), {binary: true, mask: true}, function(err){

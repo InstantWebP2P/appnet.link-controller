@@ -10,7 +10,7 @@ process.on('uncaughtException', function (err) {
 var WebSocket = require('wspp');
 
 // connecting to primary name-server
-var con = new WebSocket('wss://localhost:'+process.argv[2]+SEP.SEP_CTRLPATH_HS, {httpp: true});
+var con = new WebSocket('wss://127.0.0.1:'+process.argv[2]+SEP.SEP_CTRLPATH_HS, {httpp: true});
 
 var t = setTimeout(function(){
     console.log('connecting to hole punch server timeout');

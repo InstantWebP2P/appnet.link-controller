@@ -317,7 +317,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                                   vtoken: sdp.client.vtoken,  // client vURL secure token
                                   
                                clntgeoip: JSON.parse(sdp.client.geoip), // client GeoIP
-                                 clntlip: sdp.client.localIP, // client local ip/port
+                                 clntlip: sdp.client.localIP,           // client local ip/port
                                clntlport: sdp.client.localPort,
                                
                                   clntip: sdp.sdp.clntIP,  // client public ip/port
@@ -373,7 +373,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                                     altname: [
                                         ///'*.*.vurl.'+sdp.server.dn, '*.vurl.local.'+sdp.server.dn, '*.*.vurl.local.'+sdp.server.dn,
                                         ///'*.vurl.'+sdp.server.dn,
-                                        client.clntinfo.clntip, client.clntinfo.clntlip, '127.0.0.1'
+                                        client.clntinfo.clntip, client.clntinfo.clntlip, '127.0.0.1', 'localhost',
                                     ]
                                 },
                                 function(err, cert){

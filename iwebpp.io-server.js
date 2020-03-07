@@ -167,7 +167,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
         // onMessage handler
         client.on('message', function(message, flags){
          // !!! catch any exceptions and ignore it
-         //try 
+         try 
          {
         
             var data = (flags.binary) ? MSGPACK.decode(message) : JSON.parse(message);
@@ -284,7 +284,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                                   vtoken: sdp.client.vtoken,  // client vURL secure token
                                   
                                clntgeoip: JSON.parse(sdp.client.geoip), // client GeoIP
-                                 clntlip: sdp.client.localIP, // client local ip/port
+                                 clntlip: sdp.client.localIP,           // client local ip/port
                                clntlport: sdp.client.localPort,
                                
                                   clntip: sdp.sdp.clntIP,  // client public ip/port
@@ -340,10 +340,10 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                                     altname: [
                                         ///'*.*.vurl.'+sdp.server.dn, '*.vurl.local.'+sdp.server.dn, '*.*.vurl.local.'+sdp.server.dn,
                                         ///'*.vurl.'+sdp.server.dn,
-                                        client.clntinfo.clntip, client.clntinfo.clntlip, '127.0.0.1'
-                                    ]
+                                        client.clntinfo.clntip, client.clntinfo.clntlip, '127.0.0.1', 'localhost',
+                                    ],
                                 },
-                                function(err, cert){
+                                function(err, cert) {
                                     if (err) {
                                         console.log(err+',generate security certs failed');
                                         data.answer.secerts = null;
@@ -1419,9 +1419,9 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
             }
             
          }
-         //catch (e) {
-         //    console.error('Name-server ignore caught message-handle exception:'+e);
-         //}
+         catch (e) {
+             console.error('Name-server ignore caught message-handle exception:'+e);
+         }
          
         });
         

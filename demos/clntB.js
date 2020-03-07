@@ -103,7 +103,7 @@ nmclnsB.on('go', function() {
 					    lip: sdps[sdps.length-1].from.localIP,
 					  lport: sdps[sdps.length-1].from.localPort,
 						     
-					 natype: sdps[sdps.length-1].to.natype, 
+					 natype: sdps[sdps.length-1].from.natype, 
 							
 					     ip: sdps[sdps.length-1].rel.clntIP, 
 					   port: sdps[sdps.length-1].rel.clntPort
@@ -129,7 +129,7 @@ nmclnsB.on('go', function() {
 							});
 							
 							setInterval(function(){
-							    socket.send(msgpack.encode('Hello, This Tom Zhou. :)'), {binary: true, mask: true});
+							    socket.send(msgpack.encode('Hello, This is from test B via STUN :)'), {binary: true, mask: true});
 							}, 2000);
                         });
                     });
@@ -137,7 +137,7 @@ nmclnsB.on('go', function() {
                     // create TURN session
                     nmclnsB.offerTurn({endpoint: peerinfo, sesn: SEP.SEP_SESN_TURN}, function(err, turn){
                         console.log('B setup turn to peer:'+JSON.stringify(peerinfo));
-                        console.log('TURN:'+JSON.stringify(turn));
+                        //console.log('TURN:'+JSON.stringify(turn));
                         
                         if (err || !turn) return console.log(err+',setup TURN to peer failed');
                         
@@ -168,7 +168,7 @@ nmclnsB.on('go', function() {
 							});
 							
 							setInterval(function(){
-							    socket.send(msgpack.encode('Hello, This Tom Zhou on TURN. :)'), {binary: true, mask: true});
+                                socket.send(msgpack.encode('Hello, This is from test B via TURN :)'), { binary: true, mask: true });
 							}, 2000);
                         });
                     });

@@ -63,13 +63,13 @@ nmclnsC.on('go', function() {
     creatNmclnWss(this);
     
     // ask for all user info
-    nmclnsC.getAllUsrs(function(err, usrs){
+    /*nmclnsC.getAllUsrs(function(err, usrs){
         if (!err) {
             ///console.log('got User info answer:'+usrs.length+','+JSON.stringify(usrs));
         } else {
             console.log(err);    
         }
-    });
+    });*/
 
     // ask for all Logins info
     /*nmclnsC.getCllLogins(function(err, logins){
@@ -103,7 +103,7 @@ nmclnsC.on('go', function() {
 					    lip: sdps[sdps.length-1].from.localIP,
 					  lport: sdps[sdps.length-1].from.localPort,
 						     
-					 natype: sdps[sdps.length-1].to.natype, 
+					 natype: sdps[sdps.length-1].from.natype, 
 							
 					     ip: sdps[sdps.length-1].rel.clntIP, 
 					   port: sdps[sdps.length-1].rel.clntPort
@@ -128,7 +128,7 @@ nmclnsC.on('go', function() {
 							});
 							
 							setInterval(function(){
-							    socket.send(msgpack.encode('Hello, This Tom Zhou. :)'), {binary: true, mask: true});
+                                socket.send(msgpack.encode('Hello, This is from test C via STUN :)'), { binary: true, mask: true });
 							}, 2000);
                         });
                     });
@@ -167,7 +167,7 @@ nmclnsC.on('go', function() {
 							});
 							
 							setInterval(function(){
-							    socket.send(msgpack.encode('Hello, This Tom Zhou on TURN. :)'), {binary: true, mask: true});
+                                socket.send(msgpack.encode('Hello, This is from test C via TURN :)'), { binary: true, mask: true });
 							}, 2000);
                         });
                     });                    
