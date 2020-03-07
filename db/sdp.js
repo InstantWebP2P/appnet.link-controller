@@ -17,7 +17,9 @@
 // 11. user can login to multiple clients, while a client means a device with local proto/ip/port;
 // ...
 
+'use strict';
 var debug = require('debug')('db.sdp');
+
 var neo4j = require('neo4jv1');
 var db    = new neo4j.GraphDatabase(process.env.NEO4J_URL || 'http://localhost:7474');
 
@@ -58,7 +60,7 @@ exports.SESSION_RUNON      = 'SESSION_RUNON';
 
 // NAT/FW types:
 // 0: Asymmetric NAT/FW
-// 1:  Symmetric NAT/FW
+// 1: Symmetric NAT/FW
 exports.NAT_ASYM = 0;
 exports.NAT_SYMM = 1;
 
@@ -163,7 +165,7 @@ var updateNode = function(gid, data, fn){
         debug('updateNode@:'+gid+':'+JSON.stringify(node));
         
         if (err || !node) {
-            console.log(err+', update indexed node failed gid@'+gid);
+            if (err) console.log(err+', update indexed node failed gid@'+gid);
             // 2.
             // create new node
             addNode(data, fn);
@@ -488,7 +490,7 @@ var updateSession = exports.updateSession = function(clnt, srv, session, fn){
     debug(qs);
     db.query(qs, null, function(err, rslts){
         if (err || !rslts || (rslts.length === 0)) {
-            console.log(err+', updateSession query relationship failed @\n'+qs);
+            if (err) console.log(err+', updateSession query relationship failed @\n'+qs);
             // 2.
             // create new session
             addSession(clnt, srv, session, function(err, rel){

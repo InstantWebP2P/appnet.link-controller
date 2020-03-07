@@ -15,14 +15,16 @@
     "debug": "2.6.9",
     "connect": "2.30.2",
     "connect-httpp": "latest",
-    "geoip-lite": "1.1.x",
+    "geoip-lite": "1.1.9",
     "httpp-proxy": "latest",
     "iwebpp.io": "latest",
-    "msgpack-js": "0.1.x",
+    "msgpack-js": "0.3.0",
     "neo4jv1": "1.1.6",
     "uuid": "3.0.0",
     "siphash": "1.1.0",
     "wspp": "latest"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "jshint": "2.8.0"
+  }
 }

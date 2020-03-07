@@ -2,8 +2,12 @@
 // Copyright (c) 2012-present Tom Zhou<iwebpp@gmail.com>
 // Notes: a peer-service MUST be described by domain, usrkey and category, and identified by vURL.
 
+'use strict';
+var debug = require('debug')('peerservice');
+
+
 var eventEmitter = require('events').EventEmitter,
-    util = require('util');
+    util         = require('util');
 
 // Debug level
 var Debug = 0;

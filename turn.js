@@ -17,10 +17,14 @@
 // - 6.b Initiator client connect to relay-server proxy server
 // - 6.c Relay-server agent client connect to responder client
 
-var eventEmitter = require('events').EventEmitter,
-    util = require('util');
+'use strict';
+var debug = require('debug')('turn');
 
-var SdpDB = require('./db/sdp');
+
+var eventEmitter = require('events').EventEmitter,
+    util         = require('util');
+
+var SdpDB        = require('./db/sdp');
 
 // security hash
 // sipkey can be any user defined 4 integers, 3 sipkey generate 192bits secure number

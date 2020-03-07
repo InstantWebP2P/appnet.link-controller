@@ -1,6 +1,11 @@
 // iWebPP.IO name-server V2 implementation based SecureWebsocket and NaclCert, that works with iwebpp.io name-client
 // Copyright (c) 2014-present Tom Zhou<iwebpp@gmail.com>
 //
+
+'use strict';
+var debug  = require('debug')('iwebpp.io.srv.v2');
+
+
 // iWebPP.io module
 var iWebPP = require('iwebpp.io').V2;
 

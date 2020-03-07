@@ -7,6 +7,10 @@
 // 4. STUN_PP means the connection setup in rendezvous mode 
 // 5. STUN don't need relay-server. right now, Neither clients can behind Symmetric NAT/Firewall
 
+'use strict';
+var debug = require('debug')('stun');
+
+
 var eventEmitter = require('events').EventEmitter,
     util = require('util');
 

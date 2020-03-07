@@ -13,10 +13,13 @@
 // 7. for details, please refer to iWebPP_SW_Func_Spec.doc and Roadisys_Virtual_URL_SW_Func_Spec.doc
 // ...
 
-var eventEmitter = require('events').EventEmitter,
-    util = require('util');
+'use strict';
+var debug        = require('debug')('sdp');
 
-var SdpDB = require('./db/sdp');
+var eventEmitter = require('events').EventEmitter,
+    util         = require('util');
+
+var SdpDB        = require('./db/sdp');
 
 // security hash
 // sipkey can be any user defined 4 integers, 3 sipkey generate 192bits secure number

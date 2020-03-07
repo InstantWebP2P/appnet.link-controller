@@ -1,7 +1,7 @@
 
 var nmSrv = require('../iwebpp.io-server');
 var nmCln = nmSrv.Client;
-var SEP = nmSrv.SEP;
+var SEP   = nmSrv.SEP;
 
 // iwebpp-ws library
 var WebSocket = require('wspp');
@@ -56,20 +56,20 @@ var nmclnsB = new nmCln({
 	  vmode: vURL.URL_MODE_PATH
 });
 
-nmclnsB.on('ready', function(){
-    console.log('name-nmclnsB ready');
+nmclnsB.on('go', function() {
+    console.log('name-nmclnsB go');
     
    	// create websocket server
     creatNmclnWss(this);
      
     // ask for all user info
-    nmclnsB.getAllUsrs(function(err, usrs){
+    /*nmclnsB.getAllUsrs(function(err, usrs){
         if (!err) {
             ///console.log('got all User info answer:'+usrs.length+','+JSON.stringify(usrs));
         } else {
             console.log(err);    
         }
-    });
+    });*/
 
     // ask for all Logins info
     /*nmclnsB.getBllLogins(function(err, logins){
@@ -181,4 +181,3 @@ nmclnsB.on('ready', function(){
         }
     });
 });
-

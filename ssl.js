@@ -2,9 +2,13 @@
 // Copyright (c) 2012-present Tom Zhou<iwebpp@gmail.com>
 //
 
-var fs = require('fs');
+'use strict';
+var debug = require('debug')('ssl');
+
+
+var fs   = require('fs');
 var exec = require('child_process').exec;
-var NET = require('net');
+var NET  = require('net');
 
 
 // Debug level
@@ -108,7 +112,7 @@ var genSslCert = exports.genSslCert = function(filename, info, fn){
 	        try {
 	            fs.writeFileSync(__dirname+'/certs-tmp/'+filename+'-v3.conf', v3_conf);
 	        } catch (e) {
-	             console.log('Warning!s3 syncWrite V3 conf file failed ' + e);
+	             console.error('Warning!s3 syncWrite V3 conf file failed ' + e);
 	            fn('Warning!s3 syncWrite V3 conf file failed ' + e);
 			    
 			    return;    
@@ -120,11 +124,11 @@ var genSslCert = exports.genSslCert = function(filename, info, fn){
 	    }
 					    	    	    
         clistr = 'openssl  '+cliarg.join('  ');
-	    if (Debug) console.log('s1 cli: '+clistr);
+	    debug('s1 cli: '+clistr);
 	    
 	    var s1 = exec(clistr, {maxBuffer: 200*1024}, function(err, stdout, stderr){
 	        if (err) {
-	            console.log('Warning!s1 openssl process exited with error ' + err + stderr);
+	            console.error('Warning!s1 openssl process exited with error ' + err + stderr);
 	            fn('Warning!s1 openssl process exited with error ' + err + stderr);
 	        } else {		    
 	            try {
@@ -137,7 +141,7 @@ var genSslCert = exports.genSslCert = function(filename, info, fn){
 	                fs.unlinkSync(__dirname+'/certs-tmp/'+filename+'-key.pem');
 	                fs.unlinkSync(__dirname+'/certs-tmp/'+filename+'-cert.pem');
 	            } catch (e) {
-	                console.log('Warning!open certs file failure:'+e);
+	                console.error('Warning!open certs file failure:'+e);
 	
 	                fn('Warning!open certs file failure:'+e);
 	            }
@@ -251,14 +255,14 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
 	    cliarg.push('2048');
 	    
 	    clistr = 'openssl  '+cliarg.join('  ');
-	    if (Debug) console.log('s1 cli: '+clistr);
+	    debug('s1 cli: '+clistr);
 	    
 	    var s1 = exec(clistr, {maxBuffer: 200*1024}, function(err, stdout, stderr){
 	        if (err) {
 	            console.log('Warning!s1 openssl process exited with error ' + err + stderr);
 	            fn('Warning!s1 openssl process exited with error ' + err + stderr);
 	        } else {
-	            if (Debug) console.log('s1 stdout: '+stdout); 
+	            debug('s1 stdout: '+stdout); 
 	            
 	            // 1.1
 	            // syncWrite output to file
@@ -285,14 +289,14 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
 			    ///cliarg.push(__dirname+'/certs-tmp/'+filename+'-csr.pem');
 			    		    
 			    clistr = 'openssl  '+cliarg.join('  ');
-			    if (Debug) console.log('s2 cli: '+clistr);
+			    debug('s2 cli: '+clistr);
 			    
 			    var s2 = exec(clistr, function(err, stdout, stderr){
 			        if (err) {
 			            console.log('Warning!s2 openssl process exited with error ' + err + stderr);
 			            fn('Warning!s2 openssl process exited with error ' + err + stderr);
 			        } else {
-			            if (Debug) console.log('s2 stdout: '+stdout); 
+			            debug('s2 stdout: '+stdout); 
 			            
 			            // 2.1
 			            // syncWrite output to file
@@ -379,14 +383,14 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
 					    }
 			    				    
 			            clistr = 'openssl  '+cliarg.join('  ');
-			            if (Debug) console.log('s3 cli: '+clistr);
+			            debug('s3 cli: '+clistr);
 			            
 					    var s3 = exec(clistr, function(err, stdout, stderr){
 					        if (err) {
 					            console.log('Warning!s3 openssl process exited with error ' + err + stderr);
 					            fn('Warning!s3 openssl process exited with error ' + err + stderr);
 					        } else {
-					            if (Debug) console.log('s3 stdout: '+stdout); 
+					            debug('s3 stdout: '+stdout); 
 					            
 					            // 3.2
 					            // caputre cert

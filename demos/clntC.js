@@ -56,8 +56,8 @@ var nmclnsC = new nmCln({
 	  vmode: vURL.URL_MODE_PATH
 });
 
-nmclnsC.on('ready', function(){
-    console.log('name-nmclnsC ready');
+nmclnsC.on('go', function() {
+    console.log('name-nmclnsC go');
     
     // create websocket server
     creatNmclnWss(this);

@@ -87,7 +87,7 @@ nmclnsA.on('error', function(err){
     console.log('nmclnsA failed '+err);
 });
 
-nmclnsA.on('ready', function(){
+nmclnsA.on('ready', function() {
     console.log('name-nmclnsA ready');
    	
    	// create websocket server
@@ -140,7 +140,7 @@ nmclnsA.on('ready', function(){
 				    };
 				    
 				    // create STUN session 
-                    nmclnsA.offerStun({endpoint: peerinfo}, function(err, stun){
+                    nmclnsA.offerStun({endpoint: peerinfo}, function(err, stun) {
                         console.log('A setup stun to peer:'+JSON.stringify(peerinfo));
                         
                         if (err || !stun) return console.log(err+',setup STUN to peer failed');

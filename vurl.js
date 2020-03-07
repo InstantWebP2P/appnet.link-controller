@@ -4,8 +4,12 @@
 // - vURL has two mode: vHost-based and vPath-based
 // - vURL key always is lower case
 
+'use strict';
+var debug = require('debug')('vurl');
+
+
 var eventEmitter = require('events').EventEmitter,
-    util = require('util');
+    util         = require('util');
 
 // pass key-value db instance 
 var vURL = module.exports = exports = function(db){
