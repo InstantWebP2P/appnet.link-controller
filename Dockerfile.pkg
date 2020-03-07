@@ -5,7 +5,7 @@
 #
 
 # Pull base image.
-FROM httpp:16.04
+FROM httpp:0.8
 
 # Install.
 RUN \
