@@ -18,7 +18,7 @@
     "geoip-lite": "1.1.9",
     "httpp-proxy": "latest",
     "iwebpp.io": "latest",
-    "lodash": "3.10.1",
+    "lodash": "4.17.15",
     "msgpack-js": "0.3.0",
     "neo4jv1": "1.1.6",
     "siphash": "1.1.0",
