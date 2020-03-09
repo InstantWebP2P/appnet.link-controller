@@ -2597,9 +2597,10 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                     // clear client connection cache
                     var ck = client.clntinfo.vurl; // vurl as key to name-client
                     var sk = 'agent';              // key for agent server ip/port
-                    debug('ck:'+ck+',sk:'+sk+',self.turnConn[sk][ck]:'+(self.turnConn[sk])[ck]);
-                    if (self.turnConn[sk] && (self.turnConn[sk])[ck]) {                    
+                    if (self.turnConn[sk] && (self.turnConn[sk])[ck]) {
                         (self.turnConn[sk])[ck] = null;
+
+                        debug('ck:'+ck+',sk:'+sk+',self.turnConn[sk][ck]:'+(self.turnConn[sk])[ck]);
                     }
                     
                     // clear TURN server vURL entry

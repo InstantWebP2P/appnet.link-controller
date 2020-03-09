@@ -43,8 +43,8 @@ var creatNmclnWss = function(self) {
 	        // flags.binary will be set if a binary message is received
 	        // flags.masked will be set if the message was masked
 	        var data = (flags.binary) ? msgpack.decode(message) : JSON.parse(message);
-	        ///console.log('business message:'+JSON.stringify(data));
-	        data += 'reply';
+	        console.log('business message:'+JSON.stringify(data));
+	        data += 'reply from '+self.nm;
 	
 	        try {
 	            client.send(msgpack.encode(data), {binary: true, mask: true}, function(err){
@@ -61,6 +61,7 @@ var creatNmclnWss = function(self) {
 
 nmclnsB.on('ready', function(){
     console.log('name-nmclnsB ready');
+    this.nm = 'B';
     
     // create websocket server
     creatNmclnWss(this);
@@ -89,7 +90,8 @@ nmclnsA.on('error', function(err){
 
 nmclnsA.on('ready', function() {
     console.log('name-nmclnsA ready');
-   	
+    this.nm = 'A';
+
    	// create websocket server
     creatNmclnWss(this);
     
@@ -147,7 +149,7 @@ nmclnsA.on('ready', function() {
                         
 						// try to connect to peer													
                         nmclnsA.createConnection({endpoint: peerinfo}, function(err, socket){
-                            console.log('A connected to peer:'+JSON.stringify(peerinfo));
+                            console.log('A connected to peer via STUN:' + JSON.stringify(peerinfo));
                             
                             if (err || !socket) return console.log(err+',connect to peer failed');
                             
@@ -159,7 +161,7 @@ nmclnsA.on('ready', function() {
 							});
 							
 							setInterval(function(){
-							    socket.send(msgpack.encode('Hello, This Tom Zhou. :)'), {binary: true, mask: true});
+							    socket.send(msgpack.encode('Hello, This is from test A via STUN :)'), {binary: true, mask: true});
 							}, 2000);
                         });
                     });
@@ -198,7 +200,7 @@ nmclnsA.on('ready', function() {
 							});
 							
 							setInterval(function(){
-							    socket.send(msgpack.encode('Hello, This Tom Zhou on TURN. :)'), {binary: true, mask: true});
+                                socket.send(msgpack.encode('Hello, This is from test A via TURN :)'), { binary: true, mask: true });
 							}, 2000);
                         });
                     });

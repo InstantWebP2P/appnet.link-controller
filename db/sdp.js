@@ -61,8 +61,10 @@ exports.SESSION_RUNON      = 'SESSION_RUNON';
 // NAT/FW types:
 // 0: Asymmetric NAT/FW
 // 1: Symmetric NAT/FW
+// 2: No NAT/FW
 exports.NAT_ASYM = 0;
 exports.NAT_SYMM = 1;
+exports.NAT_NONE = 2;
 
 // add/edit/delete/update on node
 var addNode = function(data, fn){

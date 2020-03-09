@@ -26,7 +26,7 @@ var creatNmclnWss = function(self) {
 	        // flags.binary will be set if a binary message is received
 	        // flags.masked will be set if the message was masked
 	        var data = (flags.binary) ? msgpack.decode(message) : JSON.parse(message);
-			console.log(JSON.stringify(data));
+			console.log('business message:' + JSON.stringify(data));
 			
 	        data += 'reply from A';
 	
@@ -65,5 +65,5 @@ nmclnsA.on('go', function() {
 });
 
 nmclnsA.on('error', function(err) {
-    console.log('name client error: '+ err);
+    console.log('name client A error: '+ err);
 });

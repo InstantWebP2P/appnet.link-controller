@@ -8,7 +8,7 @@ var nmSrv = require('../iwebpp.io-server');
 var nmsrvs = new nmSrv(
     // endpoint info
     {
-            dn: 'aiworkspace.com',          // name server domain name, change to yours
+            dn: 'httpp.aiworkspace.com',          // name server domain name, change to yours
         ipaddr: '0.0.0.0', ports: [51686, 51868], // name server
           turn: [51688, 51866],                   // relay server
         option: {mbw: 32000}                      // user-specific feature, mbw: maxim bandwidth 32KB/s in default
