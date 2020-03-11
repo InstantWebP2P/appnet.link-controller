@@ -69,7 +69,9 @@ var genSslCert = exports.genSslCert = function(filename, info, fn){
 	    cliarg.push('-out');
 	    cliarg.push(__dirname+'/certs-tmp/'+filename+'-cert.pem');
 	    
-	    // V3 extension, subject alternate name
+		// V3 extension, subject alternate name
+		// !!! count CN into altnames due to latest openssl not take CN field
+		info.altname = info.altname || []; info.altname.push(info.cn);
 	    if (info.altname && info.altname.length) {
 			// remove duplicates
 			info.altname = _.uniq(info.altname);
@@ -333,7 +335,9 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
 					    }
 					    
 					    // 3.1
-					    // V3 extension, subject alternate name
+						// V3 extension, subject alternate name
+						// !!! count CN into altnames
+						info.altname = info.altname || []; info.altname.push(info.cn);
 					    if (info.altname && info.altname.length) {
 							// remove duplicates
 							info.altname = _.uniq(info.altname);
