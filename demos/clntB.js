@@ -129,8 +129,16 @@ nmclnsB.on('go', function() {
 							});
 							
 							setInterval(function(){
-							    socket.send(msgpack.encode('Hello, This is from test B via STUN :)'), {binary: true, mask: true});
-							}, 2000);
+                                try {
+                                    socket.send(msgpack.encode('Hello, This is from test B via STUN :)'), { binary: true, mask: true }, function (err) {
+                                        if (err) {
+                                            console.log(err + ',sendOpcMsg failed');
+                                        }
+                                    });
+                                } catch (e) {
+                                    console.log(e + ',sendOpcMsg failed immediately');
+                                }
+                            }, 2000);
                         });
                     });
                     
@@ -167,8 +175,16 @@ nmclnsB.on('go', function() {
                                 console.log(JSON.stringify(data));
 							});
 							
-							setInterval(function(){
-                                socket.send(msgpack.encode('Hello, This is from test B via TURN :)'), { binary: true, mask: true });
+							setInterval(function() {
+                                try {
+                                    socket.send(msgpack.encode('Hello, This is from test B via TURN :)'), { binary: true, mask: true }, function (err) {
+                                        if (err) {
+                                            console.log(err + ',sendOpcMsg failed');
+                                        }
+                                    });
+                                } catch (e) {
+                                    console.log(e + ',sendOpcMsg failed immediately');
+                                }
 							}, 2000);
                         });
                     });
