@@ -12,5 +12,5 @@ if [ $# -ne 0 ]; then
   docker run -v `pwd`:`pwd` -w `pwd` -i -t --rm --network host v2neo4j:2.1.8 $@
 else
   echo "Start Neo4j services ..."
-  docker run                         -i -t --rm --network host v2neo4j:2.1.8
+  docker run                               --rm --network host v2neo4j:2.1.8
 fi
