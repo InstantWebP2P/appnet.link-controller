@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
 
 # check docker image for packaging 
-echo "Build Docker image as iwebpp-srv:3.1"
-docker image build --rm --network host --compress -t iwebpp-srv:3.1 -f ./Dockerfile.pkg .
+if [ $# == 0 ]; then
+  echo "Build Docker image as iwebpp-srv:3.1"
+  docker image build --rm --network host --compress -t iwebpp-srv:3.1 -f ./Dockerfile.pkg .
+fi
 
+if [ "$(docker images -q iwebpp-srv:3.1 2> /dev/null)" == "" ]; then
+  echo "Build Docker image as iwebpp-srv:3.1"
+  docker image build --rm --network host --compress -t iwebpp-srv:3.1 -f ./Dockerfile.pkg .
+fi
+ 
 # execute commands 
 if [ $# -ne 0 ]; then
   echo "$@ ..."
