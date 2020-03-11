@@ -28,7 +28,7 @@ iWebPP.IO controller serivices to support [iwebpp.io protocol](https://github.co
 
 * generate SSL certs once for your own Domain Name, like
 
-    ` ./tools/genSrvKey.bash httpp.aiworkspace.com `
+    ` ./tools/genSrvKey.bash 51dese.com `
 
 * start controller services
 
@@ -49,7 +49,7 @@ iWebPP.IO controller serivices to support [iwebpp.io protocol](https://github.co
       
 * Generate SSL certs once for your own Domain Name, like
 
-      ./appbld ./tools/genSrvKey.bash httpp.aiworkspace.com
+      ./appbld ./tools/genSrvKey.bash 51dese.com
       
 * Packaging and start services
       

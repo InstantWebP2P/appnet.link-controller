@@ -21,7 +21,7 @@ var Debug = 0;
 // - openssl x509 -req -in server-csr.pem -signkey server-key.pem -out server-cert.pem
 //
 // Or prefer in single line: http://www.madboa.com/geek/openssl/#cert-self
-// openssl req  -x509 -nodes -days 365 -subj '/C=CN/ST=SH/L=SH/CN=aiworkspace.com' -newkey rsa:2048 -keyout server-key.pem -out server-cert.pem
+// openssl req  -x509 -nodes -days 365 -subj '/C=CN/ST=SH/L=SH/CN=51dese.com' -newkey rsa:2048 -keyout server-key.pem -out server-cert.pem
 // Or create self-signed wildcard ssl certificate
 // - http://security.stackexchange.com/questions/10538/what-certificates-are-needed-for-multi-level-subdomains
 // - 
@@ -31,10 +31,10 @@ var genSslCert = exports.genSslCert = function(filename, info, fn){
         fn = info;
         
         info = {};
-        info.cn = 'aiworkspace.com';
+        info.cn = '51dese.com';
     }
     if (!info.cn) {
-        info.cn = 'aiworkspace.com';    
+        info.cn = '51dese.com';    
     }
     filename += info.cn;
     filename = filename.replace('*', 'x');
@@ -182,13 +182,13 @@ var genSslCert = exports.genSslCert = function(filename, info, fn){
 
 // Generate CA-signed cert
 // - openssl genrsa -out server-key.pem 2048  
-// - openssl req -new -key server-key.pem -subj '/C=CN/ST=SH/L=SH/CN=aiworkspace.com' -out server-csr.pem  
+// - openssl req -new -key server-key.pem -subj '/C=CN/ST=SH/L=SH/CN=51dese.com' -out server-csr.pem  
 // - openssl x509 -req -days 730 -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -in server-csr.pem -out server-cert.pem -extensions v3_req -extfile openssl.cnf  
 // -
 // - http://blog.didierstevens.com/2008/12/30/howto-make-your-own-cert-with-openssl/
 // -- CA root cert:
 // --- openssl genrsa -out ca-key.pem 4096
-// --- openssl req -new -x509 -days 1868 -subj '/C=CN/ST=SH/L=SH/CN=aiworkspace.com' -key ca-key.pem -out ca-cert.pem
+// --- openssl req -new -x509 -days 1868 -subj '/C=CN/ST=SH/L=SH/CN=51dese.com' -key ca-key.pem -out ca-cert.pem
 // --
 // -- server cert:
 // --- openssl genrsa -out ia.key 2048
@@ -240,10 +240,10 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
         fn = info;
         
         info = {};
-        info.cn = 'aiworkspace.com';
+        info.cn = '51dese.com';
     }
     if (!info.cn) {
-        info.cn = 'aiworkspace.com';    
+        info.cn = '51dese.com';    
     }
     filename += info.cn;
 	filename = filename.replace('*', 'x');
@@ -465,8 +465,8 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
                 ca_key: './ca-certs/ca-key.pem',
 
                 days: 666,
-                cn: 'aiworkspace.com',
-                altname: ['vurl.aiworkspace.com', '*.vurl.aiworkspace.com', '127.0.0.1']
+                cn: '51dese.com',
+                altname: ['vurl.51dese.com', '*.vurl.51dese.com', '127.0.0.1']
     },
     function(err, certs){
         if (err)

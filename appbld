@@ -13,5 +13,5 @@ if [ $# -ne 0 ]; then
 else
   echo "Start building ..."
   docker run -v `pwd`:`pwd` -w `pwd` -i -t --rm --network host iwebpp-bld:3.1 \
-  bash -c "npm i --only=prod && ./tools/genSrvKey.bash httpp.aiworkspace.com"
+  bash -c "npm i --only=prod && ./tools/genSrvKey.bash 51dese.com"
 fi
