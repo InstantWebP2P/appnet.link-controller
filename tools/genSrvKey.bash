@@ -9,12 +9,6 @@ if [ "$2" == "genca" ]; then
 fi
 
 ## Usage: ./genSrvKey.bash domainName [genca: Gen CA cert]
- 
-### default key/cert
-openssl genrsa -out ./certs/$1-key.pem 2048
-openssl req -new -key ./certs/$1-key.pem -subj "/C=CN/ST=Shanghai/L=Shanghai/OU=51DESE.com/CN=$1" -out ./certs/$1-csr.pem
-openssl x509 -req -days 368 -CA ./ca-certs/ca-cert.pem -CAkey ./ca-certs/ca-key.pem -CAcreateserial -in ./certs/$1-csr.pem -out ./certs/$1-cert.pem
-rm -rf ./certs/$1-csr.pem
 
 ### as
 sed "s/tbdcn/$1/gi" ./certs/as-v3.conf.tmpl > ./certs/as-v3.conf
@@ -30,7 +24,7 @@ echo "### Generate Agent server cert done"
 sed "s/tbdcn/$1/gi" ./certs/ps-v3.conf.tmpl > ./certs/ps-v3.conf
 
 openssl genrsa -out ./certs/ps-key.pem 2048
-openssl req -new -key ./certs/ps-key.pem -subj "/C=CN/ST=SH/L=SH/CN=*.vurl.$1" -out ./certs/ps-csr.pem
+openssl req -new -key ./certs/ps-key.pem -subj "/C=CN/ST=Shanghai/L=Shanghai/OU=51DESE.com/CN=$1" -out ./certs/ps-csr.pem
 openssl x509 -req -days 368 -CA ./ca-certs/ca-cert.pem -CAkey ./ca-certs/ca-key.pem -CAcreateserial -in ./certs/ps-csr.pem -out ./certs/ps-cert.pem -extensions v3_req -extfile ./certs/ps-v3.conf
 rm -rf ./certs/ps-csr.pem
 
