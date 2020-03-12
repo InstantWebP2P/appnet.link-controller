@@ -3,7 +3,8 @@
 # CA cert Self-Signed
 ## Need only generate once for one Domain Name
 if [ "$2" == "genca" ]; then
-    openssl req -x509 -nodes -days 3680 -subj '/C=CN/ST=Shanghai/L=Shanghai/OU=51DESE.com/CN=$1' -newkey rsa:4096 -keyout ./ca-certs/ca-key.pem -out ./ca-certs/ca-cert.pem
+    openssl req -x509 -nodes -days 3680 -subj "/C=CN/ST=Shanghai/L=Shanghai/OU=51DESE.com/CN=$1" -newkey rsa:4096 -keyout ./ca-certs/ca-key.pem -out ./ca-certs/ca-cert.pem
+    
     echo "### Generate CA cert done"
 fi
 
