@@ -30,3 +30,11 @@ var nmsrvs = new nmSrv(
         }
     }    
 ); 
+
+nmsrvs.on('error', function (err) {
+    console.log('name server error: ' + err);
+});
+
+process.on('uncaughtException', function (e) {
+    console.log('name server exception: ' + e);
+});

@@ -214,3 +214,6 @@ nmclnsA.on('ready', function() {
     });
 });
 
+process.on('uncaughtException', function (e) {
+    console.log('name client exception: ' + e);
+});
