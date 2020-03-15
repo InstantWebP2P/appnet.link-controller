@@ -2,7 +2,7 @@
 
 var nmSrv = require('../iwebpp.io-server');
 var WEBPP = nmSrv.Client;
-var SEP = nmSrv.SEP;
+var SEP   = nmSrv.SEP;
 
 // vURL
 var vURL = require('../vurl');

@@ -1,7 +1,8 @@
+var _     = require('lodash');
 
 var nmSrv = require('../iwebpp.io-server');
 var nmCln = nmSrv.Client;
-var SEP = nmSrv.SEP;
+var SEP   = nmSrv.SEP;
 
 // iwebpp-ws library
 var WebSocket = require('wspp');
@@ -85,9 +86,16 @@ nmclnsC.on('go', function() {
     nmclnsC.getUsrLogins({domain: '51dese.com', usrkey: 'B'}, function(err, logins){
         if (!err) {
             ///console.log('nmclnsB Logins answer:'+logins.length+','+JSON.stringify(logins));
-          
+
+            // filter in live session only
+            var lives = _.filter(logins, function (n) { return n.to.live });
+            if (lives.length == 0) {
+                console.error('No live user B login session ...');
+                return;
+            }
+
             // ask for client-specific Logins info
-           nmclnsC.getClntSdps(logins[logins.length-1].to.gid, function(err, sdps){
+            nmclnsC.getClntSdps(logins[logins.length-1].to.gid, function(err, sdps){
                 if (!err) {
                     ///console.log('nmclnsC SDPs answer:'+JSON.stringify(sdps));
                       						 
