@@ -365,15 +365,16 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                                 SSL.genSslCertCA(sdp.client.gid,
                                 // client cert info
                                 {
-                                         cn: '*.vurl.'+sdp.server.dn,
+                                         cn: sdp.client.vmode == vurl.URL_MODE_HOST ? '*.vurl.' + sdp.server.dn : sdp.server.dn,
                                     ca_cert: self.sslcerts.ca && self.sslcerts.ca.cert,
                                      ca_key: self.sslcerts.ca && self.sslcerts.ca.key,
                                      
-                                    // SSL V3 alternate names: sub-domains, public/local ip, 127.0.0.1
+                                    // SSL V3 alternate names: sub-domains, public/local ip, 127.0.0.1 and Agent server IP
                                     altname: [
                                         ///'*.*.vurl.'+sdp.server.dn, '*.vurl.local.'+sdp.server.dn, '*.*.vurl.local.'+sdp.server.dn,
                                         ///'*.vurl.'+sdp.server.dn,
                                         client.clntinfo.clntip, client.clntinfo.clntlip, '127.0.0.1', 'localhost',
+                                        sdp.server.ip,
                                     ]
                                 },
                                 function(err, cert){
