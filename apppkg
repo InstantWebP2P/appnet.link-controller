@@ -17,5 +17,5 @@ if [ $# -ne 0 ]; then
   docker run -v `pwd`:`pwd` -w `pwd` -i -t --rm --network host iwebpp-srv:3.1 $@
 else
   echo "Start services ..."
-  docker run                            -d --rm --network host iwebpp-srv:3.1
+  docker run --tmpfs /appins/httpp/certs-tmp -d --rm --network host iwebpp-srv:3.1
 fi
