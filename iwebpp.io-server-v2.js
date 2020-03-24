@@ -1630,10 +1630,10 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
 		    // match vURL pattern:
 		    // - vhost like http(s)://"xxx.vurl."iwebpp.com
 		    // - vpath like http(s)://iwebpp.com"/vurl/xxx"
-		    if (vstrs = req.headers.host.match(vurl.regex_vhost)) {
+		    if (vstrs = req.headers.host && req.headers.host.match(vurl.regex_vhost)) {
 		        vurle = vstrs[0];
 		        if (Debug) console.log('proxy for client with vhost:'+vurle);
-		    } else if (vstrs = req.url.match(vurl.regex_vpath)) {
+		    } else if (vstrs = req.url && req.url.match(vurl.regex_vpath)) {
 			    vurle = vstrs[0];	       
 			    
 			    // prune vpath in req.url
