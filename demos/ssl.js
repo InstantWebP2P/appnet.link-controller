@@ -30,10 +30,10 @@ var genSslCert = exports.genSslCert = function(filename, fn){
 
 var genSslCert = exports.genSslCert = function(filename, fn){
     // 1.
-    // openssl req -x509 -nodes -days 365 -subj '/C=CN/ST=SH/L=SH/CN=www.iwebpp.com' -newkey rsa:1024 -keyout server-key.pem -out server-cert.pem
+    // openssl req -x509 -nodes -days 365 -subj '/C=CN/ST=SH/L=SH/CN=www.51dese.com' -newkey rsa:1024 -keyout server-key.pem -out server-cert.pem
     var s1 = spawn('openssl',
                    ['req', '-x509', '-nodes', '-days', '365',
-                    '-subj', '/C=CN/ST=SH/L=SH/CN=www.iwebpp.com',
+                    '-subj', '/C=CN/ST=SH/L=SH/CN=www.51dese.com',
                     '-newkey', 'rsa:1024',
                     '-keyout', __dirname+'/certs/'+filename+'-key.pem',
                     '-out', __dirname+'/certs/'+filename+'-cert.pem'

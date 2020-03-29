@@ -110,7 +110,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
     eventEmitter.call(self);
 
     // at least two ports to listen
-    self.dn     = endpoints.dn      || 'iwebpp.com';
+    self.dn     = endpoints.dn      || '51dese.com';
     self.ipaddr = endpoints.ipaddr  || '0.0.0.0';
     self.ports  = endpoints.ports   || [51686, 51868];
     	
@@ -391,7 +391,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
 					                    self.emit('NS.SEP.SEP_OPC_SDP_OFFER', {client: client, data: data});
                                     } else {
                                         // 3.2.2
-                                        // like for *.vurl.iwebpp.com
+                                        // like for *.vurl.51dese.com
                                         data.answer.secerts = cert;
                                         
                                         // 3.2.3
@@ -1628,8 +1628,8 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
 		    
 		    // 1.2.1
 		    // match vURL pattern:
-		    // - vhost like http(s)://"xxx.vurl."iwebpp.com
-		    // - vpath like http(s)://iwebpp.com"/vurl/xxx"
+		    // - vhost like http(s)://"xxx.vurl."51dese.com
+		    // - vpath like http(s)://51dese.com"/vurl/xxx"
 		    if (vstrs = req.headers.host && req.headers.host.match(vurl.regex_vhost)) {
 		        vurle = vstrs[0];
 		        if (Debug) console.log('proxy for client with vhost:'+vurle);
@@ -1773,8 +1773,8 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
 		    
 		    // 1.
 		    // match vURL pattern:
-		    // - vhost like http(s)://"xxx.vurl."iwebpp.com
-		    // - vpath like http(s)://iwebpp.com"/vurl/xxx"
+		    // - vhost like http(s)://"xxx.vurl."51dese.com
+		    // - vpath like http(s)://51dese.com"/vurl/xxx"
 		    if (vstrs = req.headers.host.match(vurl.regex_vhost)) {
 		        vurle = vstrs[0];
 		        if (Debug) console.log('proxy for client with vhost:'+vurle);
@@ -1929,8 +1929,8 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
 		    
 		    // 1.5.1
 		    // match vURL pattern:
-		    // - vhost like http(s)://xxx.vurl.iwebpp.com
-		    // - vpath like http(s)://iwebpp.com/vurl/xxx
+		    // - vhost like http(s)://xxx.vurl.51dese.com
+		    // - vpath like http(s)://51dese.com/vurl/xxx
 		    if (vstrs = req.headers.host.match(vurl.regex_vhost)) {
 		        vurle = vstrs[0];
 		        if (Debug) console.log('proxy for client with vhost:'+vurle);
@@ -2162,8 +2162,8 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
 		    
 		    // 1.6.1
 		    // match vURL pattern:
-		    // - vhost like http(s)://xxx.vurl.iwebpp.com
-		    // - vpath like http(s)://iwebpp.com/vurl/xxx
+		    // - vhost like http(s)://xxx.vurl.51dese.com
+		    // - vpath like http(s)://51dese.com/vurl/xxx
 		    if (vstrs = urle.match(vurl.regex_vhost)) {
 		        vurle = vstrs[0];
 		        if (Debug) console.log('proxy for client with vhost:'+vurle);

@@ -271,7 +271,7 @@ var turnPunch = function(session){
         // client vURL vpath or vhost
         // TBD... allocation schema
          vpath: '/vurl/'+clntgidhex, // '/vurl/gid' in default by now
-         vhost: clntgidhex+'.vurl.', // 'gid.vurl.iwebpp.com' like append on iwebpp.com
+         vhost: clntgidhex+'.vurl.', // 'gid.vurl.51dese.com' like append on 51dese.com
          vmode: session.vmode,    // vURL mode
         vtoken: session.vtoken,   // vURL secure token
         
@@ -419,7 +419,7 @@ var turnProxy = function(session){
         // client vURL vpath or vhost
         // TBD... allocation schema
          vpath: '/vurl/'+clntgidhex, // '/vurl/gid' in default by now
-         vhost: clntgidhex+'.vurl.', // 'gid.vurl.iwebpp.com' like append on iwebpp.com
+         vhost: clntgidhex+'.vurl.', // 'gid.vurl.51dese.com' like append on 51dese.com
          vmode: session.vmode,    // vURL mode
         vtoken: session.vtoken,   // vURL secure token
         
@@ -566,7 +566,7 @@ var turnAgent = function(session){
         // client vURL vpath or vhost
         // TBD... allocation schema
          vpath: '/vurl/'+clntgidhex, // '/vurl/gid' in default by now
-         vhost: clntgidhex+'.vurl.', // 'gid.vurl.iwebpp.com' like append on iwebpp.com
+         vhost: clntgidhex+'.vurl.', // 'gid.vurl.51dese.com' like append on 51dese.com
          vmode: session.vmode,    // vURL mode
         vtoken: session.vtoken,   // vURL secure token
         
