@@ -340,7 +340,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                                     altname: [
                                         ///'*.*.vurl.'+sdp.server.dn, '*.vurl.local.'+sdp.server.dn, '*.*.vurl.local.'+sdp.server.dn,
                                         ///'*.vurl.'+sdp.server.dn,
-                                        client.clntinfo.clntip, client.clntinfo.clntlip, '127.0.0.1', 'localhost',
+                                        client.clntinfo.clntip, client.clntinfo.clntlip, '127.0.0.1', 'localhost', '::1', 'ip6-localhost',
                                         sdp.server.ip,
                                         // append vlocal. subdomain
                                         sdp.client.vmode == vurl.URL_MODE_HOST ? '*.vurl.vlocal.' + sdp.server.dn : 'vlocal.' + sdp.server.dn,
