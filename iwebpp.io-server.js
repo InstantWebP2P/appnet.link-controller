@@ -6,8 +6,8 @@
 var debug = require('debug')('iwebpp.io.srv');
 
 
-// iWebPP.io module
-var iWebPP        = require('iwebpp.io');
+// AppNet.io module
+var iWebPP        = require('appnet.io');
 
 // Session establish protocol
 var SEP           = iWebPP.SEP;
