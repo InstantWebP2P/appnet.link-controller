@@ -18,7 +18,7 @@ AppNet.IO controller serivices to support [AppNet.io protocol](https://github.co
  
 ### Install
 
-* iwebpp.io-controller depends on node-httpp, please build it from repo [node-httpp](https://github.com/InstantWebP2P/node-httpp.git)
+* appnet.io-controller depends on node-httpp, please build it from repo [node-httpp](https://github.com/InstantWebP2P/node-httpp.git)
 
 * clone this repo and install dependency modules
 
@@ -34,7 +34,7 @@ AppNet.IO controller serivices to support [AppNet.io protocol](https://github.co
 
     ` ~/node-httpp/node ./bin/srv.js `
 
-* now ready to serve [iwebpp.io client](https://github.com/InstantWebP2P/iwebpp.io)
+* now ready to serve [appnet.io client](https://github.com/InstantWebP2P/appnet.io)
 
 
 #### Install on Linux with Docker
