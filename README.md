@@ -1,5 +1,5 @@
 # appnet.io-controller
-AppNet.IO controller serivices to support [appnet.io protocol](https://github.com/InstantWebP2P/appnet.io)
+AppNet.IO controller serivices to support [AppNet.io protocol](https://github.com/InstantWebP2P/appnet.io)
 
 
 ### [Discussion group](https://groups.google.com/d/forum/iwebpp)
