@@ -45,15 +45,15 @@ var genSslCert = exports.genSslCert = function(filename, fn){
         if (code !== 0) {
             console.log('s1 openssl process exited with code ' + code);
             fn('s1 openssl process exited with code ' + code);
-        } else {		    
-		    fn(null, {
-		         key: fs.readFileSync(__dirname+'/certs/'+filename+'-key.pem').toString(),
-		        cert: fs.readFileSync(__dirname+'/certs/'+filename+'-cert.pem').toString()
-		    });
-		    
-		    // destroy certs
-		    fs.unlink(__dirname+'/certs/'+filename+'-key.pem');
-		    fs.unlink(__dirname+'/certs/'+filename+'-cert.pem');
+        } else {            
+            fn(null, {
+                 key: fs.readFileSync(__dirname+'/certs/'+filename+'-key.pem').toString(),
+                cert: fs.readFileSync(__dirname+'/certs/'+filename+'-cert.pem').toString()
+            });
+            
+            // destroy certs
+            fs.unlink(__dirname+'/certs/'+filename+'-key.pem');
+            fs.unlink(__dirname+'/certs/'+filename+'-cert.pem');
         }
     });
 };

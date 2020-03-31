@@ -68,10 +68,10 @@ var genSslCert = exports.genSslCert = function(filename, info, fn){
             ///fn('s1 openssl process exited with code ' + code);
             // fall back to fixed certs
             fn(null, {
-		         key: fs.readFileSync(__dirname+'/certs/'+'peerwww'+'-key.pem').toString(),
-		        cert: fs.readFileSync(__dirname+'/certs/'+'peerwww'+'-cert.pem').toString()
-		    });
-        } else {		    
+                 key: fs.readFileSync(__dirname+'/certs/'+'peerwww'+'-key.pem').toString(),
+                cert: fs.readFileSync(__dirname+'/certs/'+'peerwww'+'-cert.pem').toString()
+            });
+        } else {            
             try {
                 fn(null, {
                      key: fs.readFileSync(__dirname+'/certs/'+filename+'-key.pem').toString(),

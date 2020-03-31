@@ -94,19 +94,19 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
     self.dn     = endpoints.dn      || '51dese.com';
     self.ipaddr = endpoints.ipaddr  || '0.0.0.0';
     self.ports  = endpoints.ports   || [51686, 51868];
-	
+    
     // SSL certs
     self.sslcerts    = sslcerts || {};
     self.sslcerts.ns = self.sslcerts.ns || false;
     self.sslcerts.as = self.sslcerts.as || false;
     self.sslcerts.ps = self.sslcerts.ps || false;
-	
+    
     // ssl CA cert/key
     self.sslcerts.ca = self.sslcerts.ca || false;
-	
+    
     // default user-specific features
     self.option = endpoints.option || {};
-	
+    
     // server obj cache
     self.srvs = {};
     
@@ -132,9 +132,9 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
     function sendOpcMsg(socket, opc_msg, fn){ 
         try {
             if (socket && socket.send) {
-            	// !!!Prefer json instead of msgpack
+                // !!!Prefer json instead of msgpack
                 ///socket.send(MSGPACK.encode(opc_msg), {binary: true, mask: false}, function(err){
-            	socket.send(JSON.stringify(opc_msg), {binary: false, mask: false}, function(err){
+                socket.send(JSON.stringify(opc_msg), {binary: false, mask: false}, function(err){
                     if (err) {
                         console.log(err+',sendOpcMsg failed');
                         if (fn) fn(err+',sendOpcMsg failed');
@@ -265,9 +265,9 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                                 }, 2000); // 2s timeout
                             });
                             
-		                    // 3.1
-		                    // emit event
-		                    self.emit('NS.SEP.SEP_OPC_SDP_OFFER', {client: client, data: data});
+                            // 3.1
+                            // emit event
+                            self.emit('NS.SEP.SEP_OPC_SDP_OFFER', {client: client, data: data});
                         } else {
                             // hook client info
                             client.clntinfo = {
@@ -307,13 +307,13 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                             
                             // !!! for security, only return country/city of GeoIP to client
                             if (data.answer.client.geoip) {
-	                            data.answer.client.geoip = JSON.parse(data.answer.client.geoip);
-	                            Object.keys(data.answer.client.geoip).forEach(function(k){
-	                                if (!(k in {country: 'us', city: 'ca'})) {
-	                                    data.answer.client.geoip[k] = null; 
-	                                    delete data.answer.client.geoip[k];    
-	                                }
-	                            });
+                                data.answer.client.geoip = JSON.parse(data.answer.client.geoip);
+                                Object.keys(data.answer.client.geoip).forEach(function(k){
+                                    if (!(k in {country: 'us', city: 'ca'})) {
+                                        data.answer.client.geoip[k] = null; 
+                                        delete data.answer.client.geoip[k];    
+                                    }
+                                });
                             }
                             
                             // send TURN server agent port info,ip is same as name-server normally
@@ -324,7 +324,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                                 data.answer.turn = false;
                             }
                             
-	                        // 3.2
+                            // 3.2
                             // generate security certification in secure mode
                             // TBD... added subject's alternate name like public/local ip, etc
                             if (data.offer.secmode) {
@@ -341,7 +341,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                                         ///'*.*.vurl.'+sdp.server.dn, '*.vurl.local.'+sdp.server.dn, '*.*.vurl.local.'+sdp.server.dn,
                                         ///'*.vurl.'+sdp.server.dn,
                                         client.clntinfo.clntip, client.clntinfo.clntlip, '127.0.0.1', 'localhost', 
-										'::1', '0:0:0:0:0:0:0:1', 'ip6-localhost',
+                                        '::1', '0:0:0:0:0:0:0:1', 'ip6-localhost',
                                         sdp.server.ip,
                                         // append vlocal. subdomain
                                         sdp.client.vmode == vurl.URL_MODE_HOST ? '*.vurl.vlocal.' + sdp.server.dn : 'vlocal.' + sdp.server.dn,
@@ -352,11 +352,11 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                                         console.log(err+',generate security certs failed');
                                         data.answer.secerts = null;
                                          
-	                                    sendOpcMsg(client, data);
-	                                     
-					                    // 3.2.1
-					                    // emit event
-					                    self.emit('NS.SEP.SEP_OPC_SDP_OFFER', {client: client, data: data});
+                                        sendOpcMsg(client, data);
+                                         
+                                        // 3.2.1
+                                        // emit event
+                                        self.emit('NS.SEP.SEP_OPC_SDP_OFFER', {client: client, data: data});
                                     } else {
                                         // 3.2.2
                                         // like for *.vurl.51dese.com
@@ -380,11 +380,11 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                                     }
                                 });
                             } else {            
-		                        sendOpcMsg(client, data);
-			                                
-			                    // 3.2.6
-			                    // emit event
-			                    self.emit('NS.SEP.SEP_OPC_SDP_OFFER', {client: client, data: data});
+                                sendOpcMsg(client, data);
+                                            
+                                // 3.2.6
+                                // emit event
+                                self.emit('NS.SEP.SEP_OPC_SDP_OFFER', {client: client, data: data});
                             }
                         }
                     });
@@ -416,39 +416,39 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                         // send message back
                         sendOpcMsg(client, data);
                         
-	                    // 4.1
-	                    // emit event
-	                    self.emit('NS.SEP.SEP_OPC_NAT_OFFER', {client: client, data: data});
+                        // 4.1
+                        // emit event
+                        self.emit('NS.SEP.SEP_OPC_NAT_OFFER', {client: client, data: data});
                     });
                     break;
 
                 case SEP.SEP_OPC_HEART_BEAT_OFFER:
-					// 1.
-					// check if user was allowed to query it
-					// TBD...
-	
-					// 2.
-					// heart-beat check response
-	
-					// 2.1
-					// fill answer opc
-					data.opc          = SEP.SEP_OPC_HEART_BEAT_ANSWER;
-					data.answer       = {};
-					data.answer.state = SEP.SEP_OPC_STATE_READY;
-	
-					data.answer.ready = true;
-	
-					// fill server timestamp
-					data.answer.timeAt = Date.now();
-	
-					// 3.
-					// send message back
-					sendOpcMsg(client, data);
-	
-					// 3.1
-					// emit event
-					self.emit('NS.SEP.SEP_OPC_HEART_BEAT_OFFER', {client: client, data: data});
-					break;
+                    // 1.
+                    // check if user was allowed to query it
+                    // TBD...
+    
+                    // 2.
+                    // heart-beat check response
+    
+                    // 2.1
+                    // fill answer opc
+                    data.opc          = SEP.SEP_OPC_HEART_BEAT_ANSWER;
+                    data.answer       = {};
+                    data.answer.state = SEP.SEP_OPC_STATE_READY;
+    
+                    data.answer.ready = true;
+    
+                    // fill server timestamp
+                    data.answer.timeAt = Date.now();
+    
+                    // 3.
+                    // send message back
+                    sendOpcMsg(client, data);
+    
+                    // 3.1
+                    // emit event
+                    self.emit('NS.SEP.SEP_OPC_HEART_BEAT_OFFER', {client: client, data: data});
+                    break;
 
                 case SEP.SEP_OPC_STUN_OFFER:
                     debug('stun.offer:'+JSON.stringify(data));
@@ -485,7 +485,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                           
                     /*mineclnt = (self.conn[client.clntinfo.srvip+':'+client.clntinfo.srvport])
                                          [data.offer.mine.ip+':'+data.offer.mine.port];*/
-			                                                                        
+                                                                                    
                     mineclnt = client; // current client is always mine
                                          
                     peerclnt = (self.conn[client.clntinfo.srvip+':'+client.clntinfo.srvport])
@@ -515,10 +515,10 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                         
                         // 1.1.3
                         // send STUN_ANSWER to myself client
-	                    data.offer.isInitiator = true;
-	                    
-	                    data.opc = SEP.SEP_OPC_STUN_ANSWER;
-	                    
+                        data.offer.isInitiator = true;
+                        
+                        data.opc = SEP.SEP_OPC_STUN_ANSWER;
+                        
                         data.answer = {};
                         data.answer.state = SEP.SEP_OPC_STATE_FAIL;
                         data.answer.ready = false;
@@ -533,13 +533,13 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                             }, 2000); // 2s timeout
                         });
                         
-	                    debug('mineclnt stun.data.offer:'+JSON.stringify(data.offer));
-	                    
-	                    // 1.1.6
-	                    // emit event with initiator
-	                    self.emit('NS.SEP.SEP_OPC_STUN_OFFER', {client: mineclnt, data: data});
-	                    
-	                    break;
+                        debug('mineclnt stun.data.offer:'+JSON.stringify(data.offer));
+                        
+                        // 1.1.6
+                        // emit event with initiator
+                        self.emit('NS.SEP.SEP_OPC_STUN_OFFER', {client: mineclnt, data: data});
+                        
+                        break;
                     }
                                         
                     // 2.
@@ -607,7 +607,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                           
                     /*mineclnt = (self.conn[client.clntinfo.srvip+':'+client.clntinfo.srvport])
                                          [data.offer.mine.ip+':'+data.offer.mine.port];*/
-			                                                                        
+                                                                                    
                     mineclnt = client; // current client is always mine
                                          
                     peerclnt = (self.conn[client.clntinfo.srvip+':'+client.clntinfo.srvport])
@@ -637,10 +637,10 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                         
                         // 1.1.3
                         // send TURN_ANSWER to myself client
-	                    data.offer.isInitiator = true;
-	                    
-	                    data.opc = SEP.SEP_OPC_TURN_ANSWER;
-	                    
+                        data.offer.isInitiator = true;
+                        
+                        data.opc = SEP.SEP_OPC_TURN_ANSWER;
+                        
                         data.answer = {};
                         data.answer.state = SEP.SEP_OPC_STATE_FAIL;
                         data.answer.ready = false;
@@ -655,15 +655,15 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                             }, 2000); // 2s timeout
                         });
                         
-	                    debug('mineclnt turn.data.offer:'+JSON.stringify(data.offer));
-	                    
-	                    // 1.1.6
-	                    // emit event with initiator
-	                    self.emit('NS.SEP.SEP_OPC_TURN_OFFER', {client: mineclnt, data: data});
-	                    
-	                    break;
+                        debug('mineclnt turn.data.offer:'+JSON.stringify(data.offer));
+                        
+                        // 1.1.6
+                        // emit event with initiator
+                        self.emit('NS.SEP.SEP_OPC_TURN_OFFER', {client: mineclnt, data: data});
+                        
+                        break;
                     }
-			                                                           
+                                                                       
                     // 2.
                     // check if Peer is ready for TURN/AGENT relay
                     // - find TURN/PROXY routing entry by peer's vURL root path
@@ -684,59 +684,59 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                             data.answer.ready = false;
                             
                             // 2.1
-			                // send turn answer to myself client
-			                /*mineclnt = (self.conn[client.clntinfo.srvip+':'+client.clntinfo.srvport])
-			                                         [data.offer.mine.ip+':'+data.offer.mine.port];*/
-			                mineclnt = client; // current client is always mine
-			                    
-			                data.answer.isInitiator = true;
-			                sendOpcMsg(mineclnt, data);
-			                
-			                // 2.1.1
-			                // emit event with initiator
+                            // send turn answer to myself client
+                            /*mineclnt = (self.conn[client.clntinfo.srvip+':'+client.clntinfo.srvport])
+                                                     [data.offer.mine.ip+':'+data.offer.mine.port];*/
+                            mineclnt = client; // current client is always mine
+                                
+                            data.answer.isInitiator = true;
+                            sendOpcMsg(mineclnt, data);
+                            
+                            // 2.1.1
+                            // emit event with initiator
                             self.emit('NS.SEP.SEP_OPC_TURN_OFFER', {client: mineclnt, data: data});
                         } else {                            
                             // 3.
                             // persistent TURN session
-	                        var turn = new Turn({
-	                            // session info
-	                            sid       : UUID.v4(),
-	                            proto     : 'udp',
-	                            mode      : data.offer.mode,
-	                            
-	                            // client info
-	                            minenatype: data.offer.mine.natype,
-	                            mineid    : data.offer.mine.gid,
-	                            mineIP    : data.offer.mine.ip,
-	                            minePort  : data.offer.mine.port,
-	                            
-	                            peernatype: data.offer.peer.natype,
-	                            peerid    : data.offer.peer.gid,
-	                            peerIP    : data.offer.peer.ip,
-	                            peerPort  : data.offer.peer.port,
-	                            
-	                            // turn server info got by vURL lookup
-	                            srvpublicDN : routing.turn.dn,
-	                            srvpublicIP : routing.turn.ipaddr,
-	                            srvproxyPort: routing.turn.proxyport,
-	                            srvagentPort: routing.turn.agentport
-	                        });
-	                        
-	                        turn.saveOupdate(function(err, turn){
-	                            if (err) {
-	                                console.log(err+',record turn session failed');
-	                                data.answer.state = SEP.SEP_OPC_STATE_FAIL;
-	                                data.answer.ready = false;
-	                            } else {
-	                                // fill answer info
-	                                debug('saved turn session successfully:'+JSON.stringify(turn));
-	                                data.answer.state = SEP.SEP_OPC_STATE_READY;
-	                                data.answer.ready = true;
-	                                data.answer.peer  = turn.peer;
-	                                data.answer.mine  = turn.mine;
-	                                data.answer.turn  = turn.session;
-	                                
-	                                // fill TURN/PROXY vURL vpath or vhost info
+                            var turn = new Turn({
+                                // session info
+                                sid       : UUID.v4(),
+                                proto     : 'udp',
+                                mode      : data.offer.mode,
+                                
+                                // client info
+                                minenatype: data.offer.mine.natype,
+                                mineid    : data.offer.mine.gid,
+                                mineIP    : data.offer.mine.ip,
+                                minePort  : data.offer.mine.port,
+                                
+                                peernatype: data.offer.peer.natype,
+                                peerid    : data.offer.peer.gid,
+                                peerIP    : data.offer.peer.ip,
+                                peerPort  : data.offer.peer.port,
+                                
+                                // turn server info got by vURL lookup
+                                srvpublicDN : routing.turn.dn,
+                                srvpublicIP : routing.turn.ipaddr,
+                                srvproxyPort: routing.turn.proxyport,
+                                srvagentPort: routing.turn.agentport
+                            });
+                            
+                            turn.saveOupdate(function(err, turn){
+                                if (err) {
+                                    console.log(err+',record turn session failed');
+                                    data.answer.state = SEP.SEP_OPC_STATE_FAIL;
+                                    data.answer.ready = false;
+                                } else {
+                                    // fill answer info
+                                    debug('saved turn session successfully:'+JSON.stringify(turn));
+                                    data.answer.state = SEP.SEP_OPC_STATE_READY;
+                                    data.answer.ready = true;
+                                    data.answer.peer  = turn.peer;
+                                    data.answer.mine  = turn.mine;
+                                    data.answer.turn  = turn.session;
+                                    
+                                    // fill TURN/PROXY vURL vpath or vhost info
                                     data.answer.turn.vpath  = data.offer.peer.vpath;
                                     data.answer.turn.vhost  = data.offer.peer.vhost;
                                     data.answer.turn.vmode  = data.offer.peer.vmode;
@@ -744,39 +744,39 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                                     
                                     // fill TURN security mode as peer security mode
                                     data.answer.turn.secmode = data.offer.peer.secmode;
-	                            }
-	                            
-			                    // 4.
-			                    // send turn answer to both peers
-			                    // - initiator will setup connection to turn/proxy server, then by turn/agent-client to peer
-			                    // - responsor will allow connection from turn/agent-client by turn/proxy server from initiator
-			                                        			                                                       
-			                    // keep data.seqno as turn initiator
-			                    
-			                    // 4.1
-			                    // send turn answer to myself client
-			                    data.answer.isInitiator = true;
-			                    sendOpcMsg(mineclnt, data);
-			                    debug('mineclnt turn.data.offer:'+JSON.stringify(data.offer));
-			                    
-			                    // 4.1.1
-			                    // emit event with initiator
+                                }
+                                
+                                // 4.
+                                // send turn answer to both peers
+                                // - initiator will setup connection to turn/proxy server, then by turn/agent-client to peer
+                                // - responsor will allow connection from turn/agent-client by turn/proxy server from initiator
+                                                                                                                       
+                                // keep data.seqno as turn initiator
+                                
+                                // 4.1
+                                // send turn answer to myself client
+                                data.answer.isInitiator = true;
+                                sendOpcMsg(mineclnt, data);
+                                debug('mineclnt turn.data.offer:'+JSON.stringify(data.offer));
+                                
+                                // 4.1.1
+                                // emit event with initiator
                                 self.emit('NS.SEP.SEP_OPC_TURN_OFFER', {client: mineclnt, data: data});
                             
-			                    // 4.2
-			                    // swap offer.mine and offer.peer to assemble TURN answer for peer client
-			                    // notes: only send it when find TURN/PROXY routing entry
-			                    if (data.answer.state === SEP.SEP_OPC_STATE_READY) {
-				                    var tmp = data.offer.mine;
-				                    data.offer.mine = data.offer.peer;
-				                    data.offer.peer = tmp;
-				              
-				                    // send turn answer to peer client
-				                    data.answer.isInitiator = false;
-				                    sendOpcMsg(peerclnt, data);
-				                    debug('peerclnt turn.data.offer:'+JSON.stringify(data.offer));
-			                    }
-	                        });
+                                // 4.2
+                                // swap offer.mine and offer.peer to assemble TURN answer for peer client
+                                // notes: only send it when find TURN/PROXY routing entry
+                                if (data.answer.state === SEP.SEP_OPC_STATE_READY) {
+                                    var tmp = data.offer.mine;
+                                    data.offer.mine = data.offer.peer;
+                                    data.offer.peer = tmp;
+                              
+                                    // send turn answer to peer client
+                                    data.answer.isInitiator = false;
+                                    sendOpcMsg(peerclnt, data);
+                                    debug('peerclnt turn.data.offer:'+JSON.stringify(data.offer));
+                                }
+                            });
                         }
                     });
                  
@@ -867,7 +867,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                             self.emit('NS.SEP.SEP_OPC_PUNCH_ANSWER', {client: mineclnt, data: data});
                         });
                     } else {
-					    data.answer.state = SEP.SEP_OPC_STATE_FAIL;
+                        data.answer.state = SEP.SEP_OPC_STATE_FAIL;
                         data.answer.ready =false;
                         
                         // 2.2
@@ -949,8 +949,8 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                     
                     if (_tbd_disable_alluser) {
                         data.opc    = SEP.SEP_OPC_ALL_USR_ANSWER;
-	                    data.answer = {};
-	                        
+                        data.answer = {};
+                            
                         console.error('!!! Forbiden query all user info');
                         // send back user info session as answer
                         data.answer.usrs = [];
@@ -962,30 +962,30 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                         // emit event
                         self.emit('NS.SEP.SEP_OPC_ALL_USR_OFFER', {client: mineclnt, data: data});
                     } else {
-	                    // 2.
-	                    // query login info
-	                    Sdp.getAllUsrs(function(err, usrs) {                        
-	                        // 3.
-	                        // send back ALL_USR answer
-	                        data.opc    = SEP.SEP_OPC_ALL_USR_ANSWER;
-	                        data.answer = {};
-	                        
-	                        if (err) {
-	                            console.log(err+',query user info failed');
-	                            // send back user info session as answer
-	                            data.answer.usrs = [];
-	                            data.answer.state  = SEP.SEP_OPC_STATE_FAIL;
-	                        } else {
-	                            // send back real user info as answer
-	                            data.answer.usrs  = usrs;
-	                            data.answer.state = SEP.SEP_OPC_STATE_READY;
-	                        }
-	                        sendOpcMsg(client, data);
-	                        
-	                        // 3.1
-	                        // emit event
-	                        self.emit('NS.SEP.SEP_OPC_ALL_USR_OFFER', {client: mineclnt, data: data});
-	                    });
+                        // 2.
+                        // query login info
+                        Sdp.getAllUsrs(function(err, usrs) {                        
+                            // 3.
+                            // send back ALL_USR answer
+                            data.opc    = SEP.SEP_OPC_ALL_USR_ANSWER;
+                            data.answer = {};
+                            
+                            if (err) {
+                                console.log(err+',query user info failed');
+                                // send back user info session as answer
+                                data.answer.usrs = [];
+                                data.answer.state  = SEP.SEP_OPC_STATE_FAIL;
+                            } else {
+                                // send back real user info as answer
+                                data.answer.usrs  = usrs;
+                                data.answer.state = SEP.SEP_OPC_STATE_READY;
+                            }
+                            sendOpcMsg(client, data);
+                            
+                            // 3.1
+                            // emit event
+                            self.emit('NS.SEP.SEP_OPC_ALL_USR_OFFER', {client: mineclnt, data: data});
+                        });
                     }
                     break;
                     
@@ -1003,43 +1003,43 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                     
                     if (_tbd_disable_alllogin) {                        
                         data.opc    = SEP.SEP_OPC_ALL_LOGIN_ANSWER;
-	                    data.answer = {};
-	                        
+                        data.answer = {};
+                            
                         console.error('!!! Forbiden query all login session');
                         // send back login session as answer
                         data.answer.logins = [];
                         data.answer.state  = SEP.SEP_OPC_STATE_FAIL;
                         
                         sendOpcMsg(client, data);
-	                        
+                            
                         // 1.1
                         // emit event
                         self.emit('NS.SEP.SEP_OPC_ALL_LOGIN_OFFER', {client: client, data: data});
                     } else {
-	                    // 2.
-	                    // query login info
-	                    Sdp.getAllLogin(function(err, logins) {
-	                        // 3.
-	                        // send back ALL_LOGIN answer
-	                        data.opc    = SEP.SEP_OPC_ALL_LOGIN_ANSWER;
-	                        data.answer = {};
-	                        
-	                        if (err) {
-	                            console.log(err+',query all login session failed');
-	                            // send back login session as answer
-	                            data.answer.logins = [];
-	                            data.answer.state  = SEP.SEP_OPC_STATE_FAIL;
-	                        } else {
-	                            // send back real logins session as answer
-	                            data.answer.logins = logins;
-	                            data.answer.state  = SEP.SEP_OPC_STATE_READY;
-	                        }
-	                        sendOpcMsg(client, data);
-	                        
-	                        // 3.1
-	                        // emit event
-	                        self.emit('NS.SEP.SEP_OPC_ALL_LOGIN_OFFER', {client: client, data: data});
-	                    });
+                        // 2.
+                        // query login info
+                        Sdp.getAllLogin(function(err, logins) {
+                            // 3.
+                            // send back ALL_LOGIN answer
+                            data.opc    = SEP.SEP_OPC_ALL_LOGIN_ANSWER;
+                            data.answer = {};
+                            
+                            if (err) {
+                                console.log(err+',query all login session failed');
+                                // send back login session as answer
+                                data.answer.logins = [];
+                                data.answer.state  = SEP.SEP_OPC_STATE_FAIL;
+                            } else {
+                                // send back real logins session as answer
+                                data.answer.logins = logins;
+                                data.answer.state  = SEP.SEP_OPC_STATE_READY;
+                            }
+                            sendOpcMsg(client, data);
+                            
+                            // 3.1
+                            // emit event
+                            self.emit('NS.SEP.SEP_OPC_ALL_LOGIN_OFFER', {client: client, data: data});
+                        });
                     }
                     break;
                 
@@ -1109,7 +1109,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                             }, 2000); // 2s timeout
                         });
                         
-                    	// 1.3
+                        // 1.3
                         // emit event
                         self.emit('NS.SEP.SEP_OPC_SRV_REPORT_OFFER', {client: client, data: data});   
                         
@@ -1136,7 +1136,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                             }, 2000); // 2s timeout
                         });
                         
-                    	// 1.6.1
+                        // 1.6.1
                         // emit event
                         self.emit('NS.SEP.SEP_OPC_SRV_REPORT_OFFER', {client: client, data: data});   
                         
@@ -1160,7 +1160,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                     data.offer.srv.geoip.city    = client.clntinfo.clntgeoip.city;
 
                     peerService.put(data.offer.srv, function(err, srv){                        
-                    	// 3.
+                        // 3.
                         // send back answer
                         data.opc    = SEP.SEP_OPC_SRV_REPORT_ANSWER;
                         data.answer = {};
@@ -1212,7 +1212,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                             }, 2000); // 2s timeout
                         });
                         
-                    	// 1.3
+                        // 1.3
                         // emit event
                         self.emit('NS.SEP.SEP_OPC_SRV_UPDATE_OFFER', {client: client, data: data});   
                         
@@ -1239,7 +1239,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                             }, 2000); // 2s timeout
                         });
                         
-                    	// 1.6.1
+                        // 1.6.1
                         // emit event
                         self.emit('NS.SEP.SEP_OPC_SRV_UPDATE_OFFER', {client: client, data: data});   
                         
@@ -1253,7 +1253,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
 
                     // 2.1
                     // keep geoIP info
-               	    // !!! for security, only return country/city of GeoIP to client
+                       // !!! for security, only return country/city of GeoIP to client
                     data.offer.srv.geoip         = {};
                     data.offer.srv.geoip.country = client.clntinfo.clntgeoip.country;
                     data.offer.srv.geoip.city    = client.clntinfo.clntgeoip.city;
@@ -1310,7 +1310,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                             }, 2000); // 2s timeout
                         });
                         
-                    	// 1.3
+                        // 1.3
                         // emit event
                         self.emit('NS.SEP.SEP_OPC_SRV_QUERY_OFFER', {client: client, data: data});
                         
@@ -1332,9 +1332,9 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                             data.answer.srv   = data.offer.srv;
                             data.answer.state = SEP.SEP_OPC_STATE_FAIL;
                         } else {
-                        	// send back service info as answer
-                        	data.answer.srv   = srv;
-                        	data.answer.state = SEP.SEP_OPC_STATE_READY;
+                            // send back service info as answer
+                            data.answer.srv   = srv;
+                            data.answer.state = SEP.SEP_OPC_STATE_READY;
                         }
                         sendOpcMsg(client, data);
                         
@@ -1355,7 +1355,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                     
                     // 2.
                     // get vURL info
-                    vURL.get(data.offer.vurl, function(err, routing){		                                        
+                    vURL.get(data.offer.vurl, function(err, routing){                                                
                         // 3.
                         // send back answer
                         data.opc    = SEP.SEP_OPC_VURL_INFO_ANSWER;
@@ -1370,8 +1370,8 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                         } else {
                             // 3.1
                             // check on user for authentication
-		                    // only allow user connect to user-self and public user
-		                    // TBD... Policy-Based_ACL
+                            // only allow user connect to user-self and public user
+                            // TBD... Policy-Based_ACL
                             if (client.clntinfo && client.clntinfo.domain && client.clntinfo.usrkey &&
                                 routing.usrinfo && routing.usrinfo.domain && routing.usrinfo.usrkey &&
                                  // 3.1.1
@@ -1380,29 +1380,29 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                                  // 3.1.2
                                  // !!! allow connect to public user 
                                  (client.clntinfo.domain === routing.usrinfo.domain && 'public' === routing.usrinfo.usrkey))) {
-	                            // send back vURL info as answer
-	                            // notes: don't pass usrinfo/seckeys back
-	                            data.answer.info = {};
-	                            Object.keys(routing).forEach(function(k){
-	                                if (k !== 'seckeys' && k !== 'usrinfo') 
-	                                    data.answer.info[k] = routing[k];     
-	                            });
-	                            
-	                            data.answer.state = SEP.SEP_OPC_STATE_READY;
-	                                  
-	                            sendOpcMsg(client, data);      
+                                // send back vURL info as answer
+                                // notes: don't pass usrinfo/seckeys back
+                                data.answer.info = {};
+                                Object.keys(routing).forEach(function(k){
+                                    if (k !== 'seckeys' && k !== 'usrinfo') 
+                                        data.answer.info[k] = routing[k];     
+                                });
+                                
+                                data.answer.state = SEP.SEP_OPC_STATE_READY;
+                                      
+                                sendOpcMsg(client, data);      
                             } else {
-	                            console.log('!!!DDOS attack,no permission to get vURL info');
-	                            data.answer.info  = null;
-	                            data.answer.state = SEP.SEP_OPC_STATE_FAIL;
-	                            
-	                            // close after 2s
-	                            sendOpcMsg(client, data, function(err){
-	                                if (err) console.log(err+'sendOpcMsg failed');
-	                                
-	                                setTimeout(function(){
-	                                    if (client && client.close) client.close();                                    
-	                                }, 2000); // 2s timeout
+                                console.log('!!!DDOS attack,no permission to get vURL info');
+                                data.answer.info  = null;
+                                data.answer.state = SEP.SEP_OPC_STATE_FAIL;
+                                
+                                // close after 2s
+                                sendOpcMsg(client, data, function(err){
+                                    if (err) console.log(err+'sendOpcMsg failed');
+                                    
+                                    setTimeout(function(){
+                                        if (client && client.close) client.close();                                    
+                                    }, 2000); // 2s timeout
                                 });
                             }
                         }
@@ -1436,30 +1436,30 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
             debug('client.onClose:'+JSON.stringify(client.clntinfo));
             if (client.clntinfo) {
                 try {
-	                // 1.1
-	                // emit event
-	                self.emit('NS.client.close', {clntinfo: client.clntinfo});
-	            
-	                // 2.
-	                // clear client connection cache
-	                var ck = client.clntinfo.clntip+':'+client.clntinfo.clntport,
-	                    sk = client.clntinfo.srvip+':'+client.clntinfo.srvport;
-	                debug('ck:'+ck+',sk:'+sk+',self.conn[sk][ck]:'+(self.conn[sk])[ck]);
-	                if (self.conn[sk] && (self.conn[sk])[ck] && client.clntinfo.gid) {
-	                    // Never clear data on DB, just set live flag as false
-	                    /*Sdp.db.delClient(client.clntinfo.gid, function(err){
-	                        if (err) console.log(err+',clear client with session failed @'+client.clntinfo.gid+'@srv:'+sk);
-	                        debug('clear client with sessions successfully @'+client.clntinfo.gid+',@srv:'+sk);
-	                    }, true);*/
-	                    // client data
-	                    Sdp.updateClntInfo({gid: client.clntinfo.gid, live: false}, function(err){
-	                        if (err) console.log(err+',clear client with session failed @'+client.clntinfo.gid+'@srv:'+sk);
-	                        debug('clear client with sessions successfully @'+client.clntinfo.gid+',@srv:'+sk);
-	                    
-	                        client.clntinfo = null;
-	                        (self.conn[sk])[ck] = null;
+                    // 1.1
+                    // emit event
+                    self.emit('NS.client.close', {clntinfo: client.clntinfo});
+                
+                    // 2.
+                    // clear client connection cache
+                    var ck = client.clntinfo.clntip+':'+client.clntinfo.clntport,
+                        sk = client.clntinfo.srvip+':'+client.clntinfo.srvport;
+                    debug('ck:'+ck+',sk:'+sk+',self.conn[sk][ck]:'+(self.conn[sk])[ck]);
+                    if (self.conn[sk] && (self.conn[sk])[ck] && client.clntinfo.gid) {
+                        // Never clear data on DB, just set live flag as false
+                        /*Sdp.db.delClient(client.clntinfo.gid, function(err){
+                            if (err) console.log(err+',clear client with session failed @'+client.clntinfo.gid+'@srv:'+sk);
+                            debug('clear client with sessions successfully @'+client.clntinfo.gid+',@srv:'+sk);
+                        }, true);*/
+                        // client data
+                        Sdp.updateClntInfo({gid: client.clntinfo.gid, live: false}, function(err){
+                            if (err) console.log(err+',clear client with session failed @'+client.clntinfo.gid+'@srv:'+sk);
+                            debug('clear client with sessions successfully @'+client.clntinfo.gid+',@srv:'+sk);
+                        
+                            client.clntinfo = null;
+                            (self.conn[sk])[ck] = null;
                             });
-	                }
+                    }
                 } catch (e) {
                     console.log('Ignore onClose exceptions');
                 }
@@ -1477,29 +1477,29 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
             debug('client.onError:'+JSON.stringify(client.clntinfo));
             if (client.clntinfo) {
                 try {
-	                // 1.1
-	                // emit event
-	                self.emit('NS.client.error', {clntinfo: client.clntinfo});
-	                
-	                // 2.
-	                // clear client connection cache
-	                var ck = client.clntinfo.clntip+':'+client.clntinfo.clntport,
-	                    sk = client.clntinfo.srvip+':'+client.clntinfo.srvport;
-	                debug('ck:'+ck+',sk:'+sk+',self.conn[sk][ck]:'+(self.conn[sk])[ck]);
-	                if (self.conn[sk] && (self.conn[sk])[ck] && client.clntinfo.gid) {
-	                    // Never clear data on DB, just set live flag as false
-	                    /*Sdp.db.delClient(client.clntinfo.gid, function(err){
-	                        if (err) console.log(err+',clear client with session failed @'+client.clntinfo.gid+'@srv:'+sk);
-	                        debug('clear client with sessions successfully @'+client.clntinfo.gid+',@srv:'+sk);
-	                    }, true);*/                    
-	                    Sdp.updateClntInfo({gid: client.clntinfo.gid, live: false}, function(err){
-	                        if (err) console.log(err+',clear client with session failed @'+client.clntinfo.gid+'@srv:'+sk);
-	                        debug('clear client with sessions successfully @'+client.clntinfo.gid+',@srv:'+sk);
-	                    });
-	                    
-	                    client.clntinfo = null;                        
-	                    (self.conn[sk])[ck] = null;
-	                }
+                    // 1.1
+                    // emit event
+                    self.emit('NS.client.error', {clntinfo: client.clntinfo});
+                    
+                    // 2.
+                    // clear client connection cache
+                    var ck = client.clntinfo.clntip+':'+client.clntinfo.clntport,
+                        sk = client.clntinfo.srvip+':'+client.clntinfo.srvport;
+                    debug('ck:'+ck+',sk:'+sk+',self.conn[sk][ck]:'+(self.conn[sk])[ck]);
+                    if (self.conn[sk] && (self.conn[sk])[ck] && client.clntinfo.gid) {
+                        // Never clear data on DB, just set live flag as false
+                        /*Sdp.db.delClient(client.clntinfo.gid, function(err){
+                            if (err) console.log(err+',clear client with session failed @'+client.clntinfo.gid+'@srv:'+sk);
+                            debug('clear client with sessions successfully @'+client.clntinfo.gid+',@srv:'+sk);
+                        }, true);*/                    
+                        Sdp.updateClntInfo({gid: client.clntinfo.gid, live: false}, function(err){
+                            if (err) console.log(err+',clear client with session failed @'+client.clntinfo.gid+'@srv:'+sk);
+                            debug('clear client with sessions successfully @'+client.clntinfo.gid+',@srv:'+sk);
+                        });
+                        
+                        client.clntinfo = null;                        
+                        (self.conn[sk])[ck] = null;
+                    }
                 } catch (e) {
                     console.log('Ignore onClose exceptions');
                 }
@@ -1511,31 +1511,31 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
     // TBD... run in Domain
     var httppsrvn;
     for (var i = 0, srv = {}; i < self.ports.length; i ++) {
-    	if (self.sslcerts.ns)
-    		httppsrvn = httpps.createServer(self.sslcerts.ns);
-    	else
-    		httppsrvn = httpp.createServer();	
+        if (self.sslcerts.ns)
+            httppsrvn = httpps.createServer(self.sslcerts.ns);
+        else
+            httppsrvn = httpp.createServer();    
 
         srv = new WebSocketServer({httpp: true, server: httppsrvn, path: SEP.SEP_CTRLPATH_NS});
 
-    	self.srvs[self.ipaddr+':'+self.ports[i]] = {
-    			host: self.ipaddr, 
-    			port: self.ports[i],
+        self.srvs[self.ipaddr+':'+self.ports[i]] = {
+                host: self.ipaddr, 
+                port: self.ports[i],
 
-    			srv: srv, 
-    			httppsrv: httppsrvn,
+                srv: srv, 
+                httppsrv: httppsrvn,
 
-    			path: SEP.SEP_CTRLPATH_NS,
+                path: SEP.SEP_CTRLPATH_NS,
 
-    			cert: self.sslcerts.ns
-    	};
+                cert: self.sslcerts.ns
+        };
 
-    	srv.on('connection', onConnection);
+        srv.on('connection', onConnection);
 
-    	// name server
-    	// backlog 10K TBD...
-    	httppsrvn.listen(self.ports[i], self.ipaddr);
-    	console.log('name-server-'+i+' listen on udp port '+self.ports[i]);
+        // name server
+        // backlog 10K TBD...
+        httppsrvn.listen(self.ports[i], self.ipaddr);
+        console.log('name-server-'+i+' listen on udp port '+self.ports[i]);
     }
     
     // start turn server
@@ -1548,38 +1548,38 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
         self.turnProxyCache = {}; // proxy cache
         self.trunProxyHistory = {}; // proxy history
         
-		// 1.2
-		// setup server to proxy standard HTTP requests on both tcp and udp port		
-		var proxyHttpService = function(req, res) {
-		    var vurle, vstrs, urle = req.url;
-		    
-		    // 1.2.1
-		    // match vURL pattern:
-		    // - vhost like http(s)://"xxx.vurl."51dese.com
-		    // - vpath like http(s)://51dese.com"/vurl/xxx"
-		    if (vstrs = req.headers.host.match(vurl.regex_vhost)) {
-		        vurle = vstrs[0];
-		        debug('proxy for client with vhost:'+vurle);
-		    } else if (vstrs = req.url.match(vurl.regex_vpath)) {
-			    vurle = vstrs[0];	       
-			    
-			    // prune vpath in req.url
+        // 1.2
+        // setup server to proxy standard HTTP requests on both tcp and udp port        
+        var proxyHttpService = function(req, res) {
+            var vurle, vstrs, urle = req.url;
+            
+            // 1.2.1
+            // match vURL pattern:
+            // - vhost like http(s)://"xxx.vurl."51dese.com
+            // - vpath like http(s)://51dese.com"/vurl/xxx"
+            if (vstrs = req.headers.host.match(vurl.regex_vhost)) {
+                vurle = vstrs[0];
+                debug('proxy for client with vhost:'+vurle);
+            } else if (vstrs = req.url.match(vurl.regex_vpath)) {
+                vurle = vstrs[0];           
+                
+                // prune vpath in req.url
                 req.url = req.url.replace(vurle, '');
-			         
-			    debug('proxy for client with vpath:'+vurle);
-		    } else {
-		        // invalid vURL
-		        res.writeHead(400);
+                     
+                debug('proxy for client with vpath:'+vurle);
+            } else {
+                // invalid vURL
+                res.writeHead(400);
                 res.end('invalid URL');
                 console.error('invalid URL:'+urle);
                 return;
-		    }
+            }
     
-		    debug('Http request proxy for client request.headers:'+JSON.stringify(req.headers)+
-		                           ',url:'+urle+',vurl:'+vurle);
+            debug('Http request proxy for client request.headers:'+JSON.stringify(req.headers)+
+                                   ',url:'+urle+',vurl:'+vurle);
 
-	        // 1.2.2
-	        // fetch peer target host info via vURL
+            // 1.2.2
+            // fetch peer target host info via vURL
             vURL.get(vurle, function(err, routing){
                 if (err || !routing) {
                     res.writeHead(400);
@@ -1589,138 +1589,138 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                 }
                 
                 // 1.2.3
-		        // cache proxy
-		        if (!self.turnProxyCache[vurle]) {
+                // cache proxy
+                if (!self.turnProxyCache[vurle]) {
                     // fill destination name-client info and create proxy to peer target
-		            self.turnProxyCache[vurle] = new httppProxy.HttpProxy({
-		                ///httpp: false,
-		                https: self.sslcerts.ps || false,
-		                changeOrigin: false,
-	                    enable: {xforward: true},
-		                
-		                ///source: {host: 'localhost', port: self.turnPorts[0]},
-		                  
-		                target: {
-		                    httpp: true,
-		                    
-		                    // set SSL related info
-		                    https: routing.secmode ? {
+                    self.turnProxyCache[vurle] = new httppProxy.HttpProxy({
+                        ///httpp: false,
+                        https: self.sslcerts.ps || false,
+                        changeOrigin: false,
+                        enable: {xforward: true},
+                        
+                        ///source: {host: 'localhost', port: self.turnPorts[0]},
+                          
+                        target: {
+                            httpp: true,
+                            
+                            // set SSL related info
+                            https: routing.secmode ? {
                                 rejectUnauthorized: true, 
                                                 ca: self.sslcerts.ca.cont, 
                                                key: self.sslcerts.as.key,
                                               cert: self.sslcerts.as.cert
                             } : false, 
-		                    
-		                    host: routing.dst.ipaddr,
-		                    port: routing.dst.port,
-		                    
-		                    // set user-specific feature,like maxim bandwidth,etc
-		                    // TBD... with user DB
-		                    localAddress: {
-		                        addr: routing.turn.lipaddr,
-		                        port: routing.turn.agentport,
-		                        
-		                         opt: {
-		                            mbw: self.option.mbw || null
-		                        }
-		                    }
-		                }
-		            });
-		            
-				    // Handle request error
-				    self.turnProxyCache[vurle].on('proxyError', function(err, req, res) {
-				        debug(err+',proxy to '+urle);
-				        
-				        // send error back
-				        try {
-				            res.writeHead(500, {'Content-Type': 'text/plain'});
-						    if (req.method !== 'HEAD') {
-					            if (process.env.NODE_ENV === 'production') {
-					                res.write('Internal Server Error');
-					            } else {
-					                res.write('An error has occurred: ' + JSON.stringify(err));
-					            }
-					        }
-				            res.end();
-				        } catch (ex) {
-				            console.error("res.end error: %s", ex.message) ;
-				        }
-				        
-	                    // clear vURL entry
-	                    // notes: still keep it to avoid attack
-	                    ///self.turnProxyCache[vurle] = null;
-	                });
-	                
-	                // Handle upgrade error
-				    self.turnProxyCache[vurle].on('webSocketProxyError', function(err, req, socket, head){
-				        debug(err+',proxy to '+urle);
-				        
-				        // send error back
-				        try {
-				            if (process.env.NODE_ENV === 'production') {
-				                socket.write('Internal Server Error');
-				            } else {
-				                socket.write('An error has occurred: ' + JSON.stringify(err));
-				            }
-				            socket.end();
-				        } catch (ex) {
-				            console.error("socket.end error: %s", ex.message) ;
-				        }
-				        
-				        // clear vURL entry
-				        // notes: still keep it to avoid attack
-	                    ///self.turnProxyCache[vurle] = null;
-	                });
-		        }
-		        
-	            // 1.2.5
-	            // proxy target
-	            self.turnProxyCache[vurle].proxyRequest(req, res);
-		    });
-		};
-		
-		// 1.3
-		// create http proxy service
-		
-		// 1.3.1
-		// create http proxy App
-	    var proxyHttpApp = Connect();
-	    
-	    // 1.3.2
-	    // add third-party connect middle-ware
-	    
-	    // 1.3.2.1
-	    // set httpp capacity for turn/proxy server
-	    proxyHttpApp.use(connect_httpp(self.turnPorts[0]));
-	    
-	    // 1.3.2.2
-	    // vtoken authentication
-	    proxyHttpApp.use(function(req, res, next){
-		    var vurle, vstrs, urle = req.url;
-		    
-		    // 1.
-		    // match vURL pattern:
-		    // - vhost like http(s)://"xxx.vurl."51dese.com
-		    // - vpath like http(s)://51dese.com"/vurl/xxx"
-		    if (vstrs = req.headers.host && req.headers.host.match(vurl.regex_vhost)) {
-		        vurle = vstrs[0];
-		        debug('proxy for client with vhost:'+vurle);
-		    } else if (vstrs = req.url && req.url.match(vurl.regex_vpath)) {
-			    vurle = vstrs[0];
-			    debug('proxy for client with vpath:'+vurle);
-		    } else {
-		        // invalid vURL
-		        res.writeHead(400);
+                            
+                            host: routing.dst.ipaddr,
+                            port: routing.dst.port,
+                            
+                            // set user-specific feature,like maxim bandwidth,etc
+                            // TBD... with user DB
+                            localAddress: {
+                                addr: routing.turn.lipaddr,
+                                port: routing.turn.agentport,
+                                
+                                 opt: {
+                                    mbw: self.option.mbw || null
+                                }
+                            }
+                        }
+                    });
+                    
+                    // Handle request error
+                    self.turnProxyCache[vurle].on('proxyError', function(err, req, res) {
+                        debug(err+',proxy to '+urle);
+                        
+                        // send error back
+                        try {
+                            res.writeHead(500, {'Content-Type': 'text/plain'});
+                            if (req.method !== 'HEAD') {
+                                if (process.env.NODE_ENV === 'production') {
+                                    res.write('Internal Server Error');
+                                } else {
+                                    res.write('An error has occurred: ' + JSON.stringify(err));
+                                }
+                            }
+                            res.end();
+                        } catch (ex) {
+                            console.error("res.end error: %s", ex.message) ;
+                        }
+                        
+                        // clear vURL entry
+                        // notes: still keep it to avoid attack
+                        ///self.turnProxyCache[vurle] = null;
+                    });
+                    
+                    // Handle upgrade error
+                    self.turnProxyCache[vurle].on('webSocketProxyError', function(err, req, socket, head){
+                        debug(err+',proxy to '+urle);
+                        
+                        // send error back
+                        try {
+                            if (process.env.NODE_ENV === 'production') {
+                                socket.write('Internal Server Error');
+                            } else {
+                                socket.write('An error has occurred: ' + JSON.stringify(err));
+                            }
+                            socket.end();
+                        } catch (ex) {
+                            console.error("socket.end error: %s", ex.message) ;
+                        }
+                        
+                        // clear vURL entry
+                        // notes: still keep it to avoid attack
+                        ///self.turnProxyCache[vurle] = null;
+                    });
+                }
+                
+                // 1.2.5
+                // proxy target
+                self.turnProxyCache[vurle].proxyRequest(req, res);
+            });
+        };
+        
+        // 1.3
+        // create http proxy service
+        
+        // 1.3.1
+        // create http proxy App
+        var proxyHttpApp = Connect();
+        
+        // 1.3.2
+        // add third-party connect middle-ware
+        
+        // 1.3.2.1
+        // set httpp capacity for turn/proxy server
+        proxyHttpApp.use(connect_httpp(self.turnPorts[0]));
+        
+        // 1.3.2.2
+        // vtoken authentication
+        proxyHttpApp.use(function(req, res, next){
+            var vurle, vstrs, urle = req.url;
+            
+            // 1.
+            // match vURL pattern:
+            // - vhost like http(s)://"xxx.vurl."51dese.com
+            // - vpath like http(s)://51dese.com"/vurl/xxx"
+            if (vstrs = req.headers.host && req.headers.host.match(vurl.regex_vhost)) {
+                vurle = vstrs[0];
+                debug('proxy for client with vhost:'+vurle);
+            } else if (vstrs = req.url && req.url.match(vurl.regex_vpath)) {
+                vurle = vstrs[0];
+                debug('proxy for client with vpath:'+vurle);
+            } else {
+                // invalid vURL
+                res.writeHead(400);
                 res.end('invalid URL');
                 console.error('invalid URL:'+urle);
                 return;
-		    }
+            }
     
-		    debug('Http request proxy for client request.headers:'+JSON.stringify(req.headers)+
-		                           ',url:'+urle+',vurl:'+vurle);
+            debug('Http request proxy for client request.headers:'+JSON.stringify(req.headers)+
+                                   ',url:'+urle+',vurl:'+vurle);
 
-	        // 2.
-	        // fetch peer target host info via vURL
+            // 2.
+            // fetch peer target host info via vURL
             vURL.get(vurle, function(err, routing){
                 if (err || !routing) {
                     res.writeHead(400);
@@ -1729,157 +1729,157 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                     return;
                 }
                                 
-		        // 3.
-		        // check vURL security token in case name-client in ACL-based secure vURL mode
-		        // notes: only check host-only-based token authentication here
-		        if (routing.secmode > SEP.SEP_SEC_SSL) {
-			        var curtime = Date.now();
-			        var phk = req.connection.remoteAddress+':'+vurle;
-			        
-			        debug('peer host key:'+phk);
-			        
-			        self.trunProxyHistory[phk] = self.trunProxyHistory[phk] ||
-			                                     {timestamp: Date.now(), state: 0, trys: 0, maxTrys: 6, timeOut: 6};
-			        		                                     
-			        // 3.1
-			        // allow authenticated host
-			        if (self.trunProxyHistory[phk].state > 0) {
-			            // update timestamp
-			            self.trunProxyHistory[phk].timestamp = curtime;
-			            
-			            // !!! rewrite req.url to remove vToken parts
-			            req.url = req.url.replace(vurl.regex_vtoken, '');
-			            
-			            // go on to proxy
-			            next();
-			        } else {
-			            // 3.2
-			            // check reject timer
-			            if (self.trunProxyHistory[phk].state < 0) {
-			                if (curtime < (self.trunProxyHistory[phk].timestamp + self.trunProxyHistory[phk].timeOut*1000*
-			                               (self.trunProxyHistory[phk].trys ? self.trunProxyHistory[phk].trys : 1))) {
-			                    // reject
-			                    res.writeHead(400);
-	                            res.end('please try later');
-	                            return;
-			                } else {
-			                    // reset state/trys
-			                    self.trunProxyHistory[phk].state = 0;
-			                    self.trunProxyHistory[phk].trys = 0;
-			                    self.trunProxyHistory[phk].timestamp = curtime;
-			                    
-			                    // go on to authenticate
-			                }
-			            }
-			            
-			            // 3.3
-			            // check re-try
-			            if (self.trunProxyHistory[phk].trys > self.trunProxyHistory[phk].maxTrys) {
-			                // update timestamp
-			                self.trunProxyHistory[phk].timestamp = curtime;
-			                
-			                // set reject 
-			                self.trunProxyHistory[phk].state = -1;
-			                
-			                // reject
-			                res.writeHead(400);
-	                        res.end('please try later');
-	                        return;
-			            } else {
-			                // 3.4
-			                // check vToken URL path like /vtoken/xxxx
-			                var urlstr = urle.match(vurl.regex_vtoken);
-			                var ptoken = urlstr ? urlstr[0].split(/\//gi)[2] : '';
-			                var vtoken = SIPHASH.hash_hex(routing.seckeys, routing.vurl);
-			                
-			                if (ptoken === vtoken) {		                    
-			                    // set pass 
-			                    self.trunProxyHistory[phk].state = 1;
-			                    
-			                    // update timestamp
-			                    self.trunProxyHistory[phk].timestamp = curtime;
-			                    
-			                    // !!! rewrite req.url to remove vToken parts
-			                    req.url = req.url.replace(vurl.regex_vtoken, '');
-			                    
-			                    // go on to proxy
-			                    next();
-			                } else {
-			                    // increase re-try count
-			                    self.trunProxyHistory[phk].trys ++;
-			                    
-			                    // update timestamp
-			                    self.trunProxyHistory[phk].timestamp = curtime;
-			                    
-			                    // retry
-			                    res.writeHead(400);
-	                            res.end('please try later');
-	                            return;
-			                }
-			            }
-			        }
-		        } else {
-		            // go on to proxy
-		            next();
-		        }
-	        });	    
-	    });
-	    
-	    // 1.3.2.2
-	    // compress
-	    // TBD...
-	    ///proxyHttpApp.use(Connect.compress());
-	    
-	    // 1.3.2.3
-	    // static-cache, ...
-	    // TBD...
-	    ///proxyHttpApp.use(Connect.staticCache({maxLength: 1024*1024, maxObjects: 128}));
-	    
-	    // 1.3.3
-	    // add http proxy service in App
-	    proxyHttpApp.use(proxyHttpService);
-	    
-		// 1.4
-		// create httpp/http proxy server
-		var proxyServerHttpp = self.sslcerts.ps ?
-		                       httpps.createServer(self.sslcerts.ps, proxyHttpApp) :
-		                       httpp.createServer(proxyHttpApp);
-		                       
-		var proxyServerHttp  = self.sslcerts.ps ?
-		                       https.createServer(self.sslcerts.ps, proxyHttpApp) :
-		                       http.createServer(proxyHttpApp);
-		
-		// 1.5
-		// listen to the `upgrade` event and proxy the WebSocket requests as well.
-		var proxyHttpUpgradeService = function (req, socket, head) {
-		    var vurle, vstrs, urle = req.url;
-		    
-		    // 1.5.1
-		    // match vURL pattern:
-		    // - vhost like http(s)://xxx.vurl.51dese.com
-		    // - vpath like http(s)://51dese.com/vurl/xxx
-		    if (vstrs = req.headers.host.match(vurl.regex_vhost)) {
-		        vurle = vstrs[0];
-		        debug('proxy for client with vhost:'+vurle);
-		    } else if (vstrs = req.url.match(vurl.regex_vpath)) {
-			    vurle = vstrs[0];
-			    
-			    // prune vpath in req.url
+                // 3.
+                // check vURL security token in case name-client in ACL-based secure vURL mode
+                // notes: only check host-only-based token authentication here
+                if (routing.secmode > SEP.SEP_SEC_SSL) {
+                    var curtime = Date.now();
+                    var phk = req.connection.remoteAddress+':'+vurle;
+                    
+                    debug('peer host key:'+phk);
+                    
+                    self.trunProxyHistory[phk] = self.trunProxyHistory[phk] ||
+                                                 {timestamp: Date.now(), state: 0, trys: 0, maxTrys: 6, timeOut: 6};
+                                                                 
+                    // 3.1
+                    // allow authenticated host
+                    if (self.trunProxyHistory[phk].state > 0) {
+                        // update timestamp
+                        self.trunProxyHistory[phk].timestamp = curtime;
+                        
+                        // !!! rewrite req.url to remove vToken parts
+                        req.url = req.url.replace(vurl.regex_vtoken, '');
+                        
+                        // go on to proxy
+                        next();
+                    } else {
+                        // 3.2
+                        // check reject timer
+                        if (self.trunProxyHistory[phk].state < 0) {
+                            if (curtime < (self.trunProxyHistory[phk].timestamp + self.trunProxyHistory[phk].timeOut*1000*
+                                           (self.trunProxyHistory[phk].trys ? self.trunProxyHistory[phk].trys : 1))) {
+                                // reject
+                                res.writeHead(400);
+                                res.end('please try later');
+                                return;
+                            } else {
+                                // reset state/trys
+                                self.trunProxyHistory[phk].state = 0;
+                                self.trunProxyHistory[phk].trys = 0;
+                                self.trunProxyHistory[phk].timestamp = curtime;
+                                
+                                // go on to authenticate
+                            }
+                        }
+                        
+                        // 3.3
+                        // check re-try
+                        if (self.trunProxyHistory[phk].trys > self.trunProxyHistory[phk].maxTrys) {
+                            // update timestamp
+                            self.trunProxyHistory[phk].timestamp = curtime;
+                            
+                            // set reject 
+                            self.trunProxyHistory[phk].state = -1;
+                            
+                            // reject
+                            res.writeHead(400);
+                            res.end('please try later');
+                            return;
+                        } else {
+                            // 3.4
+                            // check vToken URL path like /vtoken/xxxx
+                            var urlstr = urle.match(vurl.regex_vtoken);
+                            var ptoken = urlstr ? urlstr[0].split(/\//gi)[2] : '';
+                            var vtoken = SIPHASH.hash_hex(routing.seckeys, routing.vurl);
+                            
+                            if (ptoken === vtoken) {                            
+                                // set pass 
+                                self.trunProxyHistory[phk].state = 1;
+                                
+                                // update timestamp
+                                self.trunProxyHistory[phk].timestamp = curtime;
+                                
+                                // !!! rewrite req.url to remove vToken parts
+                                req.url = req.url.replace(vurl.regex_vtoken, '');
+                                
+                                // go on to proxy
+                                next();
+                            } else {
+                                // increase re-try count
+                                self.trunProxyHistory[phk].trys ++;
+                                
+                                // update timestamp
+                                self.trunProxyHistory[phk].timestamp = curtime;
+                                
+                                // retry
+                                res.writeHead(400);
+                                res.end('please try later');
+                                return;
+                            }
+                        }
+                    }
+                } else {
+                    // go on to proxy
+                    next();
+                }
+            });        
+        });
+        
+        // 1.3.2.2
+        // compress
+        // TBD...
+        ///proxyHttpApp.use(Connect.compress());
+        
+        // 1.3.2.3
+        // static-cache, ...
+        // TBD...
+        ///proxyHttpApp.use(Connect.staticCache({maxLength: 1024*1024, maxObjects: 128}));
+        
+        // 1.3.3
+        // add http proxy service in App
+        proxyHttpApp.use(proxyHttpService);
+        
+        // 1.4
+        // create httpp/http proxy server
+        var proxyServerHttpp = self.sslcerts.ps ?
+                               httpps.createServer(self.sslcerts.ps, proxyHttpApp) :
+                               httpp.createServer(proxyHttpApp);
+                               
+        var proxyServerHttp  = self.sslcerts.ps ?
+                               https.createServer(self.sslcerts.ps, proxyHttpApp) :
+                               http.createServer(proxyHttpApp);
+        
+        // 1.5
+        // listen to the `upgrade` event and proxy the WebSocket requests as well.
+        var proxyHttpUpgradeService = function (req, socket, head) {
+            var vurle, vstrs, urle = req.url;
+            
+            // 1.5.1
+            // match vURL pattern:
+            // - vhost like http(s)://xxx.vurl.51dese.com
+            // - vpath like http(s)://51dese.com/vurl/xxx
+            if (vstrs = req.headers.host.match(vurl.regex_vhost)) {
+                vurle = vstrs[0];
+                debug('proxy for client with vhost:'+vurle);
+            } else if (vstrs = req.url.match(vurl.regex_vpath)) {
+                vurle = vstrs[0];
+                
+                // prune vpath in req.url
                 req.url = req.url.replace(vurle, '');
-	            				
-			    debug('proxy for client with vpath:'+vurle);
-		    } else {
-		        // unknown vURL
-		        socket.end('invalid URL');
+                                
+                debug('proxy for client with vpath:'+vurle);
+            } else {
+                // unknown vURL
+                socket.end('invalid URL');
                 console.error('invalid vURL:'+urle);
                 return;
-		    }
+            }
     
-		    debug('Http upgrade proxy for client request.headers:'+JSON.stringify(req.headers)+
-		                           ',url:'+urle+',vurl:'+vurle);
-		    
-	        // 1.5.2
-	        // fetch peer target host info via vURL
+            debug('Http upgrade proxy for client request.headers:'+JSON.stringify(req.headers)+
+                                   ',url:'+urle+',vurl:'+vurle);
+            
+            // 1.5.2
+            // fetch peer target host info via vURL
             vURL.get(vurle, function(err, routing){
                 if (err || !routing) {
                     socket.end('invalid URL');
@@ -1888,227 +1888,227 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                 }
                 
                 // 1.5.3
-		        // cache proxy
-		        if (!self.turnProxyCache[vurle]) {
+                // cache proxy
+                if (!self.turnProxyCache[vurle]) {
                     // fill destination name-client info and create proxy to peer target
-		            self.turnProxyCache[vurle] = new httppProxy.HttpProxy({
-		                ///httpp: false,
-		                https: self.sslcerts.ps || false,
-		                changeOrigin: false,
-	                    enable: {xforward: true},
-		                
-		                ///source: {host: 'localhost', port: self.turnPorts[0]},
-		                 
-		                target: {
-		                    httpp: true, 
-		                    
-		                    // set SSL related info
-		                    https: routing.secmode ? {
+                    self.turnProxyCache[vurle] = new httppProxy.HttpProxy({
+                        ///httpp: false,
+                        https: self.sslcerts.ps || false,
+                        changeOrigin: false,
+                        enable: {xforward: true},
+                        
+                        ///source: {host: 'localhost', port: self.turnPorts[0]},
+                         
+                        target: {
+                            httpp: true, 
+                            
+                            // set SSL related info
+                            https: routing.secmode ? {
                                 rejectUnauthorized: true, 
                                                 ca: self.sslcerts.ca.cont, 
                                                key: self.sslcerts.as.key,
                                               cert: self.sslcerts.as.cert
                             } : false, 
-		                    
-		                    host: routing.dst.ipaddr,
-		                    port: routing.dst.port,
-		                    
-		                    // set user-specific feature,like maxim bandwidth,etc
-		                    // TBD... with user DB
-		                    localAddress: {
-		                        addr: routing.turn.lipaddr,
-		                        port: routing.turn.agentport, 
-		                        
-		                         opt: {
-		                            mbw: self.option.mbw || null
-		                        }
-		                    }
-		                }
-		            });
-		            
-		            // Handle request error
-				    self.turnProxyCache[vurle].on('proxyError', function(err, req, res){
-				        debug(err+',proxy to '+urle);
-				        
-				        // send error back
-				        try {
-				            res.writeHead(500, {'Content-Type': 'text/plain'});
-						    if (req.method !== 'HEAD') {
-					            if (process.env.NODE_ENV === 'production') {
-					                res.write('Internal Server Error');
-					            } else {
-					                res.write('An error has occurred: ' + JSON.stringify(err));
-					            }
-					        }
-				            res.end();
-				        } catch (ex) {
-				            console.error("res.end error: %s", ex.message) ;
-				        }
-				        
-	                    // clear vURL entry
-	                    // notes: still keep it to avoid attack
-	                    ///self.turnProxyCache[vurle] = null;
-	                });
-	                
-				    // Handle upgrade error
-				    self.turnProxyCache[vurle].on('webSocketProxyError', function(err, req, socket, head){
-				        debug(err+',proxy to '+urle);
-				        
-				        // send error back
-				        try {
-				            if (process.env.NODE_ENV === 'production') {
-				                socket.write('Internal Server Error');
-				            } else {
-				                socket.write('An error has occurred: ' + JSON.stringify(err));
-				            }
-				            socket.end();
-				        } catch (ex) {
-				            console.error("socket.end error: %s", ex.message) ;
-				        }
-				        
-				        // clear vURL entry
-				        // notes: still keep it to avoid attack
-	                    ///self.turnProxyCache[vurle] = null;
-	                });
-		        }
-		        
-		        // 1.5.4
-		        // check vURL security token in case name-client in ACL-based secure vURL mode
-		        // notes: only check host-only-based token authentication here
-		        if (routing.secmode > SEP.SEP_SEC_SSL) {
-			        var curtime = Date.now();
-			        var phk = socket.remoteAddress+':'+vurle;
-			        
-			        debug('peer host key:'+phk);
-			        
-			        self.trunProxyHistory[phk] = self.trunProxyHistory[phk] ||
-			                                     {timestamp: Date.now(), state: 0, trys: 0, maxTrys: 6, timeOut: 6};
-			        		                                     
-			        // 1.5.4.1
-			        // allow authenticated host
-			        if (self.trunProxyHistory[phk].state > 0) {
-			            // update timestamp
-			            self.trunProxyHistory[phk].timestamp = curtime;
-			            
-			            // !!! rewrite req.url to remove vToken parts
-			            req.url = req.url.replace(vurl.regex_vtoken, '');
-			            
-			            // go on to proxy
-			        } else {
-			            // 1.5.4.2
-			            // check reject timer
-			            if (self.trunProxyHistory[phk].state < 0) {
-			                if (curtime < (self.trunProxyHistory[phk].timestamp + self.trunProxyHistory[phk].timeOut*1000*
-			                               (self.trunProxyHistory[phk].trys ? self.trunProxyHistory[phk].trys : 1))) {
-			                    // reject
-	                            socket.write('please try later');
-	                            socket.end();
-	                            return;
-			                } else {
-			                    // reset state/trys
-			                    self.trunProxyHistory[phk].state = self.trunProxyHistory[phk].trys = 0;
-			                    self.trunProxyHistory[phk].timestamp = curtime;
-			                    
-			                    // go on to authenticate
-			                }
-			            }
-			            
-			            // 1.5.4.3
-			            // check re-try
-			            if (self.trunProxyHistory[phk].trys > self.trunProxyHistory[phk].maxTrys) {
-			                // update timestamp
-			                self.trunProxyHistory[phk].timestamp = curtime;
-			                
-			                // set reject 
-			                self.trunProxyHistory[phk].state = -1;
-			                
-			                // reject
-			                socket.write('please try later');
-	                        socket.end();
-	                        return;
-			            } else {
-			                // 1.5.4.4
-			                // check vToken URL path like /vtoken/xxxx
-			                var urlstr = urle.match(vurl.regex_vtoken);
-			                var ptoken = urlstr ? urlstr[0].split(/\//gi)[2] : '';
-			                var vtoken = SIPHASH.hash_hex(routing.seckeys, routing.vurl);
-			                
-			                debug('url:'+urle+',ptoken:'+ptoken+',vtoken:'+vtoken);
-			                
-			                if (ptoken === vtoken) {		                    
-			                    // set pass 
-			                    self.trunProxyHistory[phk].state = 1;
-			                    
-			                    // update timestamp
-			                    self.trunProxyHistory[phk].timestamp = curtime;
-			                    
-			                    // !!! rewrite req.url to remove vToken parts
-			                    req.url = req.url.replace(vurl.regex_vtoken, '');
-			                    
-			                    // go on to proxy
-			                } else {
-			                    // increase re-try count
-			                    self.trunProxyHistory[phk].trys ++;
-			                    
-			                    // update timestamp
-			                    self.trunProxyHistory[phk].timestamp = curtime;
-			                    
-			                    // retry
-			                    socket.write('please try later');
-	                            socket.end();
-	                            return;
-			                }
-			            }
-			        }
-		        }
-		        		        
-		        // 1.5.5
-		        // proxy target
-		        self.turnProxyCache[vurle].proxyWebSocketRequest(req, socket, head);
-		    });
-		};
-				
-		// 1.5.6
-		// create websocket proxy service	
-		proxyServerHttpp.on('upgrade', proxyHttpUpgradeService);
-		proxyServerHttp.on('upgrade', proxyHttpUpgradeService);
-				
-		// 1.6
-		// http tunnel based on CONNECT method
-		// notes: destination vURL in req.headers['turn-forward-to']
+                            
+                            host: routing.dst.ipaddr,
+                            port: routing.dst.port,
+                            
+                            // set user-specific feature,like maxim bandwidth,etc
+                            // TBD... with user DB
+                            localAddress: {
+                                addr: routing.turn.lipaddr,
+                                port: routing.turn.agentport, 
+                                
+                                 opt: {
+                                    mbw: self.option.mbw || null
+                                }
+                            }
+                        }
+                    });
+                    
+                    // Handle request error
+                    self.turnProxyCache[vurle].on('proxyError', function(err, req, res){
+                        debug(err+',proxy to '+urle);
+                        
+                        // send error back
+                        try {
+                            res.writeHead(500, {'Content-Type': 'text/plain'});
+                            if (req.method !== 'HEAD') {
+                                if (process.env.NODE_ENV === 'production') {
+                                    res.write('Internal Server Error');
+                                } else {
+                                    res.write('An error has occurred: ' + JSON.stringify(err));
+                                }
+                            }
+                            res.end();
+                        } catch (ex) {
+                            console.error("res.end error: %s", ex.message) ;
+                        }
+                        
+                        // clear vURL entry
+                        // notes: still keep it to avoid attack
+                        ///self.turnProxyCache[vurle] = null;
+                    });
+                    
+                    // Handle upgrade error
+                    self.turnProxyCache[vurle].on('webSocketProxyError', function(err, req, socket, head){
+                        debug(err+',proxy to '+urle);
+                        
+                        // send error back
+                        try {
+                            if (process.env.NODE_ENV === 'production') {
+                                socket.write('Internal Server Error');
+                            } else {
+                                socket.write('An error has occurred: ' + JSON.stringify(err));
+                            }
+                            socket.end();
+                        } catch (ex) {
+                            console.error("socket.end error: %s", ex.message) ;
+                        }
+                        
+                        // clear vURL entry
+                        // notes: still keep it to avoid attack
+                        ///self.turnProxyCache[vurle] = null;
+                    });
+                }
+                
+                // 1.5.4
+                // check vURL security token in case name-client in ACL-based secure vURL mode
+                // notes: only check host-only-based token authentication here
+                if (routing.secmode > SEP.SEP_SEC_SSL) {
+                    var curtime = Date.now();
+                    var phk = socket.remoteAddress+':'+vurle;
+                    
+                    debug('peer host key:'+phk);
+                    
+                    self.trunProxyHistory[phk] = self.trunProxyHistory[phk] ||
+                                                 {timestamp: Date.now(), state: 0, trys: 0, maxTrys: 6, timeOut: 6};
+                                                                 
+                    // 1.5.4.1
+                    // allow authenticated host
+                    if (self.trunProxyHistory[phk].state > 0) {
+                        // update timestamp
+                        self.trunProxyHistory[phk].timestamp = curtime;
+                        
+                        // !!! rewrite req.url to remove vToken parts
+                        req.url = req.url.replace(vurl.regex_vtoken, '');
+                        
+                        // go on to proxy
+                    } else {
+                        // 1.5.4.2
+                        // check reject timer
+                        if (self.trunProxyHistory[phk].state < 0) {
+                            if (curtime < (self.trunProxyHistory[phk].timestamp + self.trunProxyHistory[phk].timeOut*1000*
+                                           (self.trunProxyHistory[phk].trys ? self.trunProxyHistory[phk].trys : 1))) {
+                                // reject
+                                socket.write('please try later');
+                                socket.end();
+                                return;
+                            } else {
+                                // reset state/trys
+                                self.trunProxyHistory[phk].state = self.trunProxyHistory[phk].trys = 0;
+                                self.trunProxyHistory[phk].timestamp = curtime;
+                                
+                                // go on to authenticate
+                            }
+                        }
+                        
+                        // 1.5.4.3
+                        // check re-try
+                        if (self.trunProxyHistory[phk].trys > self.trunProxyHistory[phk].maxTrys) {
+                            // update timestamp
+                            self.trunProxyHistory[phk].timestamp = curtime;
+                            
+                            // set reject 
+                            self.trunProxyHistory[phk].state = -1;
+                            
+                            // reject
+                            socket.write('please try later');
+                            socket.end();
+                            return;
+                        } else {
+                            // 1.5.4.4
+                            // check vToken URL path like /vtoken/xxxx
+                            var urlstr = urle.match(vurl.regex_vtoken);
+                            var ptoken = urlstr ? urlstr[0].split(/\//gi)[2] : '';
+                            var vtoken = SIPHASH.hash_hex(routing.seckeys, routing.vurl);
+                            
+                            debug('url:'+urle+',ptoken:'+ptoken+',vtoken:'+vtoken);
+                            
+                            if (ptoken === vtoken) {                            
+                                // set pass 
+                                self.trunProxyHistory[phk].state = 1;
+                                
+                                // update timestamp
+                                self.trunProxyHistory[phk].timestamp = curtime;
+                                
+                                // !!! rewrite req.url to remove vToken parts
+                                req.url = req.url.replace(vurl.regex_vtoken, '');
+                                
+                                // go on to proxy
+                            } else {
+                                // increase re-try count
+                                self.trunProxyHistory[phk].trys ++;
+                                
+                                // update timestamp
+                                self.trunProxyHistory[phk].timestamp = curtime;
+                                
+                                // retry
+                                socket.write('please try later');
+                                socket.end();
+                                return;
+                            }
+                        }
+                    }
+                }
+                                
+                // 1.5.5
+                // proxy target
+                self.turnProxyCache[vurle].proxyWebSocketRequest(req, socket, head);
+            });
+        };
+                
+        // 1.5.6
+        // create websocket proxy service    
+        proxyServerHttpp.on('upgrade', proxyHttpUpgradeService);
+        proxyServerHttp.on('upgrade', proxyHttpUpgradeService);
+                
+        // 1.6
+        // http tunnel based on CONNECT method
+        // notes: destination vURL in req.headers['turn-forward-to']
         var proxyHttpTunnelService = function (req, socket, head) {
-		    var vurle, vstrs, urle = (req.headers && req.headers['turn-forward-to']);
-		    
-		    // check parameter
-		    if (!urle) {
-		        // unknown vURL
-		        socket.end('invalid URL');
+            var vurle, vstrs, urle = (req.headers && req.headers['turn-forward-to']);
+            
+            // check parameter
+            if (!urle) {
+                // unknown vURL
+                socket.end('invalid URL');
                 console.error('invalid vURL:'+urle);
                 return;
-		    }
-		    
-		    // 1.6.1
-		    // match vURL pattern:
-		    // - vhost like http(s)://xxx.vurl.51dese.com
-		    // - vpath like http(s)://51dese.com/vurl/xxx
-		    if (vstrs = urle.match(vurl.regex_vhost)) {
-		        vurle = vstrs[0];
-		        debug('proxy for client with vhost:'+vurle);
-		    } else if (vstrs = urle.match(vurl.regex_vpath)) {
-			    vurle = vstrs[0];	            				
-			    debug('proxy for client with vpath:'+vurle);
-		    } else {
-		        // unknown vURL
-		        socket.end('invalid URL');
+            }
+            
+            // 1.6.1
+            // match vURL pattern:
+            // - vhost like http(s)://xxx.vurl.51dese.com
+            // - vpath like http(s)://51dese.com/vurl/xxx
+            if (vstrs = urle.match(vurl.regex_vhost)) {
+                vurle = vstrs[0];
+                debug('proxy for client with vhost:'+vurle);
+            } else if (vstrs = urle.match(vurl.regex_vpath)) {
+                vurle = vstrs[0];                                
+                debug('proxy for client with vpath:'+vurle);
+            } else {
+                // unknown vURL
+                socket.end('invalid URL');
                 console.error('invalid vURL:'+urle);
                 return;
-		    }
+            }
     
-		    debug('Http tunnel proxy for client request.headers:'+JSON.stringify(req.headers)+
-		                           ',url:'+urle+',vurl:'+vurle);
-		    
-	        // 1.6.2
-	        // fetch peer target host info via vURL
+            debug('Http tunnel proxy for client request.headers:'+JSON.stringify(req.headers)+
+                                   ',url:'+urle+',vurl:'+vurle);
+            
+            // 1.6.2
+            // fetch peer target host info via vURL
             vURL.get(vurle, function(err, routing){
                 if (err || !routing) {
                     socket.end('invalid URL');
@@ -2119,202 +2119,202 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                 // 1.6.3
                 // ...
                 
-		        // 1.6.4
-		        // check vURL security token in case name-client in ACL-based secure vURL mode
-		        // notes: only check host-only-based token authentication here
-		        if (routing.secmode > SEP.SEP_SEC_SSL) {
-			        var curtime = Date.now();
-			        var phk = socket.remoteAddress+':'+vurle;
-			        
-			        debug('peer host key:'+phk);
-			        
-			        self.trunProxyHistory[phk] = self.trunProxyHistory[phk] ||
-			                                     {timestamp: Date.now(), state: 0, trys: 0, maxTrys: 6, timeOut: 6};
-			        		                                     
-			        // 1.6.4.1
-			        // allow authenticated host
-			        if (self.trunProxyHistory[phk].state > 0) {
-			            // update timestamp
-			            self.trunProxyHistory[phk].timestamp = curtime;
-			            			            
-			            // go on to proxy
-			        } else {
-			            // 1.6.4.2
-			            // check reject timer
-			            if (self.trunProxyHistory[phk].state < 0) {
-			                if (curtime < (self.trunProxyHistory[phk].timestamp + self.trunProxyHistory[phk].timeOut*1000*
-			                               (self.trunProxyHistory[phk].trys ? self.trunProxyHistory[phk].trys : 1))) {
-			                    // reject
-	                            socket.write('please try later');
-	                            socket.end();
-	                            return;
-			                } else {
-			                    // reset state/trys
-			                    self.trunProxyHistory[phk].state = self.trunProxyHistory[phk].trys = 0;
-			                    self.trunProxyHistory[phk].timestamp = curtime;
-			                    
-			                    // go on to authenticate
-			                }
-			            }
-			            
-			            // 1.6.4.3
-			            // check re-try
-			            if (self.trunProxyHistory[phk].trys > self.trunProxyHistory[phk].maxTrys) {
-			                // update timestamp
-			                self.trunProxyHistory[phk].timestamp = curtime;
-			                
-			                // set reject 
-			                self.trunProxyHistory[phk].state = -1;
-			                
-			                // reject
-			                socket.write('please try later');
-	                        socket.end();
-	                        return;
-			            } else {
-			                // 1.6.4.4
-			                // check vToken URL path like /vtoken/xxxx
-			                var urlstr = urle.match(vurl.regex_vtoken);
-			                var ptoken = urlstr ? urlstr[0].split(/\//gi)[2] : '';
-			                var vtoken = SIPHASH.hash_hex(routing.seckeys, routing.vurl);
-			                
-			                debug('url:'+urle+',ptoken:'+ptoken+',vtoken:'+vtoken);
-			                
-			                if (ptoken === vtoken) {		                    
-			                    // set pass 
-			                    self.trunProxyHistory[phk].state = 1;
-			                    
-			                    // update timestamp
-			                    self.trunProxyHistory[phk].timestamp = curtime;
-			                    
-			                    // go on to proxy
-			                } else {
-			                    // increase re-try count
-			                    self.trunProxyHistory[phk].trys ++;
-			                    
-			                    // update timestamp
-			                    self.trunProxyHistory[phk].timestamp = curtime;
-			                    
-			                    // retry
-			                    socket.write('please try later');
-	                            socket.end();
-	                            return;
-			                }
-			            }
-			        }
-		        }
-		        
-		        // 1.6.5
-		        // if req.url is valid vURL, connect to target vURL directly,
-				// otherwise do CONNECT tunnel forwarrd over target vURL
-				var dstip   = routing.dst.ipaddr;
+                // 1.6.4
+                // check vURL security token in case name-client in ACL-based secure vURL mode
+                // notes: only check host-only-based token authentication here
+                if (routing.secmode > SEP.SEP_SEC_SSL) {
+                    var curtime = Date.now();
+                    var phk = socket.remoteAddress+':'+vurle;
+                    
+                    debug('peer host key:'+phk);
+                    
+                    self.trunProxyHistory[phk] = self.trunProxyHistory[phk] ||
+                                                 {timestamp: Date.now(), state: 0, trys: 0, maxTrys: 6, timeOut: 6};
+                                                                 
+                    // 1.6.4.1
+                    // allow authenticated host
+                    if (self.trunProxyHistory[phk].state > 0) {
+                        // update timestamp
+                        self.trunProxyHistory[phk].timestamp = curtime;
+                                                
+                        // go on to proxy
+                    } else {
+                        // 1.6.4.2
+                        // check reject timer
+                        if (self.trunProxyHistory[phk].state < 0) {
+                            if (curtime < (self.trunProxyHistory[phk].timestamp + self.trunProxyHistory[phk].timeOut*1000*
+                                           (self.trunProxyHistory[phk].trys ? self.trunProxyHistory[phk].trys : 1))) {
+                                // reject
+                                socket.write('please try later');
+                                socket.end();
+                                return;
+                            } else {
+                                // reset state/trys
+                                self.trunProxyHistory[phk].state = self.trunProxyHistory[phk].trys = 0;
+                                self.trunProxyHistory[phk].timestamp = curtime;
+                                
+                                // go on to authenticate
+                            }
+                        }
+                        
+                        // 1.6.4.3
+                        // check re-try
+                        if (self.trunProxyHistory[phk].trys > self.trunProxyHistory[phk].maxTrys) {
+                            // update timestamp
+                            self.trunProxyHistory[phk].timestamp = curtime;
+                            
+                            // set reject 
+                            self.trunProxyHistory[phk].state = -1;
+                            
+                            // reject
+                            socket.write('please try later');
+                            socket.end();
+                            return;
+                        } else {
+                            // 1.6.4.4
+                            // check vToken URL path like /vtoken/xxxx
+                            var urlstr = urle.match(vurl.regex_vtoken);
+                            var ptoken = urlstr ? urlstr[0].split(/\//gi)[2] : '';
+                            var vtoken = SIPHASH.hash_hex(routing.seckeys, routing.vurl);
+                            
+                            debug('url:'+urle+',ptoken:'+ptoken+',vtoken:'+vtoken);
+                            
+                            if (ptoken === vtoken) {                            
+                                // set pass 
+                                self.trunProxyHistory[phk].state = 1;
+                                
+                                // update timestamp
+                                self.trunProxyHistory[phk].timestamp = curtime;
+                                
+                                // go on to proxy
+                            } else {
+                                // increase re-try count
+                                self.trunProxyHistory[phk].trys ++;
+                                
+                                // update timestamp
+                                self.trunProxyHistory[phk].timestamp = curtime;
+                                
+                                // retry
+                                socket.write('please try later');
+                                socket.end();
+                                return;
+                            }
+                        }
+                    }
+                }
+                
+                // 1.6.5
+                // if req.url is valid vURL, connect to target vURL directly,
+                // otherwise do CONNECT tunnel forwarrd over target vURL
+                var dstip   = routing.dst.ipaddr;
                 var dstport = routing.dst.port;
-	                
-		        if (req.url.match(vurle)) {
-		            // 1.6.5.1
-		            // connect it directly
-		            debug('turn-forward proxy, httpp connect to %s:%d', dstip, dstport);
-							                
-	                // connection options
-	                var coptions = {
-	                    port: dstport, 
-	                    host: dstip, 
-	                    
-	                    // set user-specific feature,like maxim bandwidth,etc
-	                    localAddress: {
-	                        addr: routing.turn.lipaddr,
-	                        port: routing.turn.agentport, 
-	                        
-	                        opt: {
-	                            mbw: self.option.mbw || null
-	                        }
-	                    }
-	                };
-	                var srvSocket = UDT.connect(coptions, function() {
-					    debug('turn-forward, httpp got connected');
-					
-					    socket.write('HTTP/1.1 200 Connection Established\r\n' +
-					                 'Proxy-agent: Node-Proxy\r\n' +
-						             '\r\n');
-						
-						srvSocket.pipe(socket);
-						socket.pipe(srvSocket);
-	                });
-					    
-					srvSocket.on('error', function(e) {
-					    console.log("turn-forward, httpp socket error: " + e);
-					    socket.end();
-					});						
-		        } else {		        
-			        // 1.6.5.2
-			        // setup tunnel to target by make CONNECT request
-				    var roptions = {
-					        port: dstport,
-					    hostname: dstip,
-					      method: 'CONNECT',
-					        path: req.url,
-					       agent: false,
-					        
-	                    // set user-specific feature,like maxim bandwidth,etc
-	                    // TBD... with user DB
-	                    localAddress: {
-	                        addr: routing.turn.lipaddr,
-	                        port: routing.turn.agentport, 
-	                        
-	                         opt: {
-	                            mbw: self.option.mbw || null
-	                        }
-	                    }
-			        };
-			        // set SSL related options
-				    if (routing.secmode) {
-				        roptions.rejectUnauthorized = true, 
-	                    roptions.ca = self.sslcerts.ca.cont, 
-	                    roptions.key = self.sslcerts.as.key,
-	                    roptions.cert = self.sslcerts.as.cert
-				    }			   
-				    							
-					var rreq = httpps.request(roptions);
-					rreq.end();
-					
-					debug('tunnel proxy, connect to %s:%d', dstip, dstport);
-					rreq.on('connect', function(rres, rsocket, rhead) {
-					    debug('tunnel proxy, got connected');
-					
-					    socket.write('HTTP/1.1 200 Connection Established\r\n' +
-					                 'Proxy-agent: Node-Proxy\r\n' +
-						             '\r\n');
-						
-						rsocket.pipe(socket);
-						socket.pipe(rsocket);
-						
-					    rsocket.on('error', function(e) {
-					        console.log("tunnel proxy, socket error: " + e);
-					        socket.end();
-					    });
-					});
-					
-					rreq.on('error', function(e) {
-				        console.log("tunnel proxy, CONNECT request error: " + e);					        
-				        socket.end();
-				    });
-			    }
-		    });
-		};		
-		
+                    
+                if (req.url.match(vurle)) {
+                    // 1.6.5.1
+                    // connect it directly
+                    debug('turn-forward proxy, httpp connect to %s:%d', dstip, dstport);
+                                            
+                    // connection options
+                    var coptions = {
+                        port: dstport, 
+                        host: dstip, 
+                        
+                        // set user-specific feature,like maxim bandwidth,etc
+                        localAddress: {
+                            addr: routing.turn.lipaddr,
+                            port: routing.turn.agentport, 
+                            
+                            opt: {
+                                mbw: self.option.mbw || null
+                            }
+                        }
+                    };
+                    var srvSocket = UDT.connect(coptions, function() {
+                        debug('turn-forward, httpp got connected');
+                    
+                        socket.write('HTTP/1.1 200 Connection Established\r\n' +
+                                     'Proxy-agent: Node-Proxy\r\n' +
+                                     '\r\n');
+                        
+                        srvSocket.pipe(socket);
+                        socket.pipe(srvSocket);
+                    });
+                        
+                    srvSocket.on('error', function(e) {
+                        console.log("turn-forward, httpp socket error: " + e);
+                        socket.end();
+                    });                        
+                } else {                
+                    // 1.6.5.2
+                    // setup tunnel to target by make CONNECT request
+                    var roptions = {
+                            port: dstport,
+                        hostname: dstip,
+                          method: 'CONNECT',
+                            path: req.url,
+                           agent: false,
+                            
+                        // set user-specific feature,like maxim bandwidth,etc
+                        // TBD... with user DB
+                        localAddress: {
+                            addr: routing.turn.lipaddr,
+                            port: routing.turn.agentport, 
+                            
+                             opt: {
+                                mbw: self.option.mbw || null
+                            }
+                        }
+                    };
+                    // set SSL related options
+                    if (routing.secmode) {
+                        roptions.rejectUnauthorized = true, 
+                        roptions.ca = self.sslcerts.ca.cont, 
+                        roptions.key = self.sslcerts.as.key,
+                        roptions.cert = self.sslcerts.as.cert
+                    }               
+                                                
+                    var rreq = httpps.request(roptions);
+                    rreq.end();
+                    
+                    debug('tunnel proxy, connect to %s:%d', dstip, dstport);
+                    rreq.on('connect', function(rres, rsocket, rhead) {
+                        debug('tunnel proxy, got connected');
+                    
+                        socket.write('HTTP/1.1 200 Connection Established\r\n' +
+                                     'Proxy-agent: Node-Proxy\r\n' +
+                                     '\r\n');
+                        
+                        rsocket.pipe(socket);
+                        socket.pipe(rsocket);
+                        
+                        rsocket.on('error', function(e) {
+                            console.log("tunnel proxy, socket error: " + e);
+                            socket.end();
+                        });
+                    });
+                    
+                    rreq.on('error', function(e) {
+                        console.log("tunnel proxy, CONNECT request error: " + e);                            
+                        socket.end();
+                    });
+                }
+            });
+        };        
+        
         // 1.6.6
-		// create CONNECT tunnel service	
-		proxyServerHttpp.on('connect', proxyHttpTunnelService);
-		proxyServerHttp.on('connect', proxyHttpTunnelService);
-		
-		// 1.7
-		// Listening on proxy port for both HTTPP and HTTP server
-		//  backlog 10K TBD...
-		proxyServerHttpp.listen(self.turnPorts[0], self.ipaddr, function(){
-		    console.log('httpp proxy-server listen on udp port '+self.turnPorts[0]);
-		});
-		proxyServerHttp.listen(self.turnPorts[0], self.ipaddr, function(){
-		    console.log('http proxy-server listen on tcp port '+self.turnPorts[0]);
-		});
+        // create CONNECT tunnel service    
+        proxyServerHttpp.on('connect', proxyHttpTunnelService);
+        proxyServerHttp.on('connect', proxyHttpTunnelService);
+        
+        // 1.7
+        // Listening on proxy port for both HTTPP and HTTP server
+        //  backlog 10K TBD...
+        proxyServerHttpp.listen(self.turnPorts[0], self.ipaddr, function(){
+            console.log('httpp proxy-server listen on udp port '+self.turnPorts[0]);
+        });
+        proxyServerHttp.listen(self.turnPorts[0], self.ipaddr, function(){
+            console.log('http proxy-server listen on tcp port '+self.turnPorts[0]);
+        });
         //////////////////////////////////////////////////////////////////////////////////////////////////
         
         // 1.8
@@ -2329,9 +2329,9 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
         // TBD... run in Domain
         var httppsrva;
         if (self.sslcerts.as)
-        	httppsrva = httpps.createServer(self.sslcerts.as);
+            httppsrva = httpps.createServer(self.sslcerts.as);
         else
-        	httppsrva = httpp.createServer();
+            httppsrva = httpp.createServer();
         
         var agentServer = new WebSocketServer({ httpp: true,
                                                 server: httppsrva,
@@ -2339,15 +2339,15 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                                               });
 
         self.turnSrvs.agent = {
-        		host: self.ipaddr, 
-        		port: self.turnPorts[1],
-        		
-        		     srv: agentServer, 
-        		httppsrv: httppsrva,
-        		
-        		path: SEP.SEP_CTRLPATH_AS,
-        		
-        		cert: self.sslcerts.as
+                host: self.ipaddr, 
+                port: self.turnPorts[1],
+                
+                     srv: agentServer, 
+                httppsrv: httppsrva,
+                
+                path: SEP.SEP_CTRLPATH_AS,
+                
+                cert: self.sslcerts.as
         };
                 
         // agent logics
@@ -2525,43 +2525,43 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                                         },      
                                         
                                         // destination user info
-				                        usrinfo: {
-				                            domain: tdata.offer.domain,
-				                            usrkey: tdata.offer.usrkey,
-				                        }
+                                        usrinfo: {
+                                            domain: tdata.offer.domain,
+                                            usrkey: tdata.offer.usrkey,
+                                        }
                                     },
                                     function(err, routing){
-	                                    if (err || !routing) {
-	                                        if (err) console.log(err+',setup TURN vURL routing entry failed');
-	                                        tdata.answer.ready = false;
-	                                
-	                                        // 6.
-	                                        // send back punch hole answer message
-	                                        sendOpcMsg(client, tdata);
-	                                        
-	                                        // 6.1
-	                                        // emit event
+                                        if (err || !routing) {
+                                            if (err) console.log(err+',setup TURN vURL routing entry failed');
+                                            tdata.answer.ready = false;
+                                    
+                                            // 6.
+                                            // send back punch hole answer message
+                                            sendOpcMsg(client, tdata);
+                                            
+                                            // 6.1
+                                            // emit event
                                             self.emit('AS.SEP.SEP_OPC_PUNCH_OFFER', {client: client, data: tdata});
-	                                    } else {
-	                                        console.log('setup TURN vURL routing entry successfully:'+JSON.stringify(routing));
-	                                        
-	                                        tdata.answer.ready = true;
-	                                        
-	                                        // pass vURL security token
-	                                        if (tdata.offer.secmode > SEP.SEP_SEC_SSL) 
-	                                            tdata.answer.vtoken = SIPHASH.hash_hex(routing.seckeys, routing.vurl);
-	                                        else 
-	                                            tdata.answer.vtoken = '';
-	                                        
-	                                        // 6.
-	                                        // send back punch hole answer message
-	                                        sendOpcMsg(client, tdata);
-	                                        
-	                                        // 6.1
-	                                        // emit event
+                                        } else {
+                                            console.log('setup TURN vURL routing entry successfully:'+JSON.stringify(routing));
+                                            
+                                            tdata.answer.ready = true;
+                                            
+                                            // pass vURL security token
+                                            if (tdata.offer.secmode > SEP.SEP_SEC_SSL) 
+                                                tdata.answer.vtoken = SIPHASH.hash_hex(routing.seckeys, routing.vurl);
+                                            else 
+                                                tdata.answer.vtoken = '';
+                                            
+                                            // 6.
+                                            // send back punch hole answer message
+                                            sendOpcMsg(client, tdata);
+                                            
+                                            // 6.1
+                                            // emit event
                                             self.emit('AS.SEP.SEP_OPC_PUNCH_OFFER', {client: client, data: tdata});
-	                                        
-	                                        // 7.	                                        
+                                            
+                                            // 7.                                            
                                             // store client in cache with vurl
                                             client.clntinfo.vurl = vurle;
                                             
@@ -2570,7 +2570,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                                             
                                             self.turnConn[sk]       = self.turnConn[sk] || {};
                                             (self.turnConn[sk])[ck] = client;
-	                                    }
+                                        }
                                 });
                             }
                         });

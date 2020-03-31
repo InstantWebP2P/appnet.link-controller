@@ -62,10 +62,10 @@ vURL.prototype.put = function(entry, fn){
         
         self.db[entry.vurl] = self.db[entry.vurl] || {};
         // filter selected fields
-	    Object.keys(entry).forEach(function(k){
-	        (self.db[entry.vurl])[k] = entry[k];
-	    });
-	    
+        Object.keys(entry).forEach(function(k){
+            (self.db[entry.vurl])[k] = entry[k];
+        });
+        
         if (fn) fn(null, self.db[entry.vurl]);
         ///console.log('add vURL:'+JSON.stringify(entry));
 

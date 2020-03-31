@@ -713,22 +713,22 @@ var updateSessionsByFromType = exports.updateSessionsByFromType = function(clnt,
         // update every sessions
         var cnt = 0;
         for (var i = 0; i < rslts.length; i ++) {
-	        var rel = rslts[i] && rslts[i].rel;
-	        
-	        // 2.1
-	        // update property
-	        for (var k in session) {
-	            if (session.hasOwnProperty(k)) rel._data.data[k] = session[k];
-	        }
-	        
-	        // 2.2
-	        // persist again
-	        rel.save(function(err){
-	            cnt ++;
-	            
-	            if (err) return fn(err+',update session failed');
-	            if (cnt === rslts.length) fn(null, rel._data.data);
-	        });
+            var rel = rslts[i] && rslts[i].rel;
+            
+            // 2.1
+            // update property
+            for (var k in session) {
+                if (session.hasOwnProperty(k)) rel._data.data[k] = session[k];
+            }
+            
+            // 2.2
+            // persist again
+            rel.save(function(err){
+                cnt ++;
+                
+                if (err) return fn(err+',update session failed');
+                if (cnt === rslts.length) fn(null, rel._data.data);
+            });
         }
     });
 };

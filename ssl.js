@@ -5,11 +5,11 @@
 'use strict';
 var debug = require('debug')('ssl');
 
-var    _ = require('lodash');
-
-var fs   = require('fs');
-var exec = require('child_process').exec;
-var NET  = require('net');
+var      _ = require('lodash');
+var IPADDR = require('ipaddr.js');
+var fs     = require('fs');
+var exec   = require('child_process').exec;
+var NET    = require('net');
 
 
 // Debug level
@@ -38,145 +38,145 @@ var genSslCert = exports.genSslCert = function(filename, info, fn){
     }
     filename += info.cn;
     filename = filename.replace('*', 'x');
-	debug('genSslCert info: ' + JSON.stringify(info));
+    debug('genSslCert info: ' + JSON.stringify(info));
 
     // SSL CA cert generate with retry    
     function genCert(filename, info, fn) {
-	    // construct openssl CLI arguments
-	    var clistr = '', cliarg = ['req', '-x509', '-nodes'];
-	
-	    // duration
-	    if (info.days) {
-	        cliarg.push('-days');
-	        cliarg.push(info.days);
-	    } else {
-	        cliarg.push('-days');
-	        cliarg.push('365');
-	    }
-	    
-	    // subject
-	    cliarg.push('-subj');
-	    cliarg.push('/C=CN/ST=SH/L=SH/CN='+info.cn);
-	    
-	    // -newkey rsa:2048
-	    cliarg.push('-newkey');
-	    cliarg.push('rsa:2048');
-	    
-	    // output
-	    cliarg.push('-keyout');
-	    cliarg.push(__dirname+'/certs-tmp/'+filename+'-key.pem');
-	    
-	    cliarg.push('-out');
-	    cliarg.push(__dirname+'/certs-tmp/'+filename+'-cert.pem');
-	    
-		// V3 extension, subject alternate name
-		// !!! count CN into altnames due to latest openssl not take CN field
-		info.altname = info.altname || []; info.altname.push(info.cn);
-	    if (info.altname && info.altname.length) {
-			// remove duplicates
-			info.altname = _.uniq(info.altname);
-			debug('client altnames: '+info.altname);
+        // construct openssl CLI arguments
+        var clistr = '', cliarg = ['req', '-x509', '-nodes'];
+    
+        // duration
+        if (info.days) {
+            cliarg.push('-days');
+            cliarg.push(info.days);
+        } else {
+            cliarg.push('-days');
+            cliarg.push('365');
+        }
+        
+        // subject
+        cliarg.push('-subj');
+        cliarg.push('/C=CN/ST=SH/L=SH/CN='+info.cn);
+        
+        // -newkey rsa:2048
+        cliarg.push('-newkey');
+        cliarg.push('rsa:2048');
+        
+        // output
+        cliarg.push('-keyout');
+        cliarg.push(__dirname+'/certs-tmp/'+filename+'-key.pem');
+        
+        cliarg.push('-out');
+        cliarg.push(__dirname+'/certs-tmp/'+filename+'-cert.pem');
+        
+        // V3 extension, subject alternate name
+        // !!! count CN into altnames due to latest openssl not take CN field
+        info.altname = info.altname || []; info.altname.push(info.cn);
+        if (info.altname && info.altname.length) {
+            // remove duplicates
+            info.altname = _.uniq(info.altname, function(v) {if (6 === NET.isIP(v)) return IPADDR.parse(v).toString(); else return v;});
+            debug('client altnames: '+info.altname);
 
-	        // -extensions v3_req
-	        cliarg.push('-extensions');
-	        cliarg.push('v3_req');
-	        
-	        // create ssl.conf
-	        var v3_conf  = '[req] \n';
-	            v3_conf += '    req_extensions = v3_req \n\n';
-	            v3_conf += '    [ v3_req ] \n';
-				v3_conf += '    basicConstraints = CA:FALSE \n';
-				v3_conf += '    keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment \n';
+            // -extensions v3_req
+            cliarg.push('-extensions');
+            cliarg.push('v3_req');
+            
+            // create ssl.conf
+            var v3_conf  = '[req] \n';
+                v3_conf += '    req_extensions = v3_req \n\n';
+                v3_conf += '    [ v3_req ] \n';
+                v3_conf += '    basicConstraints = CA:FALSE \n';
+                v3_conf += '    keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment \n';
                 v3_conf += '    subjectAltName = @alt_names \n\n';
-	        
-	        // like 
-	        // [alt_names]
-	        // DNS.1 = ns3.dns.com 
-	        // ... 
+            
+            // like 
+            // [alt_names]
+            // DNS.1 = ns3.dns.com 
+            // ... 
             // IP.1 = 192.168.1.84  
             // ...
             var ips = [], dns = [];
             
-			v3_conf += '    [alt_names] \n';
-	        for (var idx = 0; idx < info.altname.length; idx ++) {
-	            var name = info.altname[idx];
-	            
-	            if (NET.isIP(name)) {
-	                ips.push(name);
-	            } else {
-	                dns.push(name);
-	            }
-			}
-			for (var idx = 0; idx < ips.length; idx++) {
-				v3_conf += '    IP.' + idx + ' = ' + ips[idx] + '\n';
-			}
-	        for (var idx = 0; idx < dns.length; idx ++) {
-	            v3_conf += '    DNS.'+ idx + ' = '+dns[idx]+'\n';
-	        }
-	        v3_conf += '\n';
-	        
-	        // create file
-	        try {
-	            fs.writeFileSync(__dirname+'/certs-tmp/'+filename+'-v3.conf', v3_conf);
-	        } catch (e) {
-	             console.error('Warning!s3 syncWrite V3 conf file failed ' + e);
-	            fn('Warning!s3 syncWrite V3 conf file failed ' + e);
-			    
-			    return;    
-	        }
-	        
-	        // -extfile
-	        cliarg.push('-extfile');
-	        cliarg.push(__dirname+'/certs-tmp/'+filename+'-v3.conf');
-	    }
-					    	    	    
+            v3_conf += '    [alt_names] \n';
+            for (var idx = 0; idx < info.altname.length; idx ++) {
+                var name = info.altname[idx];
+                
+                if (NET.isIP(name)) {
+                    ips.push(name);
+                } else {
+                    dns.push(name);
+                }
+            }
+            for (var idx = 0; idx < ips.length; idx++) {
+                v3_conf += '    IP.' + idx + ' = ' + ips[idx] + '\n';
+            }
+            for (var idx = 0; idx < dns.length; idx ++) {
+                v3_conf += '    DNS.'+ idx + ' = '+dns[idx]+'\n';
+            }
+            v3_conf += '\n';
+            
+            // create file
+            try {
+                fs.writeFileSync(__dirname+'/certs-tmp/'+filename+'-v3.conf', v3_conf);
+            } catch (e) {
+                 console.error('Warning!s3 syncWrite V3 conf file failed ' + e);
+                fn('Warning!s3 syncWrite V3 conf file failed ' + e);
+                
+                return;    
+            }
+            
+            // -extfile
+            cliarg.push('-extfile');
+            cliarg.push(__dirname+'/certs-tmp/'+filename+'-v3.conf');
+        }
+                                        
         clistr = 'openssl  '+cliarg.join('  ');
-	    debug('s1 cli: '+clistr);
-	    
-	    var s1 = exec(clistr, {maxBuffer: 200*1024}, function(err, stdout, stderr){
-	        if (err) {
-	            console.error('Warning!s1 openssl process exited with error ' + err + stderr);
-	            fn('Warning!s1 openssl process exited with error ' + err + stderr);
-	        } else {		    
-	            try {
-	                fn(null, {
-	                     key: fs.readFileSync(__dirname+'/certs-tmp/'+filename+'-key.pem').toString(),
-	                    cert: fs.readFileSync(__dirname+'/certs-tmp/'+filename+'-cert.pem').toString()
-	                });
-	                
-	                // destroy certs
-	                fs.unlinkSync(__dirname+'/certs-tmp/'+filename+'-key.pem');
-	                fs.unlinkSync(__dirname+'/certs-tmp/'+filename+'-cert.pem');
-	            } catch (e) {
-	                console.error('Warning!open certs file failure:'+e);
-	
-	                fn('Warning!open certs file failure:'+e);
-	            }
-	        }
-	    });
+        debug('s1 cli: '+clistr);
+        
+        var s1 = exec(clistr, {maxBuffer: 200*1024}, function(err, stdout, stderr){
+            if (err) {
+                console.error('Warning!s1 openssl process exited with error ' + err + stderr);
+                fn('Warning!s1 openssl process exited with error ' + err + stderr);
+            } else {            
+                try {
+                    fn(null, {
+                         key: fs.readFileSync(__dirname+'/certs-tmp/'+filename+'-key.pem').toString(),
+                        cert: fs.readFileSync(__dirname+'/certs-tmp/'+filename+'-cert.pem').toString()
+                    });
+                    
+                    // destroy certs
+                    fs.unlinkSync(__dirname+'/certs-tmp/'+filename+'-key.pem');
+                    fs.unlinkSync(__dirname+'/certs-tmp/'+filename+'-cert.pem');
+                } catch (e) {
+                    console.error('Warning!open certs file failure:'+e);
+    
+                    fn('Warning!open certs file failure:'+e);
+                }
+            }
+        });
     }
     
     // retry 3 times
     var retry = 0;
     
     (function regenCert(){
-	    genCert(filename, info, function(err, cert){
-	        if (err) {
-	            if (retry < 3) {
-	                // delay regen
-	                setTimeout(function(){
-	                    retry ++;
-	                    regenCert();
-	                }, 1000); // 1s delay
-	            } else {
-	                // pass error
-	                fn('ssl certgen failed');
-	            }
-	        } else {
-	            // pass cert
-	            fn(null, cert);
-	        }
-	    })
+        genCert(filename, info, function(err, cert){
+            if (err) {
+                if (retry < 3) {
+                    // delay regen
+                    setTimeout(function(){
+                        retry ++;
+                        regenCert();
+                    }, 1000); // 1s delay
+                } else {
+                    // pass error
+                    fn('ssl certgen failed');
+                }
+            } else {
+                // pass cert
+                fn(null, cert);
+            }
+        })
     })();
 };
 
@@ -246,214 +246,215 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
         info.cn = '51dese.com';    
     }
     filename += info.cn;
-	filename = filename.replace('*', 'x');
-	
-	debug('genSslCertCA info: '+JSON.stringify(info));
+    filename = filename.replace('*', 'x');
+    
+    debug('genSslCertCA info: '+JSON.stringify(info));
     
     // SSL CA cert generate with retry    
     function genCert(filename, info, fn) {
-	    // construct openssl CLI arguments
-	    var clistr = '', cliarg = [];
-	    var key_out = '', csr_out = '', cert_out = '';
-	    
-	    // 1.
-	    // - openssl genrsa -out server-key.pem 2048
-	    cliarg.push('genrsa');
-	    ///cliarg.push('-out');
-	    ///cliarg.push(__dirname+'/certs-tmp/'+filename+'-key.pem');
-	    cliarg.push('2048');
-	    
-	    clistr = 'openssl  '+cliarg.join('  ');
-	    debug('s1 cli: '+clistr);
-	    
-	    var s1 = exec(clistr, {maxBuffer: 200*1024}, function(err, stdout, stderr){
-	        if (err) {
-	            console.log('Warning!s1 openssl process exited with error ' + err + stderr);
-	            fn('Warning!s1 openssl process exited with error ' + err + stderr);
-	        } else {
-	            debug('s1 stdout: '+stdout); 
-	            
-	            // 1.1
-	            // syncWrite output to file
-	            key_out = stdout;
-	            try {
-	                fs.writeFileSync(__dirname+'/certs-tmp/'+filename+'-key.pem', key_out);
-	            } catch (e) {
-	                console.log('Warning!s1 syncWrite key file failed ' + e);
-		            fn('Warning!s1 syncWrite key file failed ' + e);
-				    
-				    return;    
-	            }
-	            
-	            // 2.
-	            // - openssl req -new -key server-key.pem -subj '/C=CN/ST=SH/L=SH/CN=domain' -out server-csr.pem
-	            cliarg = ['req', '-new', '-key', __dirname+'/certs-tmp/'+filename+'-key.pem'];
-	            
-	            // subject
-				cliarg.push('-subj');
-				cliarg.push('/C=CN/ST=SH/L=SH/CN='+info.cn);
-			    
-			    // csr output
-			    ///cliarg.push('-out');
-			    ///cliarg.push(__dirname+'/certs-tmp/'+filename+'-csr.pem');
-			    		    
-			    clistr = 'openssl  '+cliarg.join('  ');
-			    debug('s2 cli: '+clistr);
-			    
-			    var s2 = exec(clistr, function(err, stdout, stderr){
-			        if (err) {
-			            console.log('Warning!s2 openssl process exited with error ' + err + stderr);
-			            fn('Warning!s2 openssl process exited with error ' + err + stderr);
-			        } else {
-			            debug('s2 stdout: '+stdout); 
-			            
-			            // 2.1
-			            // syncWrite output to file
-			            csr_out = stdout;
-			            
-			            try {
-			                fs.writeFileSync(__dirname+'/certs-tmp/'+filename+'-csr.pem', csr_out);
-			            } catch (e) {
-			                console.log('Warning!s2 syncWrite csr file failed ' + e);
-				            fn('Warning!s2 syncWrite csr file failed ' + e);
-						    
-						    return;    
-			            }		        
-			            
-			            // 3.
-			            // - openssl x509 -req -days 730 -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -in server-csr.pem -out server-cert.pem
-			            cliarg = ['x509', '-req', '-CA', info.ca_cert, '-CAkey', info.ca_key,
-			                      '-CAcreateserial', '-in', __dirname+'/certs-tmp/'+filename+'-csr.pem'];
-			            
-			            // duration
-					    if (info.days) {
-					        cliarg.push('-days');
-					        cliarg.push(info.days);
-					    } else {
-					        cliarg.push('-days');
-					        cliarg.push('365');
-					    }
-					    
-					    // 3.1
-						// V3 extension, subject alternate name
-						// !!! count CN into altnames
-						info.altname = info.altname || []; info.altname.push(info.cn);
-					    if (info.altname && info.altname.length) {
-							// remove duplicates
-							info.altname = _.uniq(info.altname);
-
-					        // -extensions v3_req
-					        cliarg.push('-extensions');
-					        cliarg.push('v3_req');
-					        
-					        // create ssl.conf
-					        var v3_conf  = '[req] \n';
-					            v3_conf += '    req_extensions = v3_req \n\n';
-					            v3_conf += '    [ v3_req ] \n';
-								v3_conf += '    basicConstraints = CA:FALSE \n';
-								v3_conf += '    keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment \n';
-			                    v3_conf += '    subjectAltName = @alt_names \n\n';
-					        
-					        // like 
-					        // [alt_names]
-					        // DNS.1 = ns3.dns.com 
-					        // ... 
-			                // IP.1 = 192.168.1.84  
-			                // ...
-			                var ips = [], dns = [];
-			                
-			                v3_conf += '    [alt_names] \n';
-					        for (var idx = 0; idx < info.altname.length; idx ++) {
-					            var name = info.altname[idx];
-					            
-					            if (NET.isIP(name)) {
-					                ips.push(name);
-					            } else {
-					                dns.push(name);
-					            }
-							}
-							for (var idx = 0; idx < ips.length; idx++) {
-								v3_conf += '    IP.' + idx + ' = ' + ips[idx] + '\n';
-							}
-					        for (var idx = 0; idx < dns.length; idx ++) {
-					            v3_conf += '    DNS.'+idx+' = '+dns[idx]+'\n';
-					        }
-					        v3_conf += '\n';
-					        
-					        // create file
-					        try {
-					            fs.writeFileSync(__dirname+'/certs-tmp/'+filename+'-v3.conf', v3_conf);
-					        } catch (e) {
-					             console.log('Warning!s3 syncWrite V3 conf file failed ' + e);
-					            fn('Warning!s3 syncWrite V3 conf file failed ' + e);
-							    
-							    return;    
-					        }
-					        
-					        // -extfile
-					        cliarg.push('-extfile');
-					        cliarg.push(__dirname+'/certs-tmp/'+filename+'-v3.conf');
-					    }
-			    				    
-			            clistr = 'openssl  '+cliarg.join('  ');
-			            debug('s3 cli: '+clistr);
-			            
-					    var s3 = exec(clistr, function(err, stdout, stderr){
-					        if (err) {
-					            console.log('Warning!s3 openssl process exited with error ' + err + stderr);
-					            fn('Warning!s3 openssl process exited with error ' + err + stderr);
-					        } else {
-					            debug('s3 stdout: '+stdout); 
-					            
-					            // 3.2
-					            // caputre cert
-					            cert_out = stdout;
-					            
-					            try {
-					                fn(null, {
-					                     key: key_out,
-					                    cert: cert_out
-					                });
-					                
-					                // destroy certs
-					                fs.unlink(__dirname+'/certs-tmp/'+filename+'-key.pem');
-					                fs.unlink(__dirname+'/certs-tmp/'+filename+'-csr.pem');
-					                
-					                if (info.altname && info.altname.length) 
-					                    fs.unlink(__dirname+'/certs-tmp/'+filename+'-v3.conf');
-					            } catch (e) {
-					                console.log('Warning!s3 open certs file failure:'+e);
-					                fn('Warning!s3 open certs file failure:'+e);
-					            }
-							}
-					    });
-			        }
-			    });
-	        }
-	    });
+        // construct openssl CLI arguments
+        var clistr = '', cliarg = [];
+        var key_out = '', csr_out = '', cert_out = '';
+        
+        // 1.
+        // - openssl genrsa -out server-key.pem 2048
+        cliarg.push('genrsa');
+        ///cliarg.push('-out');
+        ///cliarg.push(__dirname+'/certs-tmp/'+filename+'-key.pem');
+        cliarg.push('2048');
+        
+        clistr = 'openssl  '+cliarg.join('  ');
+        debug('s1 cli: '+clistr);
+        
+        var s1 = exec(clistr, {maxBuffer: 200*1024}, function(err, stdout, stderr){
+            if (err) {
+                console.log('Warning!s1 openssl process exited with error ' + err + stderr);
+                fn('Warning!s1 openssl process exited with error ' + err + stderr);
+            } else {
+                debug('s1 stdout: '+stdout); 
+                
+                // 1.1
+                // syncWrite output to file
+                key_out = stdout;
+                try {
+                    fs.writeFileSync(__dirname+'/certs-tmp/'+filename+'-key.pem', key_out);
+                } catch (e) {
+                    console.log('Warning!s1 syncWrite key file failed ' + e);
+                    fn('Warning!s1 syncWrite key file failed ' + e);
+                    
+                    return;    
+                }
+                
+                // 2.
+                // - openssl req -new -key server-key.pem -subj '/C=CN/ST=SH/L=SH/CN=domain' -out server-csr.pem
+                cliarg = ['req', '-new', '-key', __dirname+'/certs-tmp/'+filename+'-key.pem'];
+                
+                // subject
+                cliarg.push('-subj');
+                cliarg.push('/C=CN/ST=SH/L=SH/CN='+info.cn);
+                
+                // csr output
+                ///cliarg.push('-out');
+                ///cliarg.push(__dirname+'/certs-tmp/'+filename+'-csr.pem');
+                            
+                clistr = 'openssl  '+cliarg.join('  ');
+                debug('s2 cli: '+clistr);
+                
+                var s2 = exec(clistr, function(err, stdout, stderr){
+                    if (err) {
+                        console.log('Warning!s2 openssl process exited with error ' + err + stderr);
+                        fn('Warning!s2 openssl process exited with error ' + err + stderr);
+                    } else {
+                        debug('s2 stdout: '+stdout); 
+                        
+                        // 2.1
+                        // syncWrite output to file
+                        csr_out = stdout;
+                        
+                        try {
+                            fs.writeFileSync(__dirname+'/certs-tmp/'+filename+'-csr.pem', csr_out);
+                        } catch (e) {
+                            console.log('Warning!s2 syncWrite csr file failed ' + e);
+                            fn('Warning!s2 syncWrite csr file failed ' + e);
+                            
+                            return;    
+                        }                
+                        
+                        // 3.
+                        // - openssl x509 -req -days 730 -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -in server-csr.pem -out server-cert.pem
+                        cliarg = ['x509', '-req', '-CA', info.ca_cert, '-CAkey', info.ca_key,
+                                  '-CAcreateserial', '-in', __dirname+'/certs-tmp/'+filename+'-csr.pem'];
+                        
+                        // duration
+                        if (info.days) {
+                            cliarg.push('-days');
+                            cliarg.push(info.days);
+                        } else {
+                            cliarg.push('-days');
+                            cliarg.push('365');
+                        }
+                        
+                        // 3.1
+                        // V3 extension, subject alternate name
+                        // !!! count CN into altnames
+                        info.altname = info.altname || []; info.altname.push(info.cn);
+                        if (info.altname && info.altname.length) {
+                            // remove duplicates
+                            info.altname = _.uniq(info.altname, function(v) {if (6 === NET.isIP(v)) return IPADDR.parse(v).toString(); else return v;});
+                            debug('client altnames: '+info.altname);
+                            
+                            // -extensions v3_req
+                            cliarg.push('-extensions');
+                            cliarg.push('v3_req');
+                            
+                            // create ssl.conf
+                            var v3_conf  = '[req] \n';
+                                v3_conf += '    req_extensions = v3_req \n\n';
+                                v3_conf += '    [ v3_req ] \n';
+                                v3_conf += '    basicConstraints = CA:FALSE \n';
+                                v3_conf += '    keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment \n';
+                                v3_conf += '    subjectAltName = @alt_names \n\n';
+                            
+                            // like 
+                            // [alt_names]
+                            // DNS.1 = ns3.dns.com 
+                            // ... 
+                            // IP.1 = 192.168.1.84  
+                            // ...
+                            var ips = [], dns = [];
+                            
+                            v3_conf += '    [alt_names] \n';
+                            for (var idx = 0; idx < info.altname.length; idx ++) {
+                                var name = info.altname[idx];
+                                
+                                if (NET.isIP(name)) {
+                                    ips.push(name);
+                                } else {
+                                    dns.push(name);
+                                }
+                            }
+                            for (var idx = 0; idx < ips.length; idx++) {
+                                v3_conf += '    IP.' + idx + ' = ' + ips[idx] + '\n';
+                            }
+                            for (var idx = 0; idx < dns.length; idx ++) {
+                                v3_conf += '    DNS.'+idx+' = '+dns[idx]+'\n';
+                            }
+                            v3_conf += '\n';
+                            
+                            // create file
+                            try {
+                                fs.writeFileSync(__dirname+'/certs-tmp/'+filename+'-v3.conf', v3_conf);
+                            } catch (e) {
+                                 console.log('Warning!s3 syncWrite V3 conf file failed ' + e);
+                                fn('Warning!s3 syncWrite V3 conf file failed ' + e);
+                                
+                                return;    
+                            }
+                            
+                            // -extfile
+                            cliarg.push('-extfile');
+                            cliarg.push(__dirname+'/certs-tmp/'+filename+'-v3.conf');
+                        }
+                                    
+                        clistr = 'openssl  '+cliarg.join('  ');
+                        debug('s3 cli: '+clistr);
+                        
+                        var s3 = exec(clistr, function(err, stdout, stderr){
+                            if (err) {
+                                console.log('Warning!s3 openssl process exited with error ' + err + stderr);
+                                fn('Warning!s3 openssl process exited with error ' + err + stderr);
+                            } else {
+                                debug('s3 stdout: '+stdout); 
+                                
+                                // 3.2
+                                // caputre cert
+                                cert_out = stdout;
+                                
+                                try {
+                                    fn(null, {
+                                         key: key_out,
+                                        cert: cert_out
+                                    });
+                                    
+                                    // destroy certs
+                                    fs.unlink(__dirname+'/certs-tmp/'+filename+'-key.pem');
+                                    fs.unlink(__dirname+'/certs-tmp/'+filename+'-csr.pem');
+                                    
+                                    if (info.altname && info.altname.length) 
+                                        fs.unlink(__dirname+'/certs-tmp/'+filename+'-v3.conf');
+                                } catch (e) {
+                                    console.log('Warning!s3 open certs file failure:'+e);
+                                    fn('Warning!s3 open certs file failure:'+e);
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
     }
     
     // retry 3 times
     var retry = 0;
     
     (function regenCert(){
-	    genCert(filename, info, function(err, cert){
-	        if (err) {
-	            if (retry < 3) {
-	                // delay regen
-	                setTimeout(function(){
-	                    retry ++;
-	                    regenCert();
-	                }, 1000); // 1s delay
-	            } else {
-	                // pass error
-	                fn('ssl certgen failed');
-	            }
-	        } else {
-	            // pass cert
-	            fn(null, cert);
-	        }
-	    })
+        genCert(filename, info, function(err, cert){
+            if (err) {
+                if (retry < 3) {
+                    // delay regen
+                    setTimeout(function(){
+                        retry ++;
+                        regenCert();
+                    }, 1000); // 1s delay
+                } else {
+                    // pass error
+                    fn('ssl certgen failed');
+                }
+            } else {
+                // pass cert
+                fn(null, cert);
+            }
+        })
     })();
 };
 
