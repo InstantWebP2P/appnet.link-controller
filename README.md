@@ -81,8 +81,8 @@ AppNet.IO controller serivices to support [AppNet.io protocol](https://github.co
 * db/sdp.js.             - Session data model persistent in GraphDB
 * vurl.js.               - Virtual URL implementation
 
-* iwebpp.io-server.js    - iWebPP.io protocol controller implementation
-* iwebpp.io-server-v2.js - iWebPP.io protocol controller V2 implementation using SecureWebsocket and NaclCert
+* appnet.io-server.js    - AppNet.io protocol controller implementation
+* appnet.io-server-v2.js - AppNet.io protocol controller V2 implementation using SecureWebsocket and NaclCert
 
 * ssl.js                 - SSL/RSA certs generate utils
 * demos/                 - demos

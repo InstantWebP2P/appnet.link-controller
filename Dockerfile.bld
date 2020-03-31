@@ -1,7 +1,7 @@
 #
-# iWebPP.io building Dockerfile
+# AppNet.io building Dockerfile
 #
-# https://github.com/InstantWebP2P/iwebpp.io-controller
+# https://github.com/InstantWebP2P/appnet.io-controller
 # Copyright (c) 2020 Tom Zhou<iwebpp@gmail.com>
 
 # Pull base image.

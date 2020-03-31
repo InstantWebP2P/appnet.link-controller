@@ -1,8 +1,8 @@
-// iWebPP.IO name-server example
+// AppNet.IO name-server example
 // Copyright (c) 2012-present Tom Zhou<iwebpp@gmail.com>
 //
 var fs    = require('fs');
-var nmSrv = require('../iwebpp.io-server');
+var nmSrv = require('../appnet.io-server');
 
 var nmsrvs = new nmSrv(
     // endpoint info

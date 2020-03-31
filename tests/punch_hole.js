@@ -1,6 +1,6 @@
 // Copyright (c) 2012-present Tom Zhou<iwebpp@gmail.com>
 
-var SEP = require('iwebpp.io').SEP;
+var SEP = require('appnet.io').SEP;
 
 process.on('uncaughtException', function (err) {
   console.log('Caught exception: ' + err);

@@ -1,4 +1,4 @@
-iwebpp.io-nameserver cluster - a cluster of machine node run nameserver services
+appnet.io-nameserver cluster - a cluster of machine node run nameserver services
 ============================================================================
 
 
@@ -48,7 +48,7 @@ iwebpp.io-nameserver cluster - a cluster of machine node run nameserver services
 
 ## Implementation
 
-* front load-balancer detect dead node, distribute load from iwebpp.io client
+* front load-balancer detect dead node, distribute load from appnet.io client
 
 * connected via SWS(secure websocket)
 

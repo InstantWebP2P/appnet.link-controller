@@ -1,6 +1,6 @@
 var _     = require('lodash');
 
-var nmSrv = require('../iwebpp.io-server');
+var nmSrv = require('../appnet.io-server');
 var nmCln = nmSrv.Client;
 var SEP   = nmSrv.SEP;
 

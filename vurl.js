@@ -1,4 +1,4 @@
-// iWebPP vURL pure JS implementation
+// AppNet vURL pure JS implementation
 // Copyright (c) 2012-present Tom Zhou<iwebpp@gmail.com>
 // Notes: 
 // - vURL has two mode: vHost-based and vPath-based
@@ -101,7 +101,7 @@ vURL.prototype.del = function(vurl, fn){
     }
 }
 
-// class methods MUST be compatible to iWebPP.io
+// class methods MUST be compatible to AppNet.io
 
 // Version 1.0
 vURL.version = vURL.VERSION = '1.0';
