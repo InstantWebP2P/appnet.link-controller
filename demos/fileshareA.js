@@ -5,7 +5,7 @@ var SEP = nmSrv.SEP;
 
 var dgram = require("dgram");
 
-// iwebpp-ws library
+// appnet.io-ws library
 var WebSocket = require('wspp');
 var WebSocketServer = WebSocket.Server;
 

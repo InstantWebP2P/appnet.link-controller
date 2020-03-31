@@ -10,7 +10,7 @@
 //    notify peers;
 // 5. nameserver basically maintain a live connection state-machine and cooperate with peers;
 // 6. to punch hole easily, the client as user always binds one same ip/port on the device
-// 7. for details, please refer to iWebPP_SW_Func_Spec.doc and Roadisys_Virtual_URL_SW_Func_Spec.doc
+// 7. for details, please refer to AppNet_SW_Func_Spec.doc and Roadisys_Virtual_URL_SW_Func_Spec.doc
 // ...
 
 'use strict';

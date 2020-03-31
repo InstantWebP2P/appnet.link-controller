@@ -6,7 +6,7 @@ var SEP   = nmSrv.SEP;
 // vURL
 var vURL = require('../vurl');
 
-// iwebpp-ws library
+// appnet.io-ws library
 var WebSocket = require('wspp');
 var WebSocketServer = WebSocket.Server;
 

@@ -4,7 +4,7 @@ var nmSrv = require('../appnet.io-server');
 var nmCln = nmSrv.Client;
 var SEP   = nmSrv.SEP;
 
-// iwebpp-ws library
+// appnet.io-ws library
 var WebSocket = require('wspp');
 var WebSocketServer = WebSocket.Server;
 
