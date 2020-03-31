@@ -2,7 +2,7 @@
   "author": "Tom Zhou <iwebpp@gmail.com> (https://aiworkspace.com)",
   "name": "appnet.io-controller",
   "description": "AppNet.io protocol controller service for node.js",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "repository": {
     "type": "git",
     "url": "git://github.com/InstantWebP2P/appnet.io-controller.git"
