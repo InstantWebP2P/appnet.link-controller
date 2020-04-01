@@ -2,4 +2,3 @@
 Dockerfile*
 .DS_Store
 .gitignore
-app*
