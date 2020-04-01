@@ -1,4 +1,4 @@
-// Copyright (c) 2012-present Tom Zhou<iwebpp@gmail.com>
+// Copyright (c) 2012-present Tom Zhou<appnet.link@gmail.com>
 
 var nmSrv = require('../appnet.io-server');
 var nmCln = nmSrv.Client;

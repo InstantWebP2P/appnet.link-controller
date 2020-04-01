@@ -1,5 +1,5 @@
 // AppNet.io controller 
-// Copyright (c) 2020 Tom Zhou<iwebpp@gmail.com>
+// Copyright (c) 2020 Tom Zhou<appnet.link@gmail.com>
 
 // default server v1
 module.exports    = require('./appnet.io-server');

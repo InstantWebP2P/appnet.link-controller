@@ -113,4 +113,4 @@ AppNet.IO controller serivices to support [AppNet.io protocol](https://github.co
 
 (The MIT License)
 
-Copyright (c) 2012-present Tom Zhou(iwebpp@gmail.com)
+Copyright (c) 2012-present Tom Zhou(appnet.link@gmail.com)

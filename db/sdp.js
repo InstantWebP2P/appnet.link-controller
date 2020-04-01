@@ -1,4 +1,4 @@
-// Copyright (c) 2012-present Tom Zhou<iwebpp@gmail.com>
+// Copyright (c) 2012-present Tom Zhou<appnet.link@gmail.com>
 //
 // graphDB used to record SDP, establish peer connection's topology
 // notes: 

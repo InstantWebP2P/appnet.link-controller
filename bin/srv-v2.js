@@ -1,5 +1,5 @@
 // AppNet.IO name-server V2 example
-// Copyright (c) 2012-present Tom Zhou<iwebpp@gmail.com>
+// Copyright (c) 2012-present Tom Zhou<appnet.link@gmail.com>
 //
 var fs = require('fs');
 var nmSrv = require('../appnet.io-server-v2');

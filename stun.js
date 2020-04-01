@@ -1,4 +1,4 @@
-// Copyright (c) 2012-present Tom Zhou<iwebpp@gmail.com>
+// Copyright (c) 2012-present Tom Zhou<appnet.link@gmail.com>
 //
 // STUN establish the session between two clients by UDP hole punch
 // 1. One client acts as Initiator, another client acts as Responder
