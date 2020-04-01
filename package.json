@@ -1,5 +1,5 @@
 {
-  "author": "Tom Zhou <appnet.link@gmail.com> (https://aiworkspace.com)",
+  "author": "Tom Zhou <appnet.link@gmail.com> (https://appnet.link)",
   "name": "appnet.io-controller",
   "description": "AppNet.io protocol controller service for node.js",
   "version": "3.3.3",
