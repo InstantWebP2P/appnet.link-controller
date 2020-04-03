@@ -184,14 +184,15 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                     
                     // 1.1
                     // notes: only support 51dese.com as domain at present !!!
-                    if (data.offer.domain != '51dese.com' && data.offer.domain != 'www.51dese.com') {
-                        console.log('invalid domain, please use 51dese.com by now');
+                    if (data.offer.domain != '51dese.com'  && data.offer.domain != 'www.51dese.com' &&
+                        data.offer.domain != 'appnet.link' && data.offer.domain != 'www.appnet.link') {
+                        console.log('invalid domain, please use 51dese.com or appnet.link by now');
                         
                         data.opc    = SEP.SEP_OPC_SDP_ANSWER;
                         
                         data.answer = {};
                         data.answer.ready = false;
-                        data.answer.error = 'invalid domain, please use 51dese.com by now';
+                        data.answer.error = 'invalid domain, please use 51dese.com or appnet.link by now';
                         
                         // 1.1.1
                         // send back answer message, then close client and agent client in case have
@@ -2371,15 +2372,16 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                         // 1.
                         // check offer credit by user info
                         // notes: only support 51dese.com as domain at present !!!
-                        if (tdata.offer.domain != '51dese.com' && tdata.offer.domain != 'www.51dese.com') {
-                            console.log('invalid domain, please use 51dese.com by now');
+                        if (tdata.offer.domain != '51dese.com'  && tdata.offer.domain != 'www.51dese.com' &&
+                            tdata.offer.domain != 'appnet.link' && tdata.offer.domain != 'www.appnet.link') {
+                            console.log('invalid domain, please use 51dese.com or appnet.link by now');
                             
                             // fill punch hole answer
                             tdata.opc = SEP.SEP_OPC_PUNCH_ANSWER;
                             
                             tdata.answer = {};
                             tdata.answer.ready = false;
-                            tdata.answer.error = 'invalid domain, please use 51dese.com by now';
+                            tdata.answer.error = 'invalid domain, please use 51dese.com or appnet.link by now';
                             
                             // 1.1
                             // send back punch hole answer message, then close agent socket
