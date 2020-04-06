@@ -2,7 +2,7 @@
 # AppNet.io packaging Dockerfile
 #
 # https://github.com/InstantWebP2P/appnet.io-controller
-# Copyright (c) 2020 Tom Zhou<iwebpp@gmail.com>
+# Copyright (c) 2020 Tom Zhou<appnet.link@gmail.com>
 
 # Pull base image.
 FROM httpp:0.8
