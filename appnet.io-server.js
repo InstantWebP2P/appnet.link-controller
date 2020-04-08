@@ -341,8 +341,9 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                                     altname: [
                                         ///'*.*.vurl.'+sdp.server.dn, '*.vurl.local.'+sdp.server.dn, '*.*.vurl.local.'+sdp.server.dn,
                                         ///'*.vurl.'+sdp.server.dn,
-                                        client.clntinfo.clntip, client.clntinfo.clntlip, '127.0.0.1', 'localhost', 
-                                        '::1', '0:0:0:0:0:0:0:1', 'ip6-localhost',
+                                        client.clntinfo.clntip, client.clntinfo.clntlip, 
+                                        '127.0.0.1', 'localhost',
+                                        '::1', 'ip6-localhost',
                                         sdp.server.ip,
                                         // append vlocal. subdomain
                                         sdp.client.vmode == vurl.URL_MODE_HOST ? '*.vurl.vlocal.' + sdp.server.dn : 'vlocal.' + sdp.server.dn,
@@ -791,8 +792,8 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                     // send STUN answer to initiator
                     // Algorithem:
                     // - for both of asymmmetric NAT/FW, send message from Initiator side to name-server
-                    // - for one asymmetric NAT/FW, another's symmetric, send message from symmetric side
-                    // - for both of symmmetric NAT/FW, send message from Initiator side to name-server
+                    // - for one     asymmetric NAT/FW,  another's symmetric, send message from symmetric side
+                    // - for both of symmmetric NAT/FW,  send message from Initiator side to name-server
                                        
                     // 2.1
                     // fill STUN answer
@@ -1254,7 +1255,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
 
                     // 2.1
                     // keep geoIP info
-                       // !!! for security, only return country/city of GeoIP to client
+                    // !!! for security, only return country/city of GeoIP to client
                     data.offer.srv.geoip         = {};
                     data.offer.srv.geoip.country = client.clntinfo.clntgeoip.country;
                     data.offer.srv.geoip.city    = client.clntinfo.clntgeoip.city;
@@ -1577,7 +1578,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
             }
     
             debug('Http request proxy for client request.headers:'+JSON.stringify(req.headers)+
-                                   ',url:'+urle+',vurl:'+vurle);
+                  ',url:'+urle+',vurl:'+vurle);
 
             // 1.2.2
             // fetch peer target host info via vURL
