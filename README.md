@@ -2,9 +2,6 @@
 AppNet.IO controller serivices to support [AppNet.io protocol](https://github.com/InstantWebP2P/appnet.io)
 
 
-### [Discussion group](https://groups.google.com/d/forum/iwebpp)
-
-
 ### Prerequest
 
 * Build Neo4j 2.1.8 on Linux with Docker, then start Neo4j services
