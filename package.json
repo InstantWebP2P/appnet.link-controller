@@ -16,15 +16,15 @@
     "connect-httpp": "latest",
     "debug": "2.6.9",
     "geoip-lite": "1.1.9",
-    "httpp-proxy": "latest",
+    "httpp-proxy": "0.10.3",
     "ipaddr.js": "1.0.3",
-    "appnet.io": "latest",
+    "appnet.io": "3.3.5",
     "lodash": "3.10.1",
     "msgpack-js": "0.3.0",
     "neo4jv1": "1.1.6",
     "siphash": "1.1.0",
     "uuid": "3.0.0",
-    "wspp": "latest"
+    "wspp": "1.1.5"
   },
   "devDependencies": {
     "jshint": "2.8.0"
