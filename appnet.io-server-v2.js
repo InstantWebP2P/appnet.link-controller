@@ -17,7 +17,7 @@ var eventEmitter = require('events').EventEmitter,
     util = require('util'),
     url = require('url'),
     http = require('http'),
-    https = require('https');
+    https = require('https'),
     httpp   = require('httpp'),
     httpps  = require('httpps'),
     crypto  = require('crypto'),
@@ -43,7 +43,7 @@ var SecureWebSocketServer = SecureWebSocket.Server;
 var Naclcert = SecureWebSocket.Naclcert;
 
 // httpp-proxy library
-var httppProxy = require('httpp-proxy');
+var httppProxy = require('httpp-proxy').httppproxy;
 
 // UUID generator
 var UUID = require('uuid');

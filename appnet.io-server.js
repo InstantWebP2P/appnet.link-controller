@@ -35,11 +35,11 @@ var SIPHASH = require('siphash'),
 var MSGPACK         = require('msgpack-js');
 
 // p2p stream websocket library
-var WebSocket       = require('wspp');
+var WebSocket       = require('wspp').wspp;
 var WebSocketServer = WebSocket.Server;
 
 // httpp-proxy library
-var httppProxy = require('httpp-proxy');
+var httppProxy = require('httpp-proxy').httppproxy;
 
 // UUID generator
 var UUID = require('uuid');
