@@ -10,20 +10,20 @@ var debug  = require('debug')('appnet.io.srv.v2');
 var AppNet = require('appnet.io').V2;
 
 // Session establish protocol
-var SEP = AppNet.SEP;
+var SEP    = AppNet.SEP;
 
 // eventEmitter
-var eventEmitter = require('events').EventEmitter,
-    util = require('util'),
-    url = require('url'),
-    http = require('http'),
-    https = require('https'),
-    httpp   = require('httpp'),
-    httpps  = require('httpps'),
-    crypto  = require('crypto'),
-    Connect = require('connect'),
+var eventEmitter  = require('events'),
+    util          = require('util'),
+    url           = require('url'),
+    http          = require('http'),
+    https         = require('https'),
+    httpp         = require('httpp'),
+    httpps        = require('httpps'),
+    crypto        = require('crypto'),
+    Connect       = require('connect'),
     connect_httpp = require('connect-httpp'),
-    UDT = require('udt');
+    UDT           = require('udt');
 
 // security hash
 // SIPKEY can be any user defined 4 integers

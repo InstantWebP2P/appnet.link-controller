@@ -8,25 +8,26 @@
     "url": "git://github.com/InstantWebP2P/appnet.io-controller.git"
   },
   "engines": {
-    "node": ">=0.8.0"
+    "node": ">=6.8.0"
   },
   "main": "index.js",
   "dependencies": {
-    "connect": "2.30.2",
+    "connect": "3.7.0",
     "connect-httpp": "latest",
-    "debug": "2.6.9",
-    "geoip-lite": "1.1.9",
+    "debug": "4.1.0",
+    "geoip-lite": "1.4.1",
     "httpp-proxy": "1.18.0",
-    "ipaddr.js": "1.0.3",
+    "ipaddr.js": "2.0.0",
     "appnet.io": "4.0.0",
-    "lodash": "3.10.1",
+    "lodash": "5.0.0",
     "msgpack-js": "0.3.0",
     "neo4jv1": "1.1.6",
     "siphash": "1.1.0",
-    "uuid": "3.0.0",
+    "uuid": "8.0.0",
     "wspp": "7.2.4"
   },
   "devDependencies": {
-    "jshint": "2.8.0"
+    "express": "4.17.1",
+    "jshint": "2.11.0"
   }
 }

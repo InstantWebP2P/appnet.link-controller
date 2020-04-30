@@ -13,7 +13,7 @@ var AppNet        = require('appnet.io');
 var SEP           = AppNet.SEP;
 
 // eventEmitter
-var eventEmitter  = require('events').EventEmitter,
+var eventEmitter = require('events'),
     util          = require('util'),
     url           = require('url'),
     http          = require('http'),
@@ -2312,10 +2312,10 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
         // Listening on proxy port for both HTTPP and HTTP server
         //  backlog 10K TBD...
         proxyServerHttpp.listen(self.turnPorts[0], self.ipaddr, function(){
-            console.log('httpp proxy-server listen on udp port '+self.turnPorts[0]);
+            console.log('httpps proxy-server listen on udp port '+self.turnPorts[0]);
         });
         proxyServerHttp.listen(self.turnPorts[0], self.ipaddr, function(){
-            console.log('http proxy-server listen on tcp port '+self.turnPorts[0]);
+            console.log('https proxy-server listen on tcp port '+self.turnPorts[0]);
         });
         //////////////////////////////////////////////////////////////////////////////////////////////////
         
