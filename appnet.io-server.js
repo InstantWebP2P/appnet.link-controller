@@ -133,8 +133,8 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
         try {
             if (socket && socket.send) {
                 // !!!Prefer json instead of msgpack
-                ///socket.send(MSGPACK.encode(opc_msg), {binary: true, mask: false}, function(err){
-                socket.send(JSON.stringify(opc_msg), {binary: false, mask: false}, function(err){
+                ///socket.send(MSGPACK.encode(opc_msg), function(err){
+                socket.send(JSON.stringify(opc_msg), function(err){
                     if (err) {
                         console.log(err+',sendOpcMsg failed');
                         if (fn) fn(err+',sendOpcMsg failed');
@@ -165,12 +165,12 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
         client.offerMsgcnt = 0;
         
         // onMessage handler
-        client.on('message', function(message, flags){
+        client.on('message', function(message){
          // !!! catch any exceptions and ignore it
          try 
          {
         
-            var data = (flags.binary) ? MSGPACK.decode(message) : JSON.parse(message);
+            var data = typeof message !== 'string' ? MSGPACK.decode(message) : JSON.parse(message);
             
             debug('nmsrv:new message:'+JSON.stringify(data));
             
@@ -2358,11 +2358,11 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
             debug('agent for client:');
             
             // onMessage handler
-            client.on('message', function(message, flags){
+            client.on('message', function(message){
              // !!! catch any exceptions and ignore it
              try {
             
-                var tdata = (flags.binary) ? MSGPACK.decode(message) : JSON.parse(message);
+                var tdata = typeof message !== 'string' ? MSGPACK.decode(message) : JSON.parse(message);
                 debug('nmsrv:new turn agent message:'+JSON.stringify(tdata));
                 
                 // check if opc is valid
