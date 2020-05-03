@@ -58,7 +58,7 @@ var nmclnsB = new nmCln({
 nmclnsB.on('go', function() {
     console.log('name-nmclnsB go');
     
-       // create websocket server
+    // create websocket server
     creatNmclnWss(this);
      
     // ask for all user info

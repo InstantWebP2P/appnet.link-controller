@@ -89,8 +89,8 @@ nmclnsA.on('error', function(err){
 nmclnsA.on('ready', function() {
     console.log('name-nmclnsA ready');
     this.nm = 'A';
-
-       // create websocket server
+    
+    // create websocket server
     creatNmclnWss(this);
     
     // ask for all user info
