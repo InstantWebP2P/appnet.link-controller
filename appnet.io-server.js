@@ -1618,14 +1618,16 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                             
                             // set user-specific feature,like maxim bandwidth,etc
                             // TBD... with user DB
-                            localAddress: {
+                            localAddress: routing.turn.lipaddr,
+                               localPort: routing.turn.agentport, 
+                            /*localAddress: {
                                 addr: routing.turn.lipaddr,
                                 port: routing.turn.agentport,
                                 
                                  opt: {
                                     mbw: self.option.mbw || null
                                 }
-                            }
+                            }*/
                         }
                     });
                     
@@ -1917,14 +1919,16 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                             
                             // set user-specific feature,like maxim bandwidth,etc
                             // TBD... with user DB
-                            localAddress: {
+                            localAddress: routing.turn.lipaddr,
+                               localPort: routing.turn.agentport, 
+                            /*localAddress: {
                                 addr: routing.turn.lipaddr,
                                 port: routing.turn.agentport, 
                                 
                                  opt: {
                                     mbw: self.option.mbw || null
                                 }
-                            }
+                            }*/
                         }
                     });
                     
@@ -2222,14 +2226,16 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                         host: dstip, 
                         
                         // set user-specific feature,like maxim bandwidth,etc
-                        localAddress: {
+                        localAddress: routing.turn.lipaddr,
+                           localPort: routing.turn.agentport, 
+                        /*localAddress: {
                             addr: routing.turn.lipaddr,
                             port: routing.turn.agentport, 
                             
                             opt: {
                                 mbw: self.option.mbw || null
                             }
-                        }
+                        }*/
                     };
                     var srvSocket = UDT.connect(coptions, function() {
                         debug('turn-forward, httpp got connected');
@@ -2258,14 +2264,16 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                             
                         // set user-specific feature,like maxim bandwidth,etc
                         // TBD... with user DB
-                        localAddress: {
+                        localAddress: routing.turn.lipaddr,
+                           localPort: routing.turn.agentport, 
+                        /*localAddress: {
                             addr: routing.turn.lipaddr,
                             port: routing.turn.agentport, 
                             
                              opt: {
                                 mbw: self.option.mbw || null
                             }
-                        }
+                        }*/
                     };
                     // set SSL related options
                     if (routing.secmode) {
