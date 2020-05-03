@@ -5,11 +5,11 @@
 'use strict';
 var debug = require('debug')('ssl');
 
-var      _ = require('lodash');
-var IPADDR = require('ipaddr.js');
-var fs     = require('fs');
-var exec   = require('child_process').exec;
-var NET    = require('net');
+var          _ = require('lodash');
+var     IPADDR = require('ipaddr.js');
+var         fs = require('fs');
+var        NET = require('net');
+const { exec } = require('child_process');
 
 
 // Debug level
@@ -119,7 +119,7 @@ var genSslCert = exports.genSslCert = function(filename, info, fn){
             try {
                 fs.writeFileSync(__dirname+'/certs-tmp/'+filename+'-v3.conf', v3_conf);
             } catch (e) {
-                 console.error('Warning!s3 syncWrite V3 conf file failed ' + e);
+                console.error('Warning!s3 syncWrite V3 conf file failed ' + e);
                 fn('Warning!s3 syncWrite V3 conf file failed ' + e);
                 
                 return;    
@@ -268,7 +268,7 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
         
         var s1 = exec(clistr, {maxBuffer: 200*1024}, function(err, stdout, stderr){
             if (err) {
-                console.log('Warning!s1 openssl process exited with error ' + err + stderr);
+                console.error('Warning!s1 openssl process exited with error ' + err + stderr);
                 fn('Warning!s1 openssl process exited with error ' + err + stderr);
             } else {
                 debug('s1 stdout: '+stdout); 
@@ -279,7 +279,7 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
                 try {
                     fs.writeFileSync(__dirname+'/certs-tmp/'+filename+'-key.pem', key_out);
                 } catch (e) {
-                    console.log('Warning!s1 syncWrite key file failed ' + e);
+                    console.error('Warning!s1 syncWrite key file failed ' + e);
                     fn('Warning!s1 syncWrite key file failed ' + e);
                     
                     return;    
@@ -302,7 +302,7 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
                 
                 var s2 = exec(clistr, function(err, stdout, stderr){
                     if (err) {
-                        console.log('Warning!s2 openssl process exited with error ' + err + stderr);
+                        console.error('Warning!s2 openssl process exited with error ' + err + stderr);
                         fn('Warning!s2 openssl process exited with error ' + err + stderr);
                     } else {
                         debug('s2 stdout: '+stdout); 
@@ -314,7 +314,7 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
                         try {
                             fs.writeFileSync(__dirname+'/certs-tmp/'+filename+'-csr.pem', csr_out);
                         } catch (e) {
-                            console.log('Warning!s2 syncWrite csr file failed ' + e);
+                            console.error('Warning!s2 syncWrite csr file failed ' + e);
                             fn('Warning!s2 syncWrite csr file failed ' + e);
                             
                             return;    
@@ -385,7 +385,7 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
                             try {
                                 fs.writeFileSync(__dirname+'/certs-tmp/'+filename+'-v3.conf', v3_conf);
                             } catch (e) {
-                                 console.log('Warning!s3 syncWrite V3 conf file failed ' + e);
+                                console.error('Warning!s3 syncWrite V3 conf file failed ' + e);
                                 fn('Warning!s3 syncWrite V3 conf file failed ' + e);
                                 
                                 return;    
@@ -399,9 +399,9 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
                         clistr = 'openssl  '+cliarg.join('  ');
                         debug('s3 cli: '+clistr);
                         
-                        var s3 = exec(clistr, function(err, stdout, stderr){
+                        var s3 = exec(clistr, {maxBuffer: 200*1024}, (err, stdout, stderr) => {
                             if (err) {
-                                console.log('Warning!s3 openssl process exited with error ' + err + stderr);
+                                console.error('Warning!s3 openssl process exited with error ' + err + stderr);
                                 fn('Warning!s3 openssl process exited with error ' + err + stderr);
                             } else {
                                 debug('s3 stdout: '+stdout); 
@@ -417,13 +417,13 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
                                     });
                                     
                                     // destroy certs
-                                    fs.unlink(__dirname+'/certs-tmp/'+filename+'-key.pem');
-                                    fs.unlink(__dirname+'/certs-tmp/'+filename+'-csr.pem');
+                                    fs.unlinkSync(__dirname+'/certs-tmp/'+filename+'-key.pem');
+                                    fs.unlinkSync(__dirname+'/certs-tmp/'+filename+'-csr.pem');
                                     
                                     if (info.altname && info.altname.length) 
-                                        fs.unlink(__dirname+'/certs-tmp/'+filename+'-v3.conf');
+                                        fs.unlinkSync(__dirname+'/certs-tmp/'+filename+'-v3.conf');
                                 } catch (e) {
-                                    console.log('Warning!s3 open certs file failure:'+e);
+                                    console.error('Warning!s3 open certs file failure:'+e);
                                     fn('Warning!s3 open certs file failure:'+e);
                                 }
                             }
@@ -459,8 +459,7 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
 };
 
 // simple test
-/*
-(function(){
+/*(function(){
     genSslCertCA('browser-iwebpp', {
                 ca_cert: './ca-certs/ca-cert.pem',
                 ca_key: './ca-certs/ca-key.pem',
@@ -470,14 +469,14 @@ var genSslCertCA = exports.genSslCertCA = function(filename, info, fn){
                 altname: ['vurl.51dese.com', '*.vurl.51dese.com', '127.0.0.1']
     },
     function(err, certs){
-        if (err)
-            console.log(err+' genSslCertCA failed');
-        else
+        if (err) {
+            console.error(err+' genSslCertCA failed');
+        } else {
             console.log('genSslCertCA successfully: '+JSON.stringify(certs));
 
             fs.writeFileSync('webrowser-cert.pem', certs.cert);
             fs.writeFileSync('webrowser-key.pem', certs.key);
+        }
     });
-})();
-*/
+})();*/
 
