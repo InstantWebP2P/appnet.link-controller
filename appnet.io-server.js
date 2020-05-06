@@ -38,8 +38,9 @@ var MSGPACK         = require('msgpack-js');
 var WebSocket       = require('wspp').wspp;
 var WebSocketServer = WebSocket.Server;
 
-// httpp-proxy library
-var httppProxy = require('httpp-proxy').httppproxy;
+// http/httpp-proxy library
+var httpProxy  = require('httpp-proxy');
+var httppProxy = httpProxy.httppproxy;
 
 // UUID generator
 var UUID = require('uuid');
@@ -1594,19 +1595,15 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                 // cache proxy
                 if (!self.turnProxyCache[vurle]) {
                     // fill destination name-client info and create proxy to peer target
-                    self.turnProxyCache[vurle] = new httppProxy.HttpProxy({
-                        ///httpp: false,
-                        https: self.sslcerts.ps || false,
+                    self.turnProxyCache[vurle] = new httppProxy({
                         changeOrigin: false,
-                        enable: {xforward: true},
+                        xfwd: true,
                         
-                        ///source: {host: 'localhost', port: self.turnPorts[0]},
-                          
-                        target: {
-                            httpp: true,
-                            
+                        ws: true,
+
+                        target: {                            
                             // set SSL related info
-                            https: routing.secmode ? {
+                            ssl: routing.secmode ? {
                                 rejectUnauthorized: true, 
                                                 ca: self.sslcerts.ca.cont, 
                                                key: self.sslcerts.as.key,
@@ -1615,24 +1612,16 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                             
                             host: routing.dst.ipaddr,
                             port: routing.dst.port,
-                            
-                            // set user-specific feature,like maxim bandwidth,etc
-                            // TBD... with user DB
-                            localAddress: routing.turn.lipaddr,
-                               localPort: routing.turn.agentport, 
-                            /*localAddress: {
-                                addr: routing.turn.lipaddr,
-                                port: routing.turn.agentport,
-                                
-                                 opt: {
-                                    mbw: self.option.mbw || null
-                                }
-                            }*/
-                        }
+                        },    
+                        
+                        // set user-specific feature,like maxim bandwidth,etc
+                        // TBD... with user DB
+                        localAddress: routing.turn.lipaddr,
+                           localPort: routing.turn.agentport,
                     });
                     
                     // Handle request error
-                    self.turnProxyCache[vurle].on('proxyError', function(err, req, res) {
+                    self.turnProxyCache[vurle].on('error', function(err, req, res) {
                         debug(err+',proxy to '+urle);
                         
                         // send error back
@@ -1654,32 +1643,11 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                         // notes: still keep it to avoid attack
                         ///self.turnProxyCache[vurle] = null;
                     });
-                    
-                    // Handle upgrade error
-                    self.turnProxyCache[vurle].on('webSocketProxyError', function(err, req, socket, head){
-                        debug(err+',proxy to '+urle);
-                        
-                        // send error back
-                        try {
-                            if (process.env.NODE_ENV === 'production') {
-                                socket.write('Internal Server Error');
-                            } else {
-                                socket.write('An error has occurred: ' + JSON.stringify(err));
-                            }
-                            socket.end();
-                        } catch (ex) {
-                            console.error("socket.end error: %s", ex.message) ;
-                        }
-                        
-                        // clear vURL entry
-                        // notes: still keep it to avoid attack
-                        ///self.turnProxyCache[vurle] = null;
-                    });
                 }
                 
                 // 1.2.5
                 // proxy target
-                self.turnProxyCache[vurle].proxyRequest(req, res);
+                self.turnProxyCache[vurle].web(req, res);
             });
         };
         
@@ -1895,19 +1863,15 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                 // cache proxy
                 if (!self.turnProxyCache[vurle]) {
                     // fill destination name-client info and create proxy to peer target
-                    self.turnProxyCache[vurle] = new httppProxy.HttpProxy({
-                        ///httpp: false,
-                        https: self.sslcerts.ps || false,
+                    self.turnProxyCache[vurle] = new httppProxy({
                         changeOrigin: false,
-                        enable: {xforward: true},
-                        
-                        ///source: {host: 'localhost', port: self.turnPorts[0]},
+                        xfwd: true,
                          
+                        ws: true,
+                        
                         target: {
-                            httpp: true, 
-                            
                             // set SSL related info
-                            https: routing.secmode ? {
+                            ssl: routing.secmode ? {
                                 rejectUnauthorized: true, 
                                                 ca: self.sslcerts.ca.cont, 
                                                key: self.sslcerts.as.key,
@@ -1916,24 +1880,16 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                             
                             host: routing.dst.ipaddr,
                             port: routing.dst.port,
-                            
-                            // set user-specific feature,like maxim bandwidth,etc
-                            // TBD... with user DB
-                            localAddress: routing.turn.lipaddr,
-                               localPort: routing.turn.agentport, 
-                            /*localAddress: {
-                                addr: routing.turn.lipaddr,
-                                port: routing.turn.agentport, 
-                                
-                                 opt: {
-                                    mbw: self.option.mbw || null
-                                }
-                            }*/
-                        }
+                        },    
+                        
+                        // set user-specific feature,like maxim bandwidth,etc
+                        // TBD... with user DB
+                        localAddress: routing.turn.lipaddr,
+                           localPort: routing.turn.agentport,
                     });
                     
                     // Handle request error
-                    self.turnProxyCache[vurle].on('proxyError', function(err, req, res){
+                    self.turnProxyCache[vurle].on('error', function(err, req, res){
                         debug(err+',proxy to '+urle);
                         
                         // send error back
@@ -1949,27 +1905,6 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                             res.end();
                         } catch (ex) {
                             console.error("res.end error: %s", ex.message) ;
-                        }
-                        
-                        // clear vURL entry
-                        // notes: still keep it to avoid attack
-                        ///self.turnProxyCache[vurle] = null;
-                    });
-                    
-                    // Handle upgrade error
-                    self.turnProxyCache[vurle].on('webSocketProxyError', function(err, req, socket, head){
-                        debug(err+',proxy to '+urle);
-                        
-                        // send error back
-                        try {
-                            if (process.env.NODE_ENV === 'production') {
-                                socket.write('Internal Server Error');
-                            } else {
-                                socket.write('An error has occurred: ' + JSON.stringify(err));
-                            }
-                            socket.end();
-                        } catch (ex) {
-                            console.error("socket.end error: %s", ex.message) ;
                         }
                         
                         // clear vURL entry
@@ -2069,8 +2004,8 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                 }
                                 
                 // 1.5.5
-                // proxy target
-                self.turnProxyCache[vurle].proxyWebSocketRequest(req, socket, head);
+                // proxy websocket target
+                self.turnProxyCache[vurle].ws(req, socket, head);
             });
         };
                 
@@ -2627,6 +2562,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                     // clear TURN server turnProxyCache
                     if (client.clntinfo.vurl in self.turnProxyCache) {
                         debug('clear turnProxyCache on vurl:'+client.clntinfo.vurl);
+                        self.turnProxyCache[client.clntinfo.vurl].close();
                         self.turnProxyCache[client.clntinfo.vurl] = null;
                     }
                     
