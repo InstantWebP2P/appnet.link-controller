@@ -45,7 +45,7 @@ var creatNmclnWss = function(self) {
             data += 'reply from '+self.nm;
     
             try {
-                client.send(msgpack.encode(data), {binary: true, mask: true}, function(err){
+                client.send(msgpack.encode(data), function(err){
                     if (err) {
                         console.log(err+',sendOpcMsg failed');
                     }
@@ -159,7 +159,7 @@ nmclnsA.on('ready', function() {
                             });
                             
                             setInterval(function(){
-                                socket.send(msgpack.encode('Hello, This is from test A via STUN :)'), {binary: true, mask: true});
+                                socket.send(msgpack.encode('Hello, This is from test A via STUN :)'));
                             }, 2000);
                         });
                     });
@@ -198,7 +198,7 @@ nmclnsA.on('ready', function() {
                             });
                             
                             setInterval(function(){
-                                socket.send(msgpack.encode('Hello, This is from test A via TURN :)'), { binary: true, mask: true });
+                                socket.send(msgpack.encode('Hello, This is from test A via TURN :)'));
                             }, 2000);
                         });
                     });

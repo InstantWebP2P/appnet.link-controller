@@ -5,7 +5,7 @@ var nmCln = nmSrv.Client;
 var SEP   = nmSrv.SEP;
 
 // appnet.io-ws library
-var WebSocket = require('wspp');
+var WebSocket = require('wspp').wspp;
 var WebSocketServer = WebSocket.Server;
 
 // msgpack library
@@ -29,7 +29,7 @@ var creatNmclnWss = function(self) {
             data += 'reply from C';
     
             try {
-                client.send(msgpack.encode(data), {binary: true, mask: true}, function(err){
+                client.send(msgpack.encode(data), function(err){
                     if (err) {
                         console.log(err+',sendOpcMsg failed');
                     }
@@ -135,7 +135,7 @@ nmclnsC.on('go', function() {
                             
                             setInterval(function(){
                                 try {
-                                    socket.send(msgpack.encode('Hello, This is from test C via STUN :)'), { binary: true, mask: true }, function (err) {
+                                    socket.send(msgpack.encode('Hello, This is from test C via STUN :)'), function (err) {
                                         if (err) {
                                             console.log(err + ',sendOpcMsg failed');
                                         }
@@ -182,7 +182,7 @@ nmclnsC.on('go', function() {
                             
                             setInterval(function(){
                                 try {
-                                    socket.send(msgpack.encode('Hello, This is from test C via TURN :)'), { binary: true, mask: true }, function (err) {
+                                    socket.send(msgpack.encode('Hello, This is from test C via TURN :)'), function (err) {
                                         if (err) {
                                             console.log(err + ',sendOpcMsg failed');
                                         }
