@@ -1595,13 +1595,17 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                 // cache proxy
                 if (!self.turnProxyCache[vurle]) {
                     // fill destination name-client info and create proxy to peer target
-                    self.turnProxyCache[vurle] = new httppProxy({
+                    self.turnProxyCache[vurle] = httppProxy.createProxyServer({
+                        ssl: self.sslcerts.ps || false,
+                        
                         changeOrigin: false,
                         xfwd: true,
                         
                         ws: true,
 
-                        target: {                            
+                        target: {
+                            protocol: routing.secmode ? 'https:' : 'http:',
+                            
                             // set SSL related info
                             ssl: routing.secmode ? {
                                 rejectUnauthorized: true, 
@@ -1863,13 +1867,17 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                 // cache proxy
                 if (!self.turnProxyCache[vurle]) {
                     // fill destination name-client info and create proxy to peer target
-                    self.turnProxyCache[vurle] = new httppProxy({
+                    self.turnProxyCache[vurle] = httppProxy.createProxyServer({
+                        ssl: self.sslcerts.ps || false,
+
                         changeOrigin: false,
                         xfwd: true,
                          
                         ws: true,
                         
                         target: {
+                            protocol: routing.secmode ? 'https:' : 'http:',
+
                             // set SSL related info
                             ssl: routing.secmode ? {
                                 rejectUnauthorized: true, 
