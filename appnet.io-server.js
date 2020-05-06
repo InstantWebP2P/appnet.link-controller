@@ -1595,7 +1595,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                 // cache proxy
                 if (!self.turnProxyCache[vurle]) {
                     // fill destination name-client info and create proxy to peer target
-                    self.turnProxyCache[vurle] = httppProxy.createProxyServer({
+                    const options = {
                         ssl: self.sslcerts.ps || false,
                         
                         changeOrigin: false,
@@ -1622,7 +1622,10 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                         // TBD... with user DB
                         localAddress: routing.turn.lipaddr,
                            localPort: routing.turn.agentport,
-                    });
+                    };
+                    debug(`turn web proxy options: ${options}`);
+
+                    self.turnProxyCache[vurle] = httppProxy.createProxyServer(options);
                     
                     // Handle request error
                     self.turnProxyCache[vurle].on('error', function(err, req, res) {
@@ -1867,7 +1870,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                 // cache proxy
                 if (!self.turnProxyCache[vurle]) {
                     // fill destination name-client info and create proxy to peer target
-                    self.turnProxyCache[vurle] = httppProxy.createProxyServer({
+                    const options = {
                         ssl: self.sslcerts.ps || false,
 
                         changeOrigin: false,
@@ -1894,8 +1897,11 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                         // TBD... with user DB
                         localAddress: routing.turn.lipaddr,
                            localPort: routing.turn.agentport,
-                    });
-                    
+                    };
+                    debug(`turn ws proxy options: ${options}`);
+
+                    self.turnProxyCache[vurle] = httppProxy.createProxyServer(options);
+
                     // Handle request error
                     self.turnProxyCache[vurle].on('error', function(err, req, res){
                         debug(err+',proxy to '+urle);
