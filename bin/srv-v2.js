@@ -44,7 +44,7 @@ var nmsrvs = new nmSrv(
                 // CA cert/key info file path
                 ca: {
                      key: JSON.parse(fs.readFileSync(__dirname+'/../ca-certs/nacl-ca-key.json').toString('utf-8')),
-                    cert: JSON.parse(fs.readFileSync(__dirname+'/../ca-certs/nacl-ca-cert.json').toString('utf-8'))
+                    cert: JSON.parse(fs.readFileSync(__dirname+'/../ca-certs/nacl-ca-cert.json').toString('utf-8')),
                 },
 
                 // Server cert/key

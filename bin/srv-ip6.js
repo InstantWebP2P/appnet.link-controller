@@ -4,6 +4,10 @@
 var fs    = require('fs');
 var nmSrv = require('../appnet.io-server');
 
+// root CA
+var vCA = require('ssl-root-cas').create();
+vCA.unshift(FS.readFileSync(__dirname + '/../ca-certs/ca-cert.pem'));
+
 var nmsrvs = new nmSrv(
     // endpoint info
     {
@@ -19,7 +23,7 @@ var nmsrvs = new nmSrv(
         ca: {
              key: __dirname+'/../ca-certs/ca-key.pem',
             cert: __dirname+'/../ca-certs/ca-cert.pem',
-            cont: fs.readFileSync(__dirname+'/../ca-certs/ca-cert.pem')
+            cont: vCA,
         },
 
         // Server cert/key/ca
