@@ -7,7 +7,7 @@ var SEP   = nmSrv.SEP;
 var vURL = require('../vurl');
 
 // appnet.io-ws library
-var WebSocket = require('wspp');
+var WebSocket = require('wspp').wspp;
 var WebSocketServer = WebSocket.Server;
 
 // msgpack library
@@ -29,7 +29,7 @@ var creatNmclnWss = function(self) {
             data += 'reply from A';
     
             try {
-                client.send(msgpack.encode(data), {binary: true, mask: true}, function(err){
+                client.send(msgpack.encode(data), function(err){
                     if (err) {
                         console.log(err+',sendOpcMsg failed');
                     }

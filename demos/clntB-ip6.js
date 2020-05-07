@@ -5,7 +5,7 @@ var nmCln = nmSrv.Client;
 var SEP   = nmSrv.SEP;
 
 // appnet.io-ws library
-var WebSocket = require('wspp');
+var WebSocket = require('wspp').wspp;
 var WebSocketServer = WebSocket.Server;
 
 // msgpack library
@@ -29,7 +29,7 @@ var creatNmclnWss = function(self) {
             data += 'reply from B';
     
             try {
-                client.send(msgpack.encode(data), {binary: true, mask: true}, function(err){
+                client.send(msgpack.encode(data), function(err){
                     if (err) {
                         console.log(err+',sendOpcMsg failed');
                     }
@@ -128,15 +128,13 @@ nmclnsB.on('go', function() {
                             if (err || !socket) return console.log(err+',connect to peer failed');
                             
                             socket.on('message', function(message) {
-                                // typeof message !== 'string' will be set if a binary message is received
-                                // flags.masked will be set if the message was masked
                                 var data = (typeof message !== 'string') ? msgpack.decode(message) : JSON.parse(message);
                                 console.log(JSON.stringify(data));
                             });
                             
                             setInterval(function(){
                                 try {
-                                    socket.send(msgpack.encode('Hello, This is from test B via STUN :)'), { binary: true, mask: true }, function (err) {
+                                    socket.send(msgpack.encode('Hello, This is from test B via STUN :)'), function (err) {
                                         if (err) {
                                             console.log(err + ',sendOpcMsg failed');
                                         }
@@ -175,15 +173,13 @@ nmclnsB.on('go', function() {
                             if (err || !socket) return console.log(err+',connect to turn failed');
                             
                             socket.on('message', function(message) {
-                                // typeof message !== 'string' will be set if a binary message is received
-                                // flags.masked will be set if the message was masked
                                 var data = (typeof message !== 'string') ? msgpack.decode(message) : JSON.parse(message);
                                 console.log(JSON.stringify(data));
                             });
                             
                             setInterval(function() {
                                 try {
-                                    socket.send(msgpack.encode('Hello, This is from test B via TURN :)'), { binary: true, mask: true }, function (err) {
+                                    socket.send(msgpack.encode('Hello, This is from test B via TURN :)'), function (err) {
                                         if (err) {
                                             console.log(err + ',sendOpcMsg failed');
                                         }

@@ -127,8 +127,6 @@ nmclnsC.on('go', function() {
                             if (err || !socket) return console.log(err+',connect to peer failed');
                             
                             socket.on('message', function(message) {
-                                // typeof message !== 'string' will be set if a binary message is received
-                                // flags.masked will be set if the message was masked
                                 var data = (typeof message !== 'string') ? msgpack.decode(message) : JSON.parse(message);
                                 console.log(JSON.stringify(data));
                             });
@@ -174,8 +172,6 @@ nmclnsC.on('go', function() {
                             if (err || !socket) return console.log(err+',connect to turn failed');
                             
                             socket.on('message', function(message) {
-                                // typeof message !== 'string' will be set if a binary message is received
-                                // flags.masked will be set if the message was masked
                                 var data = (typeof message !== 'string') ? msgpack.decode(message) : JSON.parse(message);
                                 console.log(JSON.stringify(data));
                             });
