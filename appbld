@@ -9,6 +9,7 @@ fi
 # execute commands 
 if [ $# -ne 0 ]; then
   echo "$@ ..."
+  ###docker run -v `pwd`:`pwd` -w `pwd` -i -t --rm --network host --env DEBUG=appnet.io.srv,appnet.io appnet-bld:4.0 $@
   docker run -v `pwd`:`pwd` -w `pwd` -i -t --rm --network host appnet-bld:4.0 $@
 else
   echo "Start building ..."

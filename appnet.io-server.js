@@ -1605,11 +1605,11 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
 
                         target: {
                             protocol: routing.secmode ? 'https:' : 'http:',
+                                  ca: routing.secmode ? self.sslcerts.ca.cont : '',
                             
                             // set SSL related info
                             ssl: routing.secmode ? {
                                 rejectUnauthorized: true, 
-                                                ca: self.sslcerts.ca.cont, 
                                                key: self.sslcerts.as.key,
                                               cert: self.sslcerts.as.cert
                             } : false, 
@@ -1623,7 +1623,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                         localAddress: routing.turn.lipaddr,
                            localPort: routing.turn.agentport,
                     };
-                    debug(`turn web proxy options: ${options}`);
+                    debug(`turn web proxy options: ${JSON.stringify(options)}`);
 
                     self.turnProxyCache[vurle] = httppProxy.createProxyServer(options);
                     
@@ -1880,11 +1880,11 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                         
                         target: {
                             protocol: routing.secmode ? 'https:' : 'http:',
-
+                                  ca: routing.secmode ? self.sslcerts.ca.cont : '',
+                            
                             // set SSL related info
                             ssl: routing.secmode ? {
                                 rejectUnauthorized: true, 
-                                                ca: self.sslcerts.ca.cont, 
                                                key: self.sslcerts.as.key,
                                               cert: self.sslcerts.as.cert
                             } : false, 
@@ -1898,7 +1898,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                         localAddress: routing.turn.lipaddr,
                            localPort: routing.turn.agentport,
                     };
-                    debug(`turn ws proxy options: ${options}`);
+                    debug(`turn ws proxy options: ${JSON.stringify(options)}`);
 
                     self.turnProxyCache[vurle] = httppProxy.createProxyServer(options);
 
