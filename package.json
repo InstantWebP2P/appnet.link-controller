@@ -2,7 +2,7 @@
   "author": "Tom Zhou <appnet.link@gmail.com> (https://appnet.link)",
   "name": "appnet.link-controller",
   "description": "AppNet.link protocol controller service for node.js",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "repository": {
     "type": "git",
     "url": "git://github.com/InstantWebP2P/appnet.link-controller.git"
