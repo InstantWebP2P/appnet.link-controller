@@ -1,11 +1,11 @@
 {
   "author": "Tom Zhou <appnet.link@gmail.com> (https://appnet.link)",
-  "name": "appnet.io-controller",
+  "name": "appnet.link-controller",
   "description": "AppNet.io protocol controller service for node.js",
-  "version": "4.0.2",
+  "version": "4.1.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/InstantWebP2P/appnet.io-controller.git"
+    "url": "git://github.com/InstantWebP2P/appnet.link-controller.git"
   },
   "engines": {
     "node": ">=6.8.0"
@@ -18,7 +18,7 @@
     "geoip-lite": "1.4.1",
     "httpp-proxy": "latest",
     "ipaddr.js": "1.9.1",
-    "appnet.io": "latest",
+    "appnet.link": "latest",
     "lodash": "4.17.5",
     "msgpack-js": "0.3.0",
     "neo4jv1": "1.1.6",
