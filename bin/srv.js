@@ -1,4 +1,4 @@
-// AppNet.IO name-server example
+// AppNet.Link name-server example
 // Copyright (c) 2012-present Tom Zhou<appnet.link@gmail.com>
 //
 var fs    = require('fs');

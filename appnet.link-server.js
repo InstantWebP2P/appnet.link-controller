@@ -1,4 +1,4 @@
-// AppNet.IO name-server implementation, that works with appnet.link name-client.
+// AppNet.Link name-server implementation, that works with appnet.link name-client.
 // Copyright (c) 2012-present Tom Zhou<appnet.link@gmail.com>
 //
 

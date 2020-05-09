@@ -1,4 +1,4 @@
-// AppNet.IO name-server V2 implementation based SecureWebsocket and NaclCert, that works with appnet.link name-client
+// AppNet.Link name-server V2 implementation based SecureWebsocket and NaclCert, that works with appnet.link name-client
 // Copyright (c) 2014-present Tom Zhou<appnet.link@gmail.com>
 //
 
