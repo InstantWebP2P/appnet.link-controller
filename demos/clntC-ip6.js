@@ -1,10 +1,10 @@
 var _     = require('lodash');
 
-var nmSrv = require('../appnet.io-server');
+var nmSrv = require('../appnet.link-server');
 var nmCln = nmSrv.Client;
 var SEP   = nmSrv.SEP;
 
-// appnet.io-ws library
+// appnet.link-ws library
 var WebSocket = require('wspp').wspp;
 var WebSocketServer = WebSocket.Server;
 

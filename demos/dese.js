@@ -1,6 +1,6 @@
 // Copyright (c) 2012-present Tom Zhou<appnet.link@gmail.com>
 
-var nmSrv = require('../appnet.io-server');
+var nmSrv = require('../appnet.link-server');
 var WEBPP = nmSrv.Client;
 var SEP   = nmSrv.SEP;
 

@@ -101,7 +101,7 @@ vURL.prototype.del = function(vurl, fn){
     }
 }
 
-// class methods MUST be compatible to AppNet.io
+// class methods MUST be compatible to AppNet.link
 
 // Version 1.0
 vURL.version = vURL.VERSION = '1.0';

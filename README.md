@@ -1,5 +1,5 @@
-# appnet.io-controller
-AppNet.IO controller serivices to support [AppNet.io protocol](https://github.com/InstantWebP2P/appnet.io)
+# appnet.link-controller
+AppNet.IO controller serivices to support [AppNet.link protocol](https://github.com/InstantWebP2P/appnet.link)
 
 
 ### Prerequest
@@ -15,7 +15,7 @@ AppNet.IO controller serivices to support [AppNet.io protocol](https://github.co
  
 ### Install
 
-* appnet.io-controller depends on node-httpp, please build it from repo [node-httpp](https://github.com/InstantWebP2P/node-httpp.git)
+* appnet.link-controller depends on node-httpp, please build it from repo [node-httpp](https://github.com/InstantWebP2P/node-httpp.git)
 
 * clone this repo and install dependency modules
 
@@ -31,7 +31,7 @@ AppNet.IO controller serivices to support [AppNet.io protocol](https://github.co
 
     ` ~/node-httpp/node ./bin/srv.js `
 
-* now ready to serve [appnet.io client](https://github.com/InstantWebP2P/appnet.io)
+* now ready to serve [appnet.link client](https://github.com/InstantWebP2P/appnet.link)
 
 
 #### Install on Linux with Docker
@@ -78,8 +78,8 @@ AppNet.IO controller serivices to support [AppNet.io protocol](https://github.co
 * db/sdp.js.             - Session data model persistent in GraphDB
 * vurl.js.               - Virtual URL implementation
 
-* appnet.io-server.js    - AppNet.io protocol controller implementation
-* appnet.io-server-v2.js - AppNet.io protocol controller V2 implementation using SecureWebsocket and NaclCert
+* appnet.link-server.js    - AppNet.link protocol controller implementation
+* appnet.link-server-v2.js - AppNet.link protocol controller V2 implementation using SecureWebsocket and NaclCert
 
 * ssl.js                 - SSL/RSA certs generate utils
 * demos/                 - demos

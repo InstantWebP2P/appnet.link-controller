@@ -1,8 +1,8 @@
-// AppNet.io controller 
+// AppNet.link controller 
 // Copyright (c) 2020 Tom Zhou<appnet.link@gmail.com>
 
 // default server v1
-module.exports    = require('./appnet.io-server');
+module.exports    = require('./appnet.link-server');
 
 // v2
-module.exports.v2 = require('./appnet.io-server-v2');
+module.exports.v2 = require('./appnet.link-server-v2');

@@ -2,7 +2,7 @@
 // Copyright (c) 2012-present Tom Zhou<appnet.link@gmail.com>
 //
 var fs = require('fs');
-var nmSrv = require('../appnet.io-server-v2');
+var nmSrv = require('../appnet.link-server-v2');
 
 var nmsrvs = new nmSrv(
     // endpoint info

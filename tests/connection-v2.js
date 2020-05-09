@@ -1,6 +1,6 @@
 // Copyright (c) 2012-present Tom Zhou<appnet.link@gmail.com>
 
-var SEP = require('appnet.io').SEP;
+var SEP = require('appnet.link').SEP;
 
 process.on('uncaughtException', function (err) {
   console.log('Caught exception: ' + err);

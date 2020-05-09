@@ -1,19 +1,19 @@
-// AppNet.IO name-server V2 implementation based SecureWebsocket and NaclCert, that works with appnet.io name-client
-// Copyright (c) 2014-present Tom Zhou<appnet.link@gmail.com>
+// AppNet.IO name-server implementation, that works with appnet.link name-client.
+// Copyright (c) 2012-present Tom Zhou<appnet.link@gmail.com>
 //
 
 'use strict';
-var debug  = require('debug')('appnet.io.srv.v2');
+var debug = require('debug')('appnet.link.srv');
 
 
-// AppNet.io module
-var AppNet = require('appnet.io').V2;
+// AppNet.link module
+var AppNet        = require('appnet.link');
 
 // Session establish protocol
-var SEP    = AppNet.SEP;
+var SEP           = AppNet.SEP;
 
 // eventEmitter
-var eventEmitter  = require('events'),
+var eventEmitter = require('events'),
     util          = require('util'),
     url           = require('url'),
     http          = require('http'),
@@ -28,22 +28,19 @@ var eventEmitter  = require('events'),
 // security hash
 // SIPKEY can be any user defined 4 integers
 var SIPHASH = require('siphash'),
-    SIPKEY = [0x33336666, 0x33338888, 0x88889999, 0x11116666]; // magic key
+    SIPKEY  = [0x33336666, 0x33338888, 0x88889999, 0x11116666]; // magic key
 
 // MSGPACK library
-var MSGPACK = require('msgpack-js');
+// prefer JSON format instead of msgpack
+var MSGPACK         = require('msgpack-js');
 
 // p2p stream websocket library
-///var WebSocket = require('wspp');
-///var WebSocketServer = WebSocket.Server;
+var WebSocket       = require('wspp').wspp;
+var WebSocketServer = WebSocket.Server;
 
-// secure websocket library
-var SecureWebSocket = require('node-sws');
-var SecureWebSocketServer = SecureWebSocket.Server;
-var Naclcert = SecureWebSocket.Naclcert;
-
-// httpp-proxy library
-var httppProxy = require('httpp-proxy').httppproxy;
+// http/httpp-proxy library
+var httpProxy  = require('httpp-proxy');
+var httppProxy = httpProxy.httppproxy;
 
 // UUID generator
 var UUID = require('uuid');
@@ -71,37 +68,22 @@ var SSL = require('./ssl');
 // GeoIP model
 var geoIP = require('geoip-lite');
 
-// Debug level
-// 1: display error, proxy entry
-// 2: display req/res headers/statusCode
-var Debug = 0;
 
-
-// name-server pair: primary/alternate listen on UDP port 51686/51868 in default
-// turn-server pair: proxy/agent server
+// name-server pair  - primary/alternate listen on UDP port 51686/51868 in default
+// turn-server pair  - proxy/agent server
 // - endpoints       : {dn: domain name, ipaddr: name-server hostname or IP, ports: [primary,alternative], turn: [proxy,agent], option: {mbw:xxx, ...}}
 // - endpoints.dn    : server's domain name, it's needed for TURN session
 // - endpoints.turn  : turn proxy/agent ports
 // - endpoints.option: default user-specific features,like mbw - maxim bandwidth, etc
 // - 
-// -         seccerts: {
-//                         // SSL certs
-//                         sslcerts: {
-//                                    ca: {key: xxx, cert: xxx, cont: xxx}, 
-//                                    ns: {key: xxx, cert: yyy}, 
-//                                    as: {key: xxx, cert: yyy}, 
-//                                    ps: {key: xxx, cert: yyy, subdn:{'subdomain': {key:x, cert: x}}}} https/httpps SSL certs
-//                         },
-//                         // NACL certs
-//                         naclcerts: {
-//                                    ca: {key: xxx, cert: xxx}, 
-//                                    ns: {key: xxx, cert: yyy}, 
-//                                    as: {key: xxx, cert: yyy}, 
-//                                    ps: {key: xxx, cert: yyy} secure websocket NACL certs
-//                         }
+// -         sslcerts: {
+//                         ca: {key: xxx, cert: xxx, cont: xxx}, 
+//                         ns: {key: xxx, cert: yyy}, 
+//                         as: {key: xxx, cert: yyy}, 
+//                         ps: {key: xxx, cert: yyy, subdn:{'subdomain': {key:x, cert: x}}}} https/httpps SSL certs
 //           }
-var nmSrv = exports = module.exports = function(endpoints, seccerts){
-    if (!(this instanceof nmSrv)) return new nmSrv(endpoints, seccerts);
+var nmSrv = exports = module.exports = function(endpoints, sslcerts){
+    if (!(this instanceof nmSrv)) return new nmSrv(endpoints, sslcerts);
 
     var self = this;
        
@@ -113,12 +95,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
     self.dn     = endpoints.dn      || '51dese.com';
     self.ipaddr = endpoints.ipaddr  || '0.0.0.0';
     self.ports  = endpoints.ports   || [51686, 51868];
-        
-    // check on secure certs /////////////////////////////
-    seccerts      = seccerts || {};
-    var sslcerts  = (seccerts && seccerts.sslcerts)  || {};
-    var naclcerts = (seccerts && seccerts.naclcerts) || {};
-
+    
     // SSL certs
     self.sslcerts    = sslcerts || {};
     self.sslcerts.ns = self.sslcerts.ns || false;
@@ -127,17 +104,6 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
     
     // ssl CA cert/key
     self.sslcerts.ca = self.sslcerts.ca || false;
-        
-    // NACL certs
-    self.naclcerts    = naclcerts || {};
-    self.naclcerts.ns = self.naclcerts.ns || false;
-    self.naclcerts.as = self.naclcerts.as || false;
-    self.naclcerts.ps = self.naclcerts.ps || false;
-    
-    // NACL CA cert/key
-    self.naclcerts.ca = self.naclcerts.ca || {};
-    self.naclcerts.ca.cert = self.naclcerts.ca.cert || Naclcert.rootCACert;
-    //////////////////////////////////////////////////////
     
     // default user-specific features
     self.option = endpoints.option || {};
@@ -167,8 +133,9 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
     function sendOpcMsg(socket, opc_msg, fn){ 
         try {
             if (socket && socket.send) {
-                // V2 will use msgpack
-                socket.send(MSGPACK.encode(opc_msg), {binary: true, mask: false}, function(err){
+                // !!!Prefer json instead of msgpack
+                ///socket.send(MSGPACK.encode(opc_msg), function(err){
+                socket.send(JSON.stringify(opc_msg), function(err){
                     if (err) {
                         console.log(err+',sendOpcMsg failed');
                         if (fn) fn(err+',sendOpcMsg failed');
@@ -192,20 +159,21 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
         var peerclnt; // the connection obj which the peer come from 
         var mineclnt; // the connection obj which the client come from
         
-        if (Debug) console.log('new connection');
+        debug('new connection');
         
         // initialize offer message count per client
         // every time, server send one offer message, increase it by one
         client.offerMsgcnt = 0;
         
         // onMessage handler
-        client.on('message', function(message, flags){
+        client.on('message', function(message){
          // !!! catch any exceptions and ignore it
-         try {
+         try 
+         {
         
-            var data = (flags.binary) ? MSGPACK.decode(message) : JSON.parse(message);
+            var data = typeof message !== 'string' ? MSGPACK.decode(message) : JSON.parse(message);
             
-            if (Debug) console.log('nmsrv:new message:'+JSON.stringify(data));
+            debug('nmsrv:new message:'+JSON.stringify(data));
             
             // check if opc is valid
             if ('number' === typeof data.opc) {
@@ -217,14 +185,15 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     
                     // 1.1
                     // notes: only support 51dese.com as domain at present !!!
-                    if (data.offer.domain != '51dese.com' && data.offer.domain != 'www.51dese.com') {
-                        console.log('invalid domain, please use 51dese.com by now');
+                    if (data.offer.domain != '51dese.com'  && data.offer.domain != 'www.51dese.com' &&
+                        data.offer.domain != 'appnet.link' && data.offer.domain != 'www.appnet.link') {
+                        console.log('invalid domain, please use 51dese.com or appnet.link by now');
                         
                         data.opc    = SEP.SEP_OPC_SDP_ANSWER;
                         
                         data.answer = {};
                         data.answer.ready = false;
-                        data.answer.error = 'invalid domain, please use 51dese.com by now';
+                        data.answer.error = 'invalid domain, please use 51dese.com or appnet.link by now';
                         
                         // 1.1.1
                         // send back answer message, then close client and agent client in case have
@@ -260,22 +229,22 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     
                     // 2.1
                     // fill session info saw by server
-                    sesn.clntpublicIP   = client.remoteAddress;
-                    sesn.clntpublicPort = client.remotePort;
-                    sesn.srvlocalIP     = client.address().address;
-                    sesn.srvlocalPort   = client.address().port;
+                    sesn.clntpublicIP   = client._socket.remoteAddress;
+                    sesn.clntpublicPort = client._socket.remotePort;
+                    sesn.srvlocalIP     = client._socket.address().address;
+                    sesn.srvlocalPort   = client._socket.address().port;
                     sesn.srvpublicDN    = self.dn;    
                     sesn.sid            = UUID.v4();
                     
                     // 2.2
                     // query client's geoIP
-                    sesn.clntgeoip = JSON.stringify(geoIP.lookup(client.remoteAddress));
-                    if (Debug) console.log('new name-client GeoIP:'+sesn.clntgeoip); 
+                    sesn.clntgeoip = JSON.stringify(geoIP.lookup(client._socket.remoteAddress) || {country: 'NA',city: 'XY'});
+                    debug('new name-client GeoIP:'+sesn.clntgeoip); 
                     
                     // 2.3
                     // persistent session info
                     var sdp = new Sdp(sesn);
-                    if (Debug) console.log('new SDP session:'+JSON.stringify(sdp));
+                    debug('new SDP session:'+JSON.stringify(sdp));
 
                     sdp.saveOupdate(function(err, sdp){
                         // 3.
@@ -373,13 +342,15 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                                     altname: [
                                         ///'*.*.vurl.'+sdp.server.dn, '*.vurl.local.'+sdp.server.dn, '*.*.vurl.local.'+sdp.server.dn,
                                         ///'*.vurl.'+sdp.server.dn,
-                                        client.clntinfo.clntip, client.clntinfo.clntlip, '127.0.0.1', 'localhost', '::1', 'ip6-localhost',
+                                        client.clntinfo.clntip, client.clntinfo.clntlip, 
+                                        '127.0.0.1', 'localhost',
+                                        '::1', 'ip6-localhost',
                                         sdp.server.ip,
                                         // append vlocal. subdomain
                                         sdp.client.vmode == vurl.URL_MODE_HOST ? '*.vurl.vlocal.' + sdp.server.dn : 'vlocal.' + sdp.server.dn,
-                                    ]
+                                    ],
                                 },
-                                function(err, cert){
+                                function(err, cert) {
                                     if (err) {
                                         console.log(err+',generate security certs failed');
                                         data.answer.secerts = null;
@@ -401,23 +372,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                                         // enable bi-direction authentication
                                         data.answer.secerts.requestCert = true;
                                         data.answer.secerts.rejectUnauthorized = true;  
-                                                                        
-                                        // fill NACL cert info on V2 /////////////////////////////////////////////////
-                                        if (data.offer.version && data.offer.version == 2) {
-                                            var reqdesc = {
-                                                      version: '1.0',
-                                                         type: 'ca',
-                                                          tte: new Date().getTime() + 365*24*3600000, // one year to expire
-                                                    publickey: data.offer.naclpublickey,
-                                                        names: [sdp.server.dn, 'localhost'],
-                                                          ips: [client.clntinfo.clntip, client.clntinfo.clntlip, '127.0.0.1']
-                                            };
-                                            var bcert = Naclcert.generate(reqdesc, self.naclcerts.ca.key.secretkey, self.naclcerts.ca.cert);
-                                            
-                                            data.answer.secerts.naclcert = bcert;
-                                        }
-                                        ////////////////////////////////////////////////////////////////////////
-                                        
+                                                                                
                                         // 3.2.5
                                         // send sdp back
                                         sendOpcMsg(client, data);
@@ -427,26 +382,9 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                                         self.emit('NS.SEP.SEP_OPC_SDP_OFFER', {client: client, data: data});
                                     }
                                 });
-                            } else {
-                                // fill NACL cert info on V2 /////////////////////////////////////////////////
-                                if (data.offer.version && data.offer.version == 2) {
-                                    var reqdesc = {
-                                              version: '1.0',
-                                                 type: 'ca',
-                                                  tte: new Date().getTime() + 365*24*3600000, // one year to expire
-                                            publickey: data.offer.naclpublickey,
-                                                names: [sdp.server.dn, 'localhost'],
-                                                  ips: [client.clntinfo.clntip, client.clntinfo.clntlip, '127.0.0.1']
-                                    };
-                                    var bcert = Naclcert.generate(reqdesc, self.naclcerts.ca.key.secretkey, self.naclcerts.ca.cert);
-
-                                    data.answer.secerts = {};
-                                    data.answer.secerts.naclcert = bcert;
-                                }
-                                ////////////////////////////////////////////////////////////////////////
-
+                            } else {            
                                 sendOpcMsg(client, data);
-
+                                            
                                 // 3.2.6
                                 // emit event
                                 self.emit('NS.SEP.SEP_OPC_SDP_OFFER', {client: client, data: data});
@@ -465,8 +403,8 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     Sdp.updateClntInfo({gid: data.offer.gid, natype: data.offer.natype}, function(err){
                         // 3.
                         // fill answer opc
-                        data.opc = SEP.SEP_OPC_NAT_ANSWER;
-                        data.answer = {};
+                        data.opc          = SEP.SEP_OPC_NAT_ANSWER;
+                        data.answer       = {};
                         data.answer.state = SEP.SEP_OPC_STATE_READY;
                     
                         if (err) {
@@ -487,37 +425,36 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     });
                     break;
 
-
-                    case SEP.SEP_OPC_HEART_BEAT_OFFER:
-                        // 1.
-                        // check if user was allowed to query it
-                        // TBD...
-                    
-                        // 2.
-                        // heart-beat check response
-                
-                        // 2.1
-                        // fill answer opc
-            data.opc = SEP.SEP_OPC_HEART_BEAT_ANSWER;
-            data.answer = {};
-            data.answer.state = SEP.SEP_OPC_STATE_READY;
-            
-            data.answer.ready = true;
-                
-            // fill server timestamp
-            data.answer.timeAt = Date.now();
-                
-            // 3.
-            // send message back
-            sendOpcMsg(client, data);
-                
-            // 3.1
-            // emit event
-                self.emit('NS.SEP.SEP_OPC_HEART_BEAT_OFFER', {client: client, data: data});
+                case SEP.SEP_OPC_HEART_BEAT_OFFER:
+                    // 1.
+                    // check if user was allowed to query it
+                    // TBD...
+    
+                    // 2.
+                    // heart-beat check response
+    
+                    // 2.1
+                    // fill answer opc
+                    data.opc          = SEP.SEP_OPC_HEART_BEAT_ANSWER;
+                    data.answer       = {};
+                    data.answer.state = SEP.SEP_OPC_STATE_READY;
+    
+                    data.answer.ready = true;
+    
+                    // fill server timestamp
+                    data.answer.timeAt = Date.now();
+    
+                    // 3.
+                    // send message back
+                    sendOpcMsg(client, data);
+    
+                    // 3.1
+                    // emit event
+                    self.emit('NS.SEP.SEP_OPC_HEART_BEAT_OFFER', {client: client, data: data});
                     break;
 
                 case SEP.SEP_OPC_STUN_OFFER:
-                    if (Debug) console.log('stun.offer:'+JSON.stringify(data));
+                    debug('stun.offer:'+JSON.stringify(data));
                     // 1.
                     // check offer credit
                     // TBD... policy
@@ -577,7 +514,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                         
                         ///
                     } else {
-                        console.log('!!!DDOS attack,no permission to get STUN session');
+                        console.error('!!!DDOS attack,no permission to get STUN session');
                         
                         // 1.1.3
                         // send STUN_ANSWER to myself client
@@ -592,14 +529,14 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                         // 1.1.5
                         // close after 2s
                         sendOpcMsg(mineclnt, data, function(err){
-                            if (err) console.log(err+'sendOpcMsg failed');
+                            if (err) console.error(err+'sendOpcMsg failed');
                             
                             setTimeout(function(){
                                 if (mineclnt && mineclnt.close) mineclnt.close();                                    
                             }, 2000); // 2s timeout
                         });
                         
-                        if (Debug) console.log('mineclnt stun.data.offer:'+JSON.stringify(data.offer));
+                        debug('mineclnt stun.data.offer:'+JSON.stringify(data.offer));
                         
                         // 1.1.6
                         // emit event with initiator
@@ -621,7 +558,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     // send punch hole offer to myself client
                     data.offer.isInitiator = true;
                     sendOpcMsg(mineclnt, data);
-                    if (Debug) console.log('mineclnt stun.data.offer:'+JSON.stringify(data.offer));
+                    debug('mineclnt stun.data.offer:'+JSON.stringify(data.offer));
                     
                     // emit event with initiator
                     self.emit('NS.SEP.SEP_OPC_STUN_OFFER', {client: mineclnt, data: data});
@@ -634,12 +571,12 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     // send punch hole offer to peer client
                     data.offer.isInitiator = false;
                     sendOpcMsg(peerclnt, data);
-                    if (Debug) console.log('peerclnt stun.data.offer:'+JSON.stringify(data.offer));
+                    debug('peerclnt stun.data.offer:'+JSON.stringify(data.offer));
                     
                     break;
                     
                 case SEP.SEP_OPC_TURN_OFFER:
-                    if (Debug) console.log('turn.offer:'+JSON.stringify(data));
+                    debug('turn.offer:'+JSON.stringify(data));
                     // 1.
                     // check offer credit
                     // TBD... policy
@@ -721,7 +658,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                             }, 2000); // 2s timeout
                         });
                         
-                        if (Debug) console.log('mineclnt turn.data.offer:'+JSON.stringify(data.offer));
+                        debug('mineclnt turn.data.offer:'+JSON.stringify(data.offer));
                         
                         // 1.1.6
                         // emit event with initiator
@@ -795,7 +732,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                                     data.answer.ready = false;
                                 } else {
                                     // fill answer info
-                                    if (Debug) console.log('saved turn session successfully:'+JSON.stringify(turn));
+                                    debug('saved turn session successfully:'+JSON.stringify(turn));
                                     data.answer.state = SEP.SEP_OPC_STATE_READY;
                                     data.answer.ready = true;
                                     data.answer.peer  = turn.peer;
@@ -823,7 +760,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                                 // send turn answer to myself client
                                 data.answer.isInitiator = true;
                                 sendOpcMsg(mineclnt, data);
-                                if (Debug) console.log('mineclnt turn.data.offer:'+JSON.stringify(data.offer));
+                                debug('mineclnt turn.data.offer:'+JSON.stringify(data.offer));
                                 
                                 // 4.1.1
                                 // emit event with initiator
@@ -840,7 +777,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                                     // send turn answer to peer client
                                     data.answer.isInitiator = false;
                                     sendOpcMsg(peerclnt, data);
-                                    if (Debug) console.log('peerclnt turn.data.offer:'+JSON.stringify(data.offer));
+                                    debug('peerclnt turn.data.offer:'+JSON.stringify(data.offer));
                                 }
                             });
                         }
@@ -856,8 +793,8 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     // send STUN answer to initiator
                     // Algorithem:
                     // - for both of asymmmetric NAT/FW, send message from Initiator side to name-server
-                    // - for one asymmetric NAT/FW, another's symmetric, send message from symmetric side
-                    // - for both of symmmetric NAT/FW, send message from Initiator side to name-server
+                    // - for one     asymmetric NAT/FW,  another's symmetric, send message from symmetric side
+                    // - for both of symmmetric NAT/FW,  send message from Initiator side to name-server
                                        
                     // 2.1
                     // fill STUN answer
@@ -896,7 +833,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                                 data.answer.ready = false;
                             } else {
                                 // fill answer info
-                                if (Debug) console.log('saved stun session successfully:'+JSON.stringify(stun));
+                                debug('saved stun session successfully:'+JSON.stringify(stun));
                                 data.answer.state = SEP.SEP_OPC_STATE_READY;
                                 data.answer.ready = true;
                                 data.answer.peer  = stun.peer;
@@ -997,7 +934,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                         
                         // 3.1
                         // emit event
-                        self.emit('NS.SEP.SEP_OPC_CLNT_SDP_OFFER', {client: mineclnt, data: data});
+                        self.emit('NS.SEP.SEP_OPC_CLNT_SDP_OFFER', { client: client, data: data});
                     });
                     break;
                     
@@ -1005,11 +942,19 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     // 1.
                     // check if user was allowed to query it
                     // TBD... disable it by now
-                    if (1) {
+                    var _tbd_disable_alluser = true;
+                    
+                    // 1.1
+                    // allow test users so far
+                    if (client.clntinfo.usrkey.match(/(A|B|C)/gi)) {
+                        _tbd_disable_alluser = false;
+                    }
+                    
+                    if (_tbd_disable_alluser) {
                         data.opc    = SEP.SEP_OPC_ALL_USR_ANSWER;
                         data.answer = {};
                             
-                        console.log(err+',query user info failed');
+                        console.error('!!! Forbiden query all user info');
                         // send back user info session as answer
                         data.answer.usrs = [];
                         data.answer.state  = SEP.SEP_OPC_STATE_FAIL;
@@ -1022,7 +967,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     } else {
                         // 2.
                         // query login info
-                        Sdp.getAllUsrs(function(err, usrs){                        
+                        Sdp.getAllUsrs(function(err, usrs) {                        
                             // 3.
                             // send back ALL_USR answer
                             data.opc    = SEP.SEP_OPC_ALL_USR_ANSWER;
@@ -1051,11 +996,19 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     // 1.
                     // check if user was allowed to query it
                     // TBD... disable it by now
-                    if (1) {
+                    var _tbd_disable_alllogin = true;
+                    
+                    // 1.1
+                    // allow test users so far
+                    if (client.clntinfo.usrkey.match(/(A|B|C)/gi)) {
+                        _tbd_disable_alllogin = false;
+                    }
+                    
+                    if (_tbd_disable_alllogin) {                        
                         data.opc    = SEP.SEP_OPC_ALL_LOGIN_ANSWER;
                         data.answer = {};
                             
-                        console.log(err+',query all login session failed');
+                        console.error('!!! Forbiden query all login session');
                         // send back login session as answer
                         data.answer.logins = [];
                         data.answer.state  = SEP.SEP_OPC_STATE_FAIL;
@@ -1068,7 +1021,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     } else {
                         // 2.
                         // query login info
-                        Sdp.getAllLogin(function(err, logins){
+                        Sdp.getAllLogin(function(err, logins) {
                             // 3.
                             // send back ALL_LOGIN answer
                             data.opc    = SEP.SEP_OPC_ALL_LOGIN_ANSWER;
@@ -1197,7 +1150,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     // record service info
                     // notes: bridge to another service manager by now
                     // TBD... record it in geo-graph database
-
+                    
                     // 2.1
                     // set live flag true
                     data.offer.srv.live = true;
@@ -1385,13 +1338,6 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                             // send back service info as answer
                             data.answer.srv   = srv;
                             data.answer.state = SEP.SEP_OPC_STATE_READY;
-
-                            // !!! for security, only return country/city of GeoIP to client
-                            var geoip_     = {};
-                            geoip_.country = srv.geoip.country;
-                            geoip_.city    = srv.geoip.city;
-
-                            data.answer.srv.geoip = geoip_;
                         }
                         sendOpcMsg(client, data);
                         
@@ -1479,17 +1425,18 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                 console.log('unknown message:'+JSON.stringify(data));    
             }
             
-         } catch (e) {
-             console.error('Name-server ignore caught message-handle exception '+e);
+         }
+         catch (e) {
+             console.error('Name-server ignore caught message-handle exception:'+e);
          }
          
         });
         
         // onClose handler
-        client.on('close', function(){
+        client.once('close', function(){
             // 1.
             // clear client Node and SDP/STUN/TURN sessions in DB
-            if (Debug) console.log('client.onClose:'+JSON.stringify(client.clntinfo));
+            debug('client.onClose:'+JSON.stringify(client.clntinfo));
             if (client.clntinfo) {
                 try {
                     // 1.1
@@ -1500,17 +1447,17 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     // clear client connection cache
                     var ck = client.clntinfo.clntip+':'+client.clntinfo.clntport,
                         sk = client.clntinfo.srvip+':'+client.clntinfo.srvport;
-                    if (Debug) console.log('ck:'+ck+',sk:'+sk+',self.conn[sk][ck]:'+(self.conn[sk])[ck]);
+                    debug('ck:'+ck+',sk:'+sk+',self.conn[sk][ck]:'+(self.conn[sk])[ck]);
                     if (self.conn[sk] && (self.conn[sk])[ck] && client.clntinfo.gid) {
                         // Never clear data on DB, just set live flag as false
                         /*Sdp.db.delClient(client.clntinfo.gid, function(err){
                             if (err) console.log(err+',clear client with session failed @'+client.clntinfo.gid+'@srv:'+sk);
-                            if (Debug) console.log('clear client with sessions successfully @'+client.clntinfo.gid+',@srv:'+sk);
+                            debug('clear client with sessions successfully @'+client.clntinfo.gid+',@srv:'+sk);
                         }, true);*/
                         // client data
                         Sdp.updateClntInfo({gid: client.clntinfo.gid, live: false}, function(err){
                             if (err) console.log(err+',clear client with session failed @'+client.clntinfo.gid+'@srv:'+sk);
-                            if (Debug) console.log('clear client with sessions successfully @'+client.clntinfo.gid+',@srv:'+sk);
+                            debug('clear client with sessions successfully @'+client.clntinfo.gid+',@srv:'+sk);
                         
                             client.clntinfo = null;
                             (self.conn[sk])[ck] = null;
@@ -1530,7 +1477,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
             
             // 1.
             // clear client Node and SDP/STUN/TURN sessions in DB
-            if (Debug) console.log('client.onError:'+JSON.stringify(client.clntinfo));
+            debug('client.onError:'+JSON.stringify(client.clntinfo));
             if (client.clntinfo) {
                 try {
                     // 1.1
@@ -1541,16 +1488,16 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     // clear client connection cache
                     var ck = client.clntinfo.clntip+':'+client.clntinfo.clntport,
                         sk = client.clntinfo.srvip+':'+client.clntinfo.srvport;
-                    if (Debug) console.log('ck:'+ck+',sk:'+sk+',self.conn[sk][ck]:'+(self.conn[sk])[ck]);
+                    debug('ck:'+ck+',sk:'+sk+',self.conn[sk][ck]:'+(self.conn[sk])[ck]);
                     if (self.conn[sk] && (self.conn[sk])[ck] && client.clntinfo.gid) {
                         // Never clear data on DB, just set live flag as false
                         /*Sdp.db.delClient(client.clntinfo.gid, function(err){
                             if (err) console.log(err+',clear client with session failed @'+client.clntinfo.gid+'@srv:'+sk);
-                            if (Debug) console.log('clear client with sessions successfully @'+client.clntinfo.gid+',@srv:'+sk);
+                            debug('clear client with sessions successfully @'+client.clntinfo.gid+',@srv:'+sk);
                         }, true);*/                    
                         Sdp.updateClntInfo({gid: client.clntinfo.gid, live: false}, function(err){
                             if (err) console.log(err+',clear client with session failed @'+client.clntinfo.gid+'@srv:'+sk);
-                            if (Debug) console.log('clear client with sessions successfully @'+client.clntinfo.gid+',@srv:'+sk);
+                            debug('clear client with sessions successfully @'+client.clntinfo.gid+',@srv:'+sk);
                         });
                         
                         client.clntinfo = null;                        
@@ -1572,24 +1519,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
         else
             httppsrvn = httpp.createServer();    
 
-        // check on secure websocket
-        if (self.naclcerts && self.naclcerts.ns)
-            srv = new SecureWebSocketServer({
-             httpp: true, 
-            server: httppsrvn, 
-              path: SEP.SEP_CTRLPATH_NS
-        }, 
-        {
-                    version: 2,
-                       cert: self.naclcerts.ns.cert,
-                         ca: self.naclcerts.ca.cert,
-                requireCert: false,
-
-                myPublicKey: Naclcert.ArrayToUint8(self.naclcerts.ns.key.publickey),
-                mySecretKey: Naclcert.ArrayToUint8(self.naclcerts.ns.key.secretkey)
-        });
-        else
-            srv = new WebSocketServer({httpp: true, server: httppsrvn, path: SEP.SEP_CTRLPATH_NS});
+        srv = new WebSocketServer({httpp: true, server: httppsrvn, path: SEP.SEP_CTRLPATH_NS});
 
         self.srvs[self.ipaddr+':'+self.ports[i]] = {
                 host: self.ipaddr, 
@@ -1630,16 +1560,16 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
             // match vURL pattern:
             // - vhost like http(s)://"xxx.vurl."51dese.com
             // - vpath like http(s)://51dese.com"/vurl/xxx"
-            if (vstrs = req.headers.host && req.headers.host.match(vurl.regex_vhost)) {
+            if (vstrs = req.headers.host.match(vurl.regex_vhost)) {
                 vurle = vstrs[0];
-                if (Debug) console.log('proxy for client with vhost:'+vurle);
-            } else if (vstrs = req.url && req.url.match(vurl.regex_vpath)) {
+                debug('proxy for client with vhost:'+vurle);
+            } else if (vstrs = req.url.match(vurl.regex_vpath)) {
                 vurle = vstrs[0];           
                 
                 // prune vpath in req.url
                 req.url = req.url.replace(vurle, '');
                      
-                if (Debug) console.log('proxy for client with vpath:'+vurle);
+                debug('proxy for client with vpath:'+vurle);
             } else {
                 // invalid vURL
                 res.writeHead(400);
@@ -1648,8 +1578,8 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                 return;
             }
     
-            if (Debug) console.log('Http request proxy for client request.headers:'+JSON.stringify(req.headers)+
-                                   ',url:'+urle+',vurl:'+vurle);
+            debug('Http request proxy for client request.headers:'+JSON.stringify(req.headers)+
+                  ',url:'+urle+',vurl:'+vurle);
 
             // 1.2.2
             // fetch peer target host info via vURL
@@ -1665,44 +1595,41 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                 // cache proxy
                 if (!self.turnProxyCache[vurle]) {
                     // fill destination name-client info and create proxy to peer target
-                    self.turnProxyCache[vurle] = new httppProxy.HttpProxy({
-                        ///httpp: false,
-                        https: self.sslcerts.ps || false,
-                        changeOrigin: false,
-                        enable: {xforward: true},
+                    const options = {
+                        ssl: self.sslcerts.ps || false,
                         
-                        ///source: {host: 'localhost', port: self.turnPorts[0]},
-                          
+                        changeOrigin: false,
+                        xfwd: true,
+                        
+                        ws: true,
+
                         target: {
-                            httpp: true,
+                            protocol: routing.secmode ? 'https:' : 'http:',
+                                  ca: routing.secmode ? self.sslcerts.ca.cont : '',
                             
                             // set SSL related info
-                            https: routing.secmode ? {
+                            ssl: routing.secmode ? {
                                 rejectUnauthorized: true, 
-                                                ca: self.sslcerts.ca.cont, 
                                                key: self.sslcerts.as.key,
                                               cert: self.sslcerts.as.cert
                             } : false, 
                             
                             host: routing.dst.ipaddr,
                             port: routing.dst.port,
-                            
-                            // set user-specific feature,like maxim bandwidth,etc
-                            // TBD... with user DB
-                            localAddress: {
-                                addr: routing.turn.lipaddr,
-                                port: routing.turn.agentport,
-                                
-                                 opt: {
-                                    mbw: self.option.mbw || null
-                                }
-                            }
-                        }
-                    });
+                        },    
+                        
+                        // set user-specific feature,like maxim bandwidth,etc
+                        // TBD... with user DB
+                        localAddress: routing.turn.lipaddr,
+                           localPort: routing.turn.agentport,
+                    };
+                    debug(`turn web proxy options: ${JSON.stringify(options)}`);
+
+                    self.turnProxyCache[vurle] = httppProxy.createProxyServer(options);
                     
                     // Handle request error
-                    self.turnProxyCache[vurle].on('proxyError', function(err, req, res){
-                        if (Debug) console.error(err+',proxy to '+urle);
+                    self.turnProxyCache[vurle].on('error', function(err, req, res) {
+                        debug(err+',proxy to '+urle);
                         
                         // send error back
                         try {
@@ -1723,32 +1650,11 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                         // notes: still keep it to avoid attack
                         ///self.turnProxyCache[vurle] = null;
                     });
-                    
-                    // Handle upgrade error
-                    self.turnProxyCache[vurle].on('webSocketProxyError', function(err, req, socket, head){
-                        if (Debug) console.error(err+',proxy to '+urle);
-                        
-                        // send error back
-                        try {
-                            if (process.env.NODE_ENV === 'production') {
-                                socket.write('Internal Server Error');
-                            } else {
-                                socket.write('An error has occurred: ' + JSON.stringify(err));
-                            }
-                            socket.end();
-                        } catch (ex) {
-                            console.error("socket.end error: %s", ex.message) ;
-                        }
-                        
-                        // clear vURL entry
-                        // notes: still keep it to avoid attack
-                        ///self.turnProxyCache[vurle] = null;
-                    });
                 }
                 
                 // 1.2.5
                 // proxy target
-                self.turnProxyCache[vurle].proxyRequest(req, res);
+                self.turnProxyCache[vurle].web(req, res);
             });
         };
         
@@ -1775,12 +1681,12 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
             // match vURL pattern:
             // - vhost like http(s)://"xxx.vurl."51dese.com
             // - vpath like http(s)://51dese.com"/vurl/xxx"
-            if (vstrs = req.headers.host.match(vurl.regex_vhost)) {
+            if (vstrs = req.headers.host && req.headers.host.match(vurl.regex_vhost)) {
                 vurle = vstrs[0];
-                if (Debug) console.log('proxy for client with vhost:'+vurle);
-            } else if (vstrs = req.url.match(vurl.regex_vpath)) {
+                debug('proxy for client with vhost:'+vurle);
+            } else if (vstrs = req.url && req.url.match(vurl.regex_vpath)) {
                 vurle = vstrs[0];
-                if (Debug) console.log('proxy for client with vpath:'+vurle);
+                debug('proxy for client with vpath:'+vurle);
             } else {
                 // invalid vURL
                 res.writeHead(400);
@@ -1789,7 +1695,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                 return;
             }
     
-            if (Debug) console.log('Http request proxy for client request.headers:'+JSON.stringify(req.headers)+
+            debug('Http request proxy for client request.headers:'+JSON.stringify(req.headers)+
                                    ',url:'+urle+',vurl:'+vurle);
 
             // 2.
@@ -1809,7 +1715,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     var curtime = Date.now();
                     var phk = req.connection.remoteAddress+':'+vurle;
                     
-                    if (Debug) console.log('peer host key:'+phk);
+                    debug('peer host key:'+phk);
                     
                     self.trunProxyHistory[phk] = self.trunProxyHistory[phk] ||
                                                  {timestamp: Date.now(), state: 0, trys: 0, maxTrys: 6, timeOut: 6};
@@ -1933,14 +1839,14 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
             // - vpath like http(s)://51dese.com/vurl/xxx
             if (vstrs = req.headers.host.match(vurl.regex_vhost)) {
                 vurle = vstrs[0];
-                if (Debug) console.log('proxy for client with vhost:'+vurle);
+                debug('proxy for client with vhost:'+vurle);
             } else if (vstrs = req.url.match(vurl.regex_vpath)) {
                 vurle = vstrs[0];
                 
                 // prune vpath in req.url
                 req.url = req.url.replace(vurle, '');
                                 
-                if (Debug) console.log('proxy for client with vpath:'+vurle);
+                debug('proxy for client with vpath:'+vurle);
             } else {
                 // unknown vURL
                 socket.end('invalid URL');
@@ -1948,7 +1854,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                 return;
             }
     
-            if (Debug) console.log('Http upgrade proxy for client request.headers:'+JSON.stringify(req.headers)+
+            debug('Http upgrade proxy for client request.headers:'+JSON.stringify(req.headers)+
                                    ',url:'+urle+',vurl:'+vurle);
             
             // 1.5.2
@@ -1964,44 +1870,41 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                 // cache proxy
                 if (!self.turnProxyCache[vurle]) {
                     // fill destination name-client info and create proxy to peer target
-                    self.turnProxyCache[vurle] = new httppProxy.HttpProxy({
-                        ///httpp: false,
-                        https: self.sslcerts.ps || false,
+                    const options = {
+                        ssl: self.sslcerts.ps || false,
+
                         changeOrigin: false,
-                        enable: {xforward: true},
-                        
-                        ///source: {host: 'localhost', port: self.turnPorts[0]},
+                        xfwd: true,
                          
+                        ws: true,
+                        
                         target: {
-                            httpp: true, 
+                            protocol: routing.secmode ? 'https:' : 'http:',
+                                  ca: routing.secmode ? self.sslcerts.ca.cont : '',
                             
                             // set SSL related info
-                            https: routing.secmode ? {
+                            ssl: routing.secmode ? {
                                 rejectUnauthorized: true, 
-                                                ca: self.sslcerts.ca.cont, 
                                                key: self.sslcerts.as.key,
                                               cert: self.sslcerts.as.cert
                             } : false, 
                             
                             host: routing.dst.ipaddr,
                             port: routing.dst.port,
-                            
-                            // set user-specific feature,like maxim bandwidth,etc
-                            // TBD... with user DB
-                            localAddress: {
-                                addr: routing.turn.lipaddr,
-                                port: routing.turn.agentport, 
-                                
-                                 opt: {
-                                    mbw: self.option.mbw || null
-                                }
-                            }
-                        }
-                    });
-                    
+                        },    
+                        
+                        // set user-specific feature,like maxim bandwidth,etc
+                        // TBD... with user DB
+                        localAddress: routing.turn.lipaddr,
+                           localPort: routing.turn.agentport,
+                    };
+                    debug(`turn ws proxy options: ${JSON.stringify(options)}`);
+
+                    self.turnProxyCache[vurle] = httppProxy.createProxyServer(options);
+
                     // Handle request error
-                    self.turnProxyCache[vurle].on('proxyError', function(err, req, res){
-                        if (Debug) console.error(err+',proxy to '+urle);
+                    self.turnProxyCache[vurle].on('error', function(err, req, res){
+                        debug(err+',proxy to '+urle);
                         
                         // send error back
                         try {
@@ -2022,27 +1925,6 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                         // notes: still keep it to avoid attack
                         ///self.turnProxyCache[vurle] = null;
                     });
-                    
-                    // Handle upgrade error
-                    self.turnProxyCache[vurle].on('webSocketProxyError', function(err, req, socket, head){
-                        if (Debug) console.error(err+',proxy to '+urle);
-                        
-                        // send error back
-                        try {
-                            if (process.env.NODE_ENV === 'production') {
-                                socket.write('Internal Server Error');
-                            } else {
-                                socket.write('An error has occurred: ' + JSON.stringify(err));
-                            }
-                            socket.end();
-                        } catch (ex) {
-                            console.error("socket.end error: %s", ex.message) ;
-                        }
-                        
-                        // clear vURL entry
-                        // notes: still keep it to avoid attack
-                        ///self.turnProxyCache[vurle] = null;
-                    });
                 }
                 
                 // 1.5.4
@@ -2052,7 +1934,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     var curtime = Date.now();
                     var phk = socket.remoteAddress+':'+vurle;
                     
-                    if (Debug) console.log('peer host key:'+phk);
+                    debug('peer host key:'+phk);
                     
                     self.trunProxyHistory[phk] = self.trunProxyHistory[phk] ||
                                                  {timestamp: Date.now(), state: 0, trys: 0, maxTrys: 6, timeOut: 6};
@@ -2106,7 +1988,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                             var ptoken = urlstr ? urlstr[0].split(/\//gi)[2] : '';
                             var vtoken = SIPHASH.hash_hex(routing.seckeys, routing.vurl);
                             
-                            if (Debug) console.log('url:'+urle+',ptoken:'+ptoken+',vtoken:'+vtoken);
+                            debug('url:'+urle+',ptoken:'+ptoken+',vtoken:'+vtoken);
                             
                             if (ptoken === vtoken) {                            
                                 // set pass 
@@ -2136,8 +2018,8 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                 }
                                 
                 // 1.5.5
-                // proxy target
-                self.turnProxyCache[vurle].proxyWebSocketRequest(req, socket, head);
+                // proxy websocket target
+                self.turnProxyCache[vurle].ws(req, socket, head);
             });
         };
                 
@@ -2166,10 +2048,10 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
             // - vpath like http(s)://51dese.com/vurl/xxx
             if (vstrs = urle.match(vurl.regex_vhost)) {
                 vurle = vstrs[0];
-                if (Debug) console.log('proxy for client with vhost:'+vurle);
+                debug('proxy for client with vhost:'+vurle);
             } else if (vstrs = urle.match(vurl.regex_vpath)) {
                 vurle = vstrs[0];                                
-                if (Debug) console.log('proxy for client with vpath:'+vurle);
+                debug('proxy for client with vpath:'+vurle);
             } else {
                 // unknown vURL
                 socket.end('invalid URL');
@@ -2177,7 +2059,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                 return;
             }
     
-            if (Debug) console.log('Http tunnel proxy for client request.headers:'+JSON.stringify(req.headers)+
+            debug('Http tunnel proxy for client request.headers:'+JSON.stringify(req.headers)+
                                    ',url:'+urle+',vurl:'+vurle);
             
             // 1.6.2
@@ -2199,7 +2081,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     var curtime = Date.now();
                     var phk = socket.remoteAddress+':'+vurle;
                     
-                    if (Debug) console.log('peer host key:'+phk);
+                    debug('peer host key:'+phk);
                     
                     self.trunProxyHistory[phk] = self.trunProxyHistory[phk] ||
                                                  {timestamp: Date.now(), state: 0, trys: 0, maxTrys: 6, timeOut: 6};
@@ -2250,7 +2132,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                             var ptoken = urlstr ? urlstr[0].split(/\//gi)[2] : '';
                             var vtoken = SIPHASH.hash_hex(routing.seckeys, routing.vurl);
                             
-                            if (Debug) console.log('url:'+urle+',ptoken:'+ptoken+',vtoken:'+vtoken);
+                            debug('url:'+urle+',ptoken:'+ptoken+',vtoken:'+vtoken);
                             
                             if (ptoken === vtoken) {                            
                                 // set pass 
@@ -2285,7 +2167,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                 if (req.url.match(vurle)) {
                     // 1.6.5.1
                     // connect it directly
-                    if (Debug) console.log('turn-forward proxy, httpp connect to %s:%d', dstip, dstport);
+                    debug('turn-forward proxy, httpp connect to %s:%d', dstip, dstport);
                                             
                     // connection options
                     var coptions = {
@@ -2293,17 +2175,19 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                         host: dstip, 
                         
                         // set user-specific feature,like maxim bandwidth,etc
-                        localAddress: {
+                        localAddress: routing.turn.lipaddr,
+                           localPort: routing.turn.agentport, 
+                        /*localAddress: {
                             addr: routing.turn.lipaddr,
                             port: routing.turn.agentport, 
                             
                             opt: {
                                 mbw: self.option.mbw || null
                             }
-                        }
+                        }*/
                     };
                     var srvSocket = UDT.connect(coptions, function() {
-                        if (Debug) console.log('turn-forward, httpp got connected');
+                        debug('turn-forward, httpp got connected');
                     
                         socket.write('HTTP/1.1 200 Connection Established\r\n' +
                                      'Proxy-agent: Node-Proxy\r\n' +
@@ -2329,14 +2213,16 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                             
                         // set user-specific feature,like maxim bandwidth,etc
                         // TBD... with user DB
-                        localAddress: {
+                        localAddress: routing.turn.lipaddr,
+                           localPort: routing.turn.agentport, 
+                        /*localAddress: {
                             addr: routing.turn.lipaddr,
                             port: routing.turn.agentport, 
                             
                              opt: {
                                 mbw: self.option.mbw || null
                             }
-                        }
+                        }*/
                     };
                     // set SSL related options
                     if (routing.secmode) {
@@ -2349,9 +2235,9 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     var rreq = httpps.request(roptions);
                     rreq.end();
                     
-                    if (Debug) console.log('tunnel proxy, connect to %s:%d', dstip, dstport);
+                    debug('tunnel proxy, connect to %s:%d', dstip, dstport);
                     rreq.on('connect', function(rres, rsocket, rhead) {
-                        if (Debug) console.log('tunnel proxy, got connected');
+                        debug('tunnel proxy, got connected');
                     
                         socket.write('HTTP/1.1 200 Connection Established\r\n' +
                                      'Proxy-agent: Node-Proxy\r\n' +
@@ -2383,10 +2269,10 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
         // Listening on proxy port for both HTTPP and HTTP server
         //  backlog 10K TBD...
         proxyServerHttpp.listen(self.turnPorts[0], self.ipaddr, function(){
-            console.log('httpp proxy-server listen on udp port '+self.turnPorts[0]);
+            console.log('httpps proxy-server listen on udp port '+self.turnPorts[0]);
         });
         proxyServerHttp.listen(self.turnPorts[0], self.ipaddr, function(){
-            console.log('http proxy-server listen on tcp port '+self.turnPorts[0]);
+            console.log('https proxy-server listen on tcp port '+self.turnPorts[0]);
         });
         //////////////////////////////////////////////////////////////////////////////////////////////////
         
@@ -2406,55 +2292,35 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
         else
             httppsrva = httpp.createServer();
         
-        
-        var agentServer;
-        // check on secure websocket
-        if (self.naclcerts && self.naclcerts.as)
-            agentServer = new SecureWebSocketServer({
-             httpp: true,
-            server: httppsrva,
-              path: SEP.SEP_CTRLPATH_AS
-        }, {
-                    version: 2,
-                       cert: self.naclcerts.as.cert,
-                         ca: self.naclcerts.ca.cert,
-                requireCert: false,
-
-                myPublicKey: Naclcert.ArrayToUint8(self.naclcerts.as.key.publickey),
-                mySecretKey: Naclcert.ArrayToUint8(self.naclcerts.as.key.secretkey)
-        });
-        else
-            agentServer = new WebSocketServer({
-             httpp: true,
-            server: httppsrva,
-              path: SEP.SEP_CTRLPATH_AS
-        });
+        var agentServer = new WebSocketServer({ httpp: true,
+                                                server: httppsrva,
+                                                path: SEP.SEP_CTRLPATH_AS
+                                              });
 
         self.turnSrvs.agent = {
-                    host: self.ipaddr, 
-                    port: self.turnPorts[1],
+                host: self.ipaddr, 
+                port: self.turnPorts[1],
                 
                      srv: agentServer, 
                 httppsrv: httppsrva,
                 
-                    path: SEP.SEP_CTRLPATH_AS,
+                path: SEP.SEP_CTRLPATH_AS,
                 
-                 sslcert: self.sslcerts.as,
-                naclcert: self.naclcerts.as
+                cert: self.sslcerts.as
         };
                 
         // agent logics
         // TBD...
         agentServer.on('connection', function(client){
-            if (Debug) console.log('agent for client:');
+            debug('agent for client:');
             
             // onMessage handler
-            client.on('message', function(message, flags){
+            client.on('message', function(message){
              // !!! catch any exceptions and ignore it
              try {
             
-                var tdata = (flags.binary) ? MSGPACK.decode(message) : JSON.parse(message);
-                if (Debug) console.log('nmsrv:new turn agent message:'+JSON.stringify(tdata));
+                var tdata = typeof message !== 'string' ? MSGPACK.decode(message) : JSON.parse(message);
+                debug('nmsrv:new turn agent message:'+JSON.stringify(tdata));
                 
                 // check if opc is valid
                 if ('number' === typeof tdata.opc) {
@@ -2464,15 +2330,16 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                         // 1.
                         // check offer credit by user info
                         // notes: only support 51dese.com as domain at present !!!
-                        if (tdata.offer.domain != '51dese.com' && tdata.offer.domain != 'www.51dese.com') {
-                            console.log('invalid domain, please use 51dese.com by now');
+                        if (tdata.offer.domain != '51dese.com'  && tdata.offer.domain != 'www.51dese.com' &&
+                            tdata.offer.domain != 'appnet.link' && tdata.offer.domain != 'www.appnet.link') {
+                            console.log('invalid domain, please use 51dese.com or appnet.link by now');
                             
                             // fill punch hole answer
                             tdata.opc = SEP.SEP_OPC_PUNCH_ANSWER;
                             
                             tdata.answer = {};
                             tdata.answer.ready = false;
-                            tdata.answer.error = 'invalid domain, please use 51dese.com by now';
+                            tdata.answer.error = 'invalid domain, please use 51dese.com or appnet.link by now';
                             
                             // 1.1
                             // send back punch hole answer message, then close agent socket
@@ -2508,9 +2375,9 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                             usrkey: tdata.offer.usrkey,
                             
                             // client info      
-                           clntgeoip: geoIP.lookup(client.remoteAddress), 
-                              clntip: client.remoteAddress,
-                            clntport: client.remotePort,
+                           clntgeoip: geoIP.lookup(client._socket.remoteAddress), 
+                              clntip: client._socket.remoteAddress,
+                            clntport: client._socket.remotePort,
                                srvdn: self.dn,
                                srvip: self.ipaddr,
                              srvport: self.turnPorts[1]
@@ -2529,8 +2396,8 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                             usrkey: tdata.offer.usrkey,
                             
                             // client info
-                              clntpublicIP: client.remoteAddress,
-                            clntpublicPort: client.remotePort,
+                              clntpublicIP: client._socket.remoteAddress,
+                            clntpublicPort: client._socket.remotePort,
                                  clntgeoip: JSON.stringify(client.clntinfo.clntgeoip),
                             
                                   clntgid: tdata.offer.clntgid,
@@ -2546,7 +2413,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                             srvproxyPort: tdata.offer.proxyport,
                             srvagentPort: tdata.offer.agentport,
                             
-                                   srvlocalIP: client.address().address,
+                                   srvlocalIP: client._socket.address().address,
                             srvlocalproxyPort: self.turnPorts[0],
                             srvlocalagentPort: self.turnPorts[1]
                         });
@@ -2597,32 +2464,35 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                                                    dn: self.dn,
                                                ipaddr: tdata.offer.srvip,
                                             proxyport: tdata.offer.proxyport,
-                                            agentport: tdata.offer.agentport, // equal to client.address().port
+                                            agentport: tdata.offer.agentport, // equal to client._socket.address().port
                                             
                                             // TURN server local ip address
-                                              lipaddr: client.address().address
+                                              lipaddr: client._socket.address().address,
                                         },
                                         
                                         // destination name-client info
                                         dst: {
-                                              geoip: {country: client.clntinfo.clntgeoip.country, city: client.clntinfo.clntgeoip.city},
-                                             ipaddr: client.remoteAddress, 
-                                               port: client.remotePort,
+                                              geoip: {
+                                                  country: client.clntinfo.clntgeoip && client.clntinfo.clntgeoip.country,
+                                                     city: client.clntinfo.clntgeoip && client.clntinfo.clntgeoip.city
+                                             },
+                                             ipaddr: client._socket.remoteAddress, 
+                                               port: client._socket.remotePort,
                                           
                                             lipaddr: tdata.offer.clntlocalIP,
                                               lport: tdata.offer.clntlocalPort,
-                                                gid: tdata.offer.clntgid
+                                                gid: tdata.offer.clntgid,
                                         },      
                                         
                                         // destination user info
                                         usrinfo: {
                                             domain: tdata.offer.domain,
-                                            usrkey: tdata.offer.usrkey
+                                            usrkey: tdata.offer.usrkey,
                                         }
                                     },
                                     function(err, routing){
                                         if (err || !routing) {
-                                            console.log(err+',setup TURN vURL routing entry failed');
+                                            if (err) console.log(err+',setup TURN vURL routing entry failed');
                                             tdata.answer.ready = false;
                                     
                                             // 6.
@@ -2633,7 +2503,7 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                                             // emit event
                                             self.emit('AS.SEP.SEP_OPC_PUNCH_OFFER', {client: client, data: tdata});
                                         } else {
-                                            console.log(err+',setup TURN vURL routing entry successfully:'+JSON.stringify(routing));
+                                            console.log('setup TURN vURL routing entry successfully:'+JSON.stringify(routing));
                                             
                                             tdata.answer.ready = true;
                                             
@@ -2682,8 +2552,8 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
             });
             
             // onClose handler
-            client.on('close', function(){
-                if (Debug) console.log('client.onClose:'+JSON.stringify(client.clntinfo));
+            client.once('close', function(){
+                debug('client.onClose:'+JSON.stringify(client.clntinfo));
                 if (client.clntinfo) {
                     // emit event
                     self.emit('AS.client.close', {clntinfo: client.clntinfo});
@@ -2691,10 +2561,10 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                     // clear client connection cache
                     var ck = client.clntinfo.vurl; // vurl as key to name-client
                     var sk = 'agent';              // key for agent server ip/port
-                    if (self.turnConn[sk] && (self.turnConn[sk])[ck]) {                    
+                    if (self.turnConn[sk] && (self.turnConn[sk])[ck]) {
                         (self.turnConn[sk])[ck] = null;
-                        
-                        if (Debug) console.log('ck:' + ck + ',sk:' + sk + ',self.turnConn[sk][ck]:' + (self.turnConn[sk])[ck]);
+
+                        debug('ck:'+ck+',sk:'+sk+',self.turnConn[sk][ck]:'+(self.turnConn[sk])[ck]);
                     }
                     
                     // clear TURN server vURL entry
@@ -2705,14 +2575,15 @@ var nmSrv = exports = module.exports = function(endpoints, seccerts){
                         
                     // clear TURN server turnProxyCache
                     if (client.clntinfo.vurl in self.turnProxyCache) {
-                        if (Debug) console.log('clear turnProxyCache on vurl:'+client.clntinfo.vurl);
+                        debug('clear turnProxyCache on vurl:'+client.clntinfo.vurl);
+                        self.turnProxyCache[client.clntinfo.vurl].close();
                         self.turnProxyCache[client.clntinfo.vurl] = null;
                     }
                     
                     // clear TURN server trunProxyHistory
                     Object.keys(self.trunProxyHistory).forEach(function(key){
                         if (key.match(client.clntinfo.vurl)) {
-                            if (Debug) console.log('clear trunProxyHistory on '+key);
+                            debug('clear trunProxyHistory on '+key);
                             self.trunProxyHistory[key] = null;
                         }
                     });
@@ -2737,7 +2608,4 @@ exports.SEP = SEP;
 
 // exports AppNet name-client
 exports.Client = AppNet;
-
-// exports Version
-exports.Version = 2;
 

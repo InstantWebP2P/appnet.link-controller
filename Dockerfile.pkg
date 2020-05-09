@@ -1,7 +1,7 @@
 #
-# AppNet.io packaging Dockerfile
+# AppNet.link packaging Dockerfile
 #
-# https://github.com/InstantWebP2P/appnet.io-controller
+# https://github.com/InstantWebP2P/appnet.link-controller
 # Copyright (c) 2020 Tom Zhou<appnet.link@gmail.com>
 
 # Pull base image.
