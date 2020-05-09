@@ -1,5 +1,5 @@
 # appnet.link-controller
-AppNet.IO controller serivices to support [AppNet.link protocol](https://github.com/InstantWebP2P/appnet.link)
+AppNet.Link controller serivices to support [AppNet.link protocol](https://github.com/InstantWebP2P/appnet.link)
 
 
 ### Prerequest
@@ -19,8 +19,6 @@ AppNet.IO controller serivices to support [AppNet.link protocol](https://github.
 
 * clone this repo and install dependency modules
 
-      npm config set strict-ssl false -g
-      npm i npm@2.15.9 -g    
       npm i
 
 * generate SSL certs once for your own Domain Name, like
