@@ -29,4 +29,4 @@ EXPOSE 51688/udp
 EXPOSE 51688/tcp
 
 # Define default command.
-CMD ["node", "./bin/srv.js"]
+CMD ["node", "--tls-min-v1.0", "./bin/srv.js"]
