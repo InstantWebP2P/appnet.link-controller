@@ -6,7 +6,7 @@ var nmSrv = require('../appnet.link-server');
 
 // root CA
 var vCA = require('ssl-root-cas').create();
-vCA.unshift(fs.readFileSync(__dirname + '/../ca-certs/ca-cert.pem'));
+vCA.unshift(fs.readFileSync(__dirname + '/../ca-certs/ca-cert.pem').toString());
 
 var nmsrvs = new nmSrv(
     // endpoint info
