@@ -1,6 +1,8 @@
 // AppNet.Link name-server example
 // Copyright (c) 2012-present Tom Zhou<appnet.link@gmail.com>
 //
+'use strict';
+
 var fs    = require('fs');
 var nmSrv = require('../appnet.link-server');
 
