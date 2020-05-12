@@ -2,7 +2,7 @@
 'use strict';
 
 var nmSrv = require('../appnet.link-server');
-var WEBPP = nmSrv.Client;
+var APPNET = nmSrv.Client;
 var SEP   = nmSrv.SEP;
 
 // vURL
@@ -11,7 +11,7 @@ var vURL = require('../vurl');
 var express = require('express');
 
 // create name-client
-var nmcln = new WEBPP({
+var nmcln = new APPNET({
     srvinfo: {
         timeout: 20,
         endpoints: [{ip: 'localhost', port: 51686}, {ip: 'localhost', port: 51868}],

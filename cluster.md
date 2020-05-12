@@ -1,4 +1,4 @@
-appnet.io-nameserver cluster - a cluster of machine node run nameserver services
+appnet.link-nameserver cluster - a cluster of machine node run nameserver services
 ============================================================================
 
 
@@ -48,7 +48,7 @@ appnet.io-nameserver cluster - a cluster of machine node run nameserver services
 
 ## Implementation
 
-* front load-balancer detect dead node, distribute load from appnet.io client
+* front load-balancer detect dead node, distribute load from appnet.link client
 
 * connected via SWS(secure websocket)
 
@@ -68,4 +68,4 @@ appnet.io-nameserver cluster - a cluster of machine node run nameserver services
   maintain a consistent cluster toponology.
 
 
-## Copyright reserved by tom zhou,iwebpp@gmail.com
+## Copyright reserved by tom zhou,appnet.link@gmail.com
