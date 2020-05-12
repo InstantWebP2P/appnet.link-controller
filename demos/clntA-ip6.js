@@ -1,3 +1,4 @@
+'use strict';
 
 var nmSrv = require('../appnet.link-server');
 var nmCln = nmSrv.Client;
