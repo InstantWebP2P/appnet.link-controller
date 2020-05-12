@@ -1597,7 +1597,8 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                     // fill destination name-client info and create proxy to peer target
                     const options = {
                         ssl: self.sslcerts.ps || false,
-                        
+                        ca: routing.secmode ? self.sslcerts.ca.cont : '',
+
                         changeOrigin: false,
                         xfwd: true,
                         
@@ -1874,6 +1875,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                     // fill destination name-client info and create proxy to peer target
                     const options = {
                         ssl: self.sslcerts.ps || false,
+                        ca: routing.secmode ? self.sslcerts.ca.cont : '',
 
                         changeOrigin: false,
                         xfwd: true,
