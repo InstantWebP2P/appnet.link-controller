@@ -1846,7 +1846,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                 // prune vpath in req.url
                 req.url = req.url.replace(vurle, '');
                                 
-                debug('proxy for client with vpath:'+vurle);
+                debug('proxy for client with vpath:'+vurle+',req.url:'+req.url);
             } else {
                 // unknown vURL
                 socket.end('invalid URL');
@@ -1855,7 +1855,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
             }
     
             debug('Http upgrade proxy for client request.headers:'+JSON.stringify(req.headers)+
-                                   ',url:'+urle+',vurl:'+vurle);
+                                   ',url:'+urle+',vurl:'+vurle+',req.url:'+req.url);
             
             // 1.5.2
             // fetch peer target host info via vURL
