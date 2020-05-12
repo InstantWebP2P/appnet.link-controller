@@ -1601,19 +1601,18 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
 
                         changeOrigin: false,
                         xfwd: true,
-                        
+                        secure: true,
+
                         ws: true,
 
                         target: {
                             protocol: routing.secmode ? 'https:' : 'http:',
-                                  ca: routing.secmode ? self.sslcerts.ca.cont : '',
                             
                             // set SSL related info
-                            ssl: routing.secmode ? {
-                                rejectUnauthorized: true, 
-                                               key: self.sslcerts.as.key,
-                                              cert: self.sslcerts.as.cert
-                            } : false, 
+                            ca                : routing.secmode ? self.sslcerts.ca.cont : '',
+                            key               : routing.secmode ? self.sslcerts.as.key  : '',
+                            cert              : routing.secmode ? self.sslcerts.as.cert : '',
+                            rejectUnauthorized: routing.secmode ? true : false,
                             
                             host: routing.dst.ipaddr,
                             port: routing.dst.port,
@@ -1879,19 +1878,18 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
 
                         changeOrigin: false,
                         xfwd: true,
-                         
+                        secure: true,
+
                         ws: true,
                         
                         target: {
                             protocol: routing.secmode ? 'https:' : 'http:',
-                                  ca: routing.secmode ? self.sslcerts.ca.cont : '',
                             
                             // set SSL related info
-                            ssl: routing.secmode ? {
-                                rejectUnauthorized: true, 
-                                               key: self.sslcerts.as.key,
-                                              cert: self.sslcerts.as.cert
-                            } : false, 
+                            ca                : routing.secmode ? self.sslcerts.ca.cont : '',
+                            key               : routing.secmode ? self.sslcerts.as.key  : '',
+                            cert              : routing.secmode ? self.sslcerts.as.cert : '',
+                            rejectUnauthorized: routing.secmode ? true : false,
                             
                             host: routing.dst.ipaddr,
                             port: routing.dst.port,
