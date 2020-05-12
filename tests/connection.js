@@ -1,4 +1,5 @@
 // Copyright (c) 2012-present Tom Zhou<appnet.link@gmail.com>
+'use strict';
 
 var SEP = require('appnet.link').SEP;
 

@@ -1,6 +1,7 @@
 // SSL binary wrapper in pure JS
 // Copyright (c) 2012-present Tom Zhou<appnet.link@gmail.com>
 //
+'use strict';
 
 var fs = require('fs');
 var spawn = require('child_process').spawn;

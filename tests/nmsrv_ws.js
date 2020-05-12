@@ -1,3 +1,4 @@
+'use strict';
 
 // msgpack library
 var msgpack = require('msgpack2');

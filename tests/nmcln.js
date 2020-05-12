@@ -1,3 +1,5 @@
+'use strict';
+
 var sys = require('sys');
 
 // websocket client

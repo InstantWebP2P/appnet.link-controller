@@ -1,4 +1,5 @@
 ///require.paths.unshift('./node_modules/');
+'use strict';
 
 var connect = require('connect');
 

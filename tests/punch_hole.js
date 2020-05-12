@@ -1,4 +1,5 @@
 // Copyright (c) 2012-present Tom Zhou<appnet.link@gmail.com>
+'use strict';
 
 var SEP = require('appnet.link').SEP;
 
@@ -7,7 +8,7 @@ process.on('uncaughtException', function (err) {
 });
 
 // p2p stream websocket library
-var WebSocket = require('wspp');
+var WebSocket = require('wspp').wspp;
 
 // connecting to primary name-server
 var con = new WebSocket('wss://127.0.0.1:'+process.argv[2]+SEP.SEP_CTRLPATH_HS, {httpp: true});
