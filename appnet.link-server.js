@@ -1707,6 +1707,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                     console.error(err+'invalid URL:'+urle);
                     return;
                 }
+                debug(`turn web proxy routing: ${JSON.stringify(routing)}`);
                                 
                 // 3.
                 // check vURL security token in case name-client in ACL-based secure vURL mode
@@ -1865,6 +1866,7 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                     console.error(err+'invalid vURL:'+vurle);
                     return;
                 }
+                debug(`turn ws proxy routing: ${JSON.stringify(routing)}`);
                 
                 // 1.5.3
                 // cache proxy
@@ -2070,7 +2072,8 @@ var nmSrv = exports = module.exports = function(endpoints, sslcerts){
                     console.error(err+'invalid vURL:'+vurle);
                     return;
                 }
-                
+                debug(`turn tunnel proxy routing: ${JSON.stringify(routing)}`);
+
                 // 1.6.3
                 // ...
                 
