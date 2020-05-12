@@ -1,5 +1,8 @@
 #!/bin/bash
 
+openssl rand -out ${HOME}/.rnd -hex 256
+echo "### Generate ${HOME}/.rnd done"
+
 # CA cert Self-Signed
 ## Need only generate once for one Domain Name
 if [ "$2" == "genca" ]; then
