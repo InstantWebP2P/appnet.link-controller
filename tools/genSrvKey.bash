@@ -21,6 +21,7 @@ openssl req -new -key ./certs/as-key.pem -subj "/C=CN/ST=Shanghai/L=Shanghai/OU=
 openssl x509 -req -days 368 -CA ./ca-certs/ca-cert.pem -CAkey ./ca-certs/ca-key.pem -CAcreateserial -in ./certs/as-csr.pem -out ./certs/as-cert.pem -extensions v3_req -extfile ./certs/as-v3.conf
 rm -rf ./certs/as-csr.pem
 
+chmod 444 ./certs/as*.pem
 echo "### Generate Agent server cert done"
 
 ### ps *.vurl.$1
@@ -31,6 +32,7 @@ openssl req -new -key ./certs/ps-key.pem -subj "/C=CN/ST=Shanghai/L=Shanghai/OU=
 openssl x509 -req -days 368 -CA ./ca-certs/ca-cert.pem -CAkey ./ca-certs/ca-key.pem -CAcreateserial -in ./certs/ps-csr.pem -out ./certs/ps-cert.pem -extensions v3_req -extfile ./certs/ps-v3.conf
 rm -rf ./certs/ps-csr.pem
 
+chmod 444 ./certs/ps*.pem
 echo "### Generate Proxy server cert done"
 
 ### ns
@@ -41,4 +43,5 @@ openssl req -new -key ./certs/ns-key.pem -subj "/C=CN/ST=Shanghai/L=Shanghai/OU=
 openssl x509 -req -days 368 -CA ./ca-certs/ca-cert.pem -CAkey ./ca-certs/ca-key.pem -CAcreateserial -in ./certs/ns-csr.pem -out ./certs/ns-cert.pem -extensions v3_req -extfile ./certs/ns-v3.conf
 rm -rf ./certs/ns-csr.pem
 
+chmod 444 ./certs/ns*.pem
 echo "### Generate Name server cert done"
