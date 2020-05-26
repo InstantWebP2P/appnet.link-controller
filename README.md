@@ -15,7 +15,7 @@ AppNet.Link controller services to support [AppNet.link protocol](https://github
  
 ### Install
 
-* appnet.link-controller depends on node-httpp, please build it from repo [node-httpp](https://github.com/InstantWebP2P/node-httpp.git)
+* appnet.link-controller depends on nodejs-httpp, please build it from repo [nodejs-httpp](https://github.com/InstantWebP2P/nodejs-httpp.git)
 
 * clone this repo and install dependency modules
 
@@ -27,14 +27,14 @@ AppNet.Link controller services to support [AppNet.link protocol](https://github
 
 * start controller services
 
-    ` ~/node-httpp/node ./bin/srv.js `
+    ` ~/nodejs-httpp/node ./bin/srv.js `
 
 * now ready to serve [appnet.link client](https://github.com/InstantWebP2P/appnet.link)
 
 
 #### Install on Linux with Docker
 
-* Build node-httpp docker images, refer to [node-httpp](https://github.com/InstantWebP2P/node-httpp)
+* Build nodejs-httpp docker images, refer to [nodejs-httpp](https://github.com/InstantWebP2P/nodejs-httpp)
 
 * Clone this repo
 
