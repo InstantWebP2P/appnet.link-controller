@@ -97,7 +97,7 @@ AppNet.Link controller services to support [AppNet.link protocol](https://github
 * User authentication
 * Domain authorization
 * Improve documents, Protocol Spec, RFC draft
-* Cluster implementation based on Raft consensus protocol
+* Cluster implementation based on [Raft](https://raft.github.io/) consensus protocol
 
 
 ### Support us
