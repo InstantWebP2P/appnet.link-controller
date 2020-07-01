@@ -1,5 +1,4 @@
-appnet.link-nameserver cluster - a cluster of machine node run nameserver services
-============================================================================
+## appnet.link-nameserver cluster - a cluster of machine node run nameserver services
 
 
 ## Goals
