@@ -2,8 +2,6 @@
 
 * GraphDB(Neo4j or OrientDB) used to describe live connection topology, use [Neo4j 2.1.8](https://github.com/neo4j/neo4j/releases/tag/2.1.8) for now.
 
-`
-
     graphDB used to record SDP, establish peer connection's topology:
     1. SDP record will be mapped to client-node, server-node and their relationship;
     2. client-node represents User entity, server-node is nameserver entity;
@@ -18,6 +16,4 @@
     9. router-node was identified by it's public IP&Port;
    10. using traceroute to setup the multi-hop route info between server-node and client-node;
    11. user can login to multiple clients, while a client means a device with local proto/ip/port;
-   
 
-`
