@@ -7,7 +7,7 @@
 // - 0.c Aroxy server binds on proxy port, while both agent server and agent client binds on same ip, but another same agent port
 // 
 // 1. One client acts as initiator, another client acts as responder and relay server as middle server
-// 2. TURN has two mode: TURN_CS, TURN_PP, that's related to STUN_CS, STUN_PP
+// 2. TURN has two mode: TURN_CS, TURN_PP, that's alike to STUN_CS, STUN_PP
 // 3. TURN_CS means the connection setup in client to server mode
 // 4. TURN_PP means the connection setup in rendezvous mode 
 // 5. TURN does need relay-server
