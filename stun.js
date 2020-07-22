@@ -5,7 +5,7 @@
 // 2. STUN has two mode: STUN_CS, STUN_PP
 // 3. STUN_CS means the connection setup in client to server mode
 // 4. STUN_PP means the connection setup in rendezvous mode 
-// 5. STUN don't need relay-server. right now, Neither clients can behind Symmetric NAT/Firewall
+// 5. STUN don't need relay-server. right now, Neither clients can be behind Symmetric NAT/Firewall
 
 'use strict';
 var debug = require('debug')('stun');
