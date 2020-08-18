@@ -1,14 +1,14 @@
-## appnet.link-nameserver cluster - a cluster of machine node run nameserver services
+## appnet.link-controller cluster - a cluster of machine node run controller services
 
 
 ## Goals
 
-* distributed
+* distributed across multiple data-centers
 * p2p, no single point of failure
 * node can join or leave dynamically
 * auto load balancing
 * secure connection between nodes
-* dead node auto repair,removed,refresh
+* dead node auto repair, removed, refresh
 
 
 ## Design
@@ -46,6 +46,8 @@
   node B take action on client b.
 
 ## Implementation
+
+* [raft-based consensus protocol](https://raft.github.io/#implementations)
 
 * front load-balancer detect dead node, distribute load from appnet.link client
 
