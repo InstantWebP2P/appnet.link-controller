@@ -15,7 +15,7 @@ AppNet.Link controller services to support [AppNet.link protocol](https://github
  
 ### Install
 
-* appnet.link-controller depends on nodejs-httpp, please build it from repo [nodejs-httpp](https://github.com/InstantWebP2P/nodejs-httpp.git)
+* appnet.link-controller depends on nodejs-httpp, please build it from [nodejs-httpp](https://github.com/InstantWebP2P/nodejs-httpp.git)
 
 * clone this repo and install dependency modules
 
