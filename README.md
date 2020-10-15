@@ -29,7 +29,7 @@ AppNet.Link controller services to support [AppNet.link](https://github.com/Inst
 
     ` ~/nodejs-httpp/node ./bin/srv.js `
 
-* now ready to serve [appnet.link client](https://github.com/InstantWebP2P/appnet.link)
+* now ready to serve [appnet.link](https://github.com/InstantWebP2P/appnet.link) client
 
 
 #### Install on Linux with Docker
