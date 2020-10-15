@@ -1,5 +1,5 @@
 # appnet.link-controller
-AppNet.Link controller services to support [AppNet.link protocol](https://github.com/InstantWebP2P/appnet.link)
+AppNet.Link controller services to support [AppNet.link](https://github.com/InstantWebP2P/appnet.link) protocol
 
 
 ### Prerequest
