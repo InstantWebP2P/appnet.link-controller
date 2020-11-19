@@ -2,7 +2,7 @@
 AppNet.Link controller services to support [AppNet.link](https://github.com/InstantWebP2P/appnet.link) protocol
 
 
-### Prerequirement
+### Prerequisites
 
 * Build Neo4j 2.1.8 on Linux with Docker, then start Neo4j services
 
