@@ -19,7 +19,7 @@
     "httpp-proxy": "latest",
     "ipaddr.js": "1.9.1",
     "appnet.link": "latest",
-    "lodash": "4.17.19",
+    "lodash": "4.17.21",
     "msgpack-js": "0.3.0",
     "neo4jv1": "1.1.6",
     "siphash": "1.1.0",
