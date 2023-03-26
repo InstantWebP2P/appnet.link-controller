@@ -29,6 +29,6 @@
   },
   "devDependencies": {
     "express": "4.17.3",
-    "jshint": "2.11.0"
+    "jshint": "2.13.6"
   }
 }
