@@ -1,6 +1,11 @@
 // Copyright (c) 2012-present Tom Zhou<appnet.link@gmail.com>
 'use strict';
 
+// root CA for connection to ns/as
+var FS = require('fs');
+var vCA = require('ssl-root-cas').create();
+vCA.unshift(FS.readFileSync(__dirname + '/../ca-certs/ca-cert.pem').toString());
+
 var SEP = require('appnet.link').SEP;
 
 process.on('uncaughtException', function (err) {
@@ -11,7 +16,12 @@ process.on('uncaughtException', function (err) {
 var WebSocket = require('wspp').wspp;
 
 // connecting to primary name-server
-var con = new WebSocket('wss://localhost:51686'+SEP.SEP_CTRLPATH_NS, {httpp: true});
+var con = new WebSocket('wss://localhost:51686'+SEP.SEP_CTRLPATH_NS, {
+    httpp: true, 
+    // SSL related info
+    rejectUnauthorized: true,
+    ca: vCA 
+});
 
 var t = setTimeout(function(){
     console.log('connecting to primary name-server timeout');
@@ -24,7 +34,12 @@ con.on('open', function(){
 });
 
 // connecting to alternative name-server
-var con1 = new WebSocket('wss://localhost:51868'+SEP.SEP_CTRLPATH_NS, {httpp: true});
+var con1 = new WebSocket('wss://localhost:51868'+SEP.SEP_CTRLPATH_NS, {
+    httpp: true, 
+    // SSL related info
+    rejectUnauthorized: true,
+    ca: vCA 
+});
 
 var t1 = setTimeout(function(){
     console.log('connecting to alternative name-server timeout');
