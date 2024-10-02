@@ -2,7 +2,7 @@
 AppNet.Link controller services to support [AppNet.link](https://github.com/InstantWebP2P/appnet.link) protocol
 
 
-### Prerequisites
+## 1. Prerequisites
 
 * Build Neo4j 2.1.8 on Linux with Docker, then start Neo4j services
 
@@ -12,8 +12,10 @@ AppNet.Link controller services to support [AppNet.link](https://github.com/Inst
 
       ./neo4jpkg cp -rf /tmp/*.tar* .
 
+
+## 2. Install
  
-### Install
+### 2.1 Install stand-alone
 
 * appnet.link-controller depends on nodejs-httpp, please build it from [nodejs-httpp](https://github.com/InstantWebP2P/nodejs-httpp.git)
 
@@ -32,7 +34,7 @@ AppNet.Link controller services to support [AppNet.link](https://github.com/Inst
 * now ready to serve [appnet.link](https://github.com/InstantWebP2P/appnet.link) client
 
 
-#### Install on Linux with Docker
+#### 2.2 Install on Linux with Docker
 
 * Build nodejs-httpp docker images, refer to [nodejs-httpp](https://github.com/InstantWebP2P/nodejs-httpp)
 
@@ -66,7 +68,7 @@ AppNet.Link controller services to support [AppNet.link](https://github.com/Inst
       connecting to primary name-server successfully
 
 
-### Code structure
+## Code structure
 
 ```js
 
@@ -87,12 +89,12 @@ AppNet.Link controller services to support [AppNet.link](https://github.com/Inst
 
 ```
     
-### More demos:
+## More demos:
 
     Look on demos/
 
 
-### TODO:
+## TODO:
 
 * User authentication
 * Domain authorization
@@ -100,12 +102,12 @@ AppNet.Link controller services to support [AppNet.link](https://github.com/Inst
 * Cluster implementation based on [Raft](https://raft.github.io/) consensus protocol
 
 
-### Support us
+## Support us
 
 * Welcome contributing on document, codes, tests and issues
 
 
-### License
+## License
 
 (The MIT License)
 
